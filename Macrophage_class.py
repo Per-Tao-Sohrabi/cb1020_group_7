@@ -1,0 +1,1 @@
+# Här tänker jag att klassen för makrofag M1 och M2 ska vara.
