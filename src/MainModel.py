@@ -1,25 +1,39 @@
 from mesa import Model
 from mesa.space import SingleGrid
-from mesa.time import RandomActivation
+from mesa.time import SimultaneousActivation
+import Cells
+import Macrophage_class as Macrophage
 
 class MainModel(Model):
-    #inheret methods from mesa Model class;J
-    super.__init__; 
 
-    def __init__(self, macrophage, fibroblast, cells):
-       
-        #Fields
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.schedule = SimultaneousActivation(self)
+        self.grid = SingleGrid(125, 135, torus=False);
+        self.cell_list = [];
+        self.macrophage_list = [];
+        self.fibroblast_list = [];
+    
+    def generate_agents(self, agent_type, amount, agent_list):
+        if agent_type == "epithelial_cells" :
+            #Do something special
+            print("In Construction")
+
+            #Create nice blodkärl on the grid.
+        else:
+            for i in range(amount):
+                agent = agent_type(i, self)
+                agent_list.append(agent);
+                i+=1;
+                #add the agents to the grid.
+
+
+
+
+
+model1 = MainModel()
         
         #lista för macrophages
-        self.macList = [];
-        self.fibList = [];
-        self.cells = [];
-        '''Other inhereted fields:
-            running
-            steps
-            random
-            rng
-        '''
 
         #initiate game environment
 
