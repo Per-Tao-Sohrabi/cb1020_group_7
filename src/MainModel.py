@@ -6,7 +6,15 @@ class MainModel:
         #Fields
         
         #lista för macrophages
-        macList = [];
-        fibList = [];
-        cells = [];
+        self.macList = [];
+        self.fibList = [];
+        self.cells = [];
+
+        #initiate game environment
+
+        #initate objects
+
+        #add objects to grid
+
+        #initate grid
 
