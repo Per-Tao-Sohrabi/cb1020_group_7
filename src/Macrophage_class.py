@@ -2,5 +2,3 @@
 
 class Macrophage: # This class contains every action and interaction that the macrophages will have
     def __init__(self, ): # The attributen from...
-
-hello world what abow knas
