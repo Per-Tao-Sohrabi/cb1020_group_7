@@ -26,20 +26,15 @@ class MainModel(Model):
                 agent_list.append(agent);
                 i+=1;
                 #add the agents to the grid.
+#MAIN
 
-
-
-
-
+#INITATE EMPTY MODEL
 model1 = MainModel()
-        
-        #lista för macrophages
 
-        #initiate game environment
+#ADD AGENTS TO THE MODEL
+model1.generate_agents(cells)
 
-        #initate objects
+#RUN THE MODEL
+#model1.run()
 
-        #add objects to grid
-
-        #initate grid
 
