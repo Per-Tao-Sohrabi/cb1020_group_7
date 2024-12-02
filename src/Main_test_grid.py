@@ -1,6 +1,6 @@
 # Imports all the required classes from the needed modules for creating the Mesa-model
 import numpy as np; import random 
-from mesa import Agent, Model 
+from mesa import Agent, Model
 from mesa.time import RandomActivation; from mesa.space import MultiGrid; from mesa.datacollection import DataCollector
 
 
@@ -12,13 +12,14 @@ class TU_Cell_Agent(Agent):
 
 
 class Tumor_cell(TU_Cell_Agent):
-    def __init__(self, agent_id, model, "TU_cell")
+    def __init__(self, agent_id, model, TU_cell):
         self.cancerous = True                           # All the relevant properties (instance variables) for the tumor cell are initiated 
         self.viable = True
         self.proliferation_prob = 0.0846
         self.migration_prob = 0.1167
         self.death_prob = 0.00284
-        self.resistance_Macrophage_prob = 0.004
+        self.initial_resist_M1_prob = 0
+        self.resistance_M1_prob = 0.004
         # OBS: Lägg till flera relevanta instansvariabler!!
     
     def apoptosis(): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
@@ -28,31 +29,31 @@ class Tumor_cell(TU_Cell_Agent):
             None
 
     # Exempel på resterande metoder som tumörcellen kommer att behöva 
-    def step():
+    #def step():
 
-    def migration():
+    #def migration():
 
-    def proliferation():
+    #def proliferation():
     
-    def resistance_Macrohpage():
+    #def resistance_Macrohpage():
 
 
 
 
-# OBS: Varje klass som hör till en unik cell-typ bör vara i en separat fil sen (nu är dem här för att kunna testköra koden)
-class Macrophage_M1(TU_Cell_Agent): 
-    def __init__(self, agent_id, model, "Macrophage_M1"):
-        self.anti_cancerous = False
-        self.proliferation_prob = 0.0065
-        # etc. lägg till flera instansvariabler
+# # OBS: Varje klass som hör till en unik cell-typ bör vara i en separat fil sen (nu är dem här för att kunna testköra koden)
+# class Macrophage_M1(TU_Cell_Agent): 
+#     def __init__(self, agent_id, model, "Macrophage_M1"):
+#         self.anti_cancerous = False
+#         self.proliferation_prob = 0.0065
+#         # etc. lägg till flera instansvariabler
         
-class Fibroblast(TU_Cell_Agent):
-    def __init__(self, agent_id, model, "Fibroblast"):
-        # Samma här, addera instansvariabler
+# class Fibroblast(TU_Cell_Agent):
+#     def __init__(self, agent_id, model, "Fibroblast"):
+#         # Samma här, addera instansvariabler
 
-class Endothelial(TU_Cell_Agent):
-    def __init__(self, agent_id, model, "Endothelial"):
-        self.proliferation_prob = 0.02
+# class Endothelial(TU_Cell_Agent):
+#     def __init__(self, agent_id, model, "Endothelial"):
+#         self.proliferation_prob = 0.02
 
 
 
@@ -90,7 +91,7 @@ class Main_simulation(Model):
 
 
 # This function runs the whole simulation 
-def run_AMB_sim(width=125, height=125, steps=1000): 
+def run_AMB_sim(width=125, height=125, steps=100): 
     model = Main_simulation(width, height)
     for _ in range(steps):
         model.step()
