@@ -47,7 +47,7 @@ class Macrophage_M1(TU_Cell_Agent):
         # etc. lägg till flera instansvariabler
         
 class Fibroblast(TU_Cell_Agent):
-    def __init__(self, agent_id, model, Fibroblast"):
+    def __init__(self, agent_id, model, "Fibroblast"):
         # Samma här, addera instansvariabler
 
 class Endothelial(TU_Cell_Agent):
