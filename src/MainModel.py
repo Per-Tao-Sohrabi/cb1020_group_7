@@ -2,7 +2,7 @@ from mesa import Model
 # from mesa import Agent, AgentSet; Obsolete
 from mesa.space import MultiGrid
 from mesa.time import SimultaneousActivation
-from .Tumor_cells import Cells;
+from .Tumor_cells import Tumor_cells; 
 from .M1 import M1;
 from .M2 import M2;
 from .Endothelial import Endothelial;
@@ -26,7 +26,7 @@ class MainModel(Model):
         super().__init__(*args, **kwargs)
         self.schedule = SimultaneousActivation(self)
         self.grid = MultiGrid(125, 135, torus=False);
-        
+
         self.generate_agents(cells,1);
         self.generate_agents(endo, 30);
         self.generate_agents(m1, 10);

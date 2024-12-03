@@ -85,5 +85,3 @@ server = ModularServer(FibroblastModel, [grid], "Fibroblast Model", {
 })
 server.port = 8521
 server.launch()
-
-
