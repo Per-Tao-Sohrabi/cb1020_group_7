@@ -13,15 +13,9 @@ import random
 
 '''
 class M2(Agent):
-<<<<<<< HEAD
     def __init__(self, unique_id, position, model): #Position inputed as (x,y)
         super().__init__(unique_id, model)
         self.position = position;
-=======
-    def __init__(self, unique_id, model):
-        super().__init__(unique_id, model);
-
->>>>>>> 00e4e96e5f131cc137288e9484cf250cc26bc342
         self.killing_capacity = 11 #M2kmax
         self.prob_kill = 0.0127 #M2pkill
         self.prob_migrate = 0.2667 #M2pmig
