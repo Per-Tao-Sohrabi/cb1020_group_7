@@ -1,12 +1,12 @@
 from mesa import Model
 # from mesa import Agent, AgentSet; Obsolete
-from mesa.space import SingleGrid
+from mesa.space import MultiGrid
 from mesa.time import SimultaneousActivation
-from .Cells import Cells;
-import M1 as m1;
-import M2 as m2;
-import Endothelial as endo;
-import Fibroblast as fib;
+from .Tumor_cells import Cells;
+from .M1 import M1;
+from .M2 import M2;
+from .Endothelial import Endothelial;
+from .Fibroblast import Fibroblast;
 
 class MainModel(Model):
     #GENERATE AGENTS 
@@ -25,7 +25,8 @@ class MainModel(Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.schedule = SimultaneousActivation(self)
-        self.grid = SingleGrid(125, 135, torus=False);
+        self.grid = MultiGrid(125, 135, torus=False);
+        
         self.generate_agents(cells,1);
         self.generate_agents(endo, 30);
         self.generate_agents(m1, 10);
