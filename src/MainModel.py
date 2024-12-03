@@ -4,27 +4,40 @@ from mesa.time import SimultaneousActivation
 from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
 
-from Tumor_cells import Tumor_cells; 
-from M1 import M1;
-from M2 import M2;
+import random as random;
+#from Tumor_cells import Tumor_cells; 
+#from M1 import M1;
+#from M2 import M2;
 from Endothelial import Endothelial;
-from Fibroblast import Fibroblast;
+#from Fibroblast import Fibroblast;
 
 class MainModel(Model):
     #GENERATE AGENTS 
     def generate_agents(self, agent_type, amount):
-        for i in range(amount):
+          agent_cache = {};
+          for i in range(amount):
             if agent_type == Endothelial:
+                if i == 0:
+                    x = 0;
+                    y = random.randrange(self.grid.height);
+                    agent = Endothelial(i, (x,y), self);
+                    agent_cache[i] = agent;
+                    self.schedule.add(agent);  
+                    self.grid.place_agent(agent, (x, y));
+                else:
+                    prev_agent = agent_cache[i-1];
+                    prev_x, prev_y = prev_agent.position;
+                    x_inc = random.randint(0,1)
+                    y_inc = random.randint(-1,1)
+                    new_x, new_y = prev_x+x_inc, prev_y+y_inc;
+                    agent = Endothelial(i, (new_x, new_y), self)
+                    agent_cache[i] = agent;
+                    self.schedule.add(agent);
+                    if new_x < self.grid.width and new_y < self.grid.height: #Handles the edge case when cells get generated outside the grid.
+                        self.grid.place_agent(agent, (new_x, new_y));
+            else: #For other agents
                 agent_type = agent_type;
-                agent = agent_type(i, self) #declare new instance of agent according to mesa Agent initation.
-                self.schedule.add(agent);
-                #Create blodkärl on the grid.
-                    #Add "next" endo besides prev endo
-                pass #temporary
-            else:
-                #Generate Agents:
-                agent_type = agent_type;
-                agent = agent_type(i, self) #declare new instance of agent according to mesa Agent initation.
+                agent = agent_type(i, (x,y), self) #declare new instance of agent according to mesa Agent initation.
                 self.schedule.add(agent);
                 #Declare Agent Coordinates:
                 x = self.random.randrange(self.grid.width);
@@ -32,14 +45,14 @@ class MainModel(Model):
                 self.grid.place_agent(agent, (x, y));
                 i+=1
                 #add the agents to the grid.
-        
+            
     #INSTANCE MODEL FIELDS
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.grid = MultiGrid(125, 135, torus=False);
+        self.grid = MultiGrid(125, 135, torus=True);
         self.schedule = SimultaneousActivation(self);
-        self.generate_agents(Tumor_cells,1);
-        #self.generate_agents(Endothelial, 30);
+        #self.generate_agents(Tumor_cells,1);
+        self.generate_agents(Endothelial, 300);
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
@@ -53,8 +66,39 @@ class MainModel(Model):
     def step(self):
         self.schedule.step
 
-#RUN MODEL SIMULATION
-model = MainModel;
+# Create a CanvasGrid for visualization
+def agent_portrayal(agent):
+    portrayal = {}
+    
+    # Define the portrayal for the Endothelial agents
+    if isinstance(agent, Endothelial):
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = 1  # radius of the circle
+        portrayal["Filled"] = "true"
+        portrayal["Color"] = "blue"
+        portrayal["Layer"] = 0  # Layer position on the grid
+    
+    # Add other agents' representations here if needed, e.g. Tumor_cells, M1, M2, etc.
+    # elif isinstance(agent, Tumor_cells):
+    #     portrayal["Shape"] = "rect"
+    #     portrayal["w"] = 1
+    #     portrayal["h"] = 1
+    #     portrayal["Color"] = "red"
+    #     portrayal["Layer"] = 1
+
+    return portrayal
+
+# Set up the visualization canvas
+canvas_element = CanvasGrid(agent_portrayal, 125, 135, 600, 600)
+
+# Create the ModularServer to run the visualization
+server = ModularServer(MainModel, [canvas_element], "Endothelial Simulation")
+server.port = 8521  # You can set a custom port
+
+# Run the visualization server
+server.launch()
+
+
 
 
 
