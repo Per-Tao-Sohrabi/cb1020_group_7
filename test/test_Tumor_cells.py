@@ -1,8 +1,8 @@
-from Cells import Cells
-from MainModel import MainModel
+from src.Cells import Cells
+from src.MainModel import MainModel
 import unittest
 
-class CellTest(unittest.TestCase):
+class Test_Cells(unittest.TestCase):
 
     def test_initiate(self):
         # Initialize MainModel object:

@@ -2,7 +2,7 @@ from mesa import Model
 # from mesa import Agent, AgentSet; Obsolete
 from mesa.space import SingleGrid
 from mesa.time import SimultaneousActivation
-import Cells as cells;
+from .Cells import Cells;
 import M1 as m1;
 import M2 as m2;
 import Endothelial as endo;
