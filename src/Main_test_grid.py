@@ -16,10 +16,10 @@ class Tumor_cell(TU_Cell_Agent):
         self.cancerous = True                           # All the relevant properties (instance variables) for the tumor cell are initiated 
         self.viable = True
         self.proliferation_prob = 0.0846
-        self.migration_prob = 0.1167
+        # self.migration_prob = 0.1167
         self.death_prob = 0.00284
-        self.initial_resist_M1_prob = 0
         self.resistance_M1_prob = 0.004
+        self.proliferation_increasement = 0.01
         # OBS: Lägg till flera relevanta instansvariabler!!
     
     def apoptosis(): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
