@@ -49,7 +49,7 @@ class MainModel(Model):
     #INSTANCE MODEL FIELDS
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.grid = MultiGrid(125, 135, torus=True);
+        self.grid = MultiGrid(125, 135, torus=False);
         self.schedule = SimultaneousActivation(self);
         #self.generate_agents(Tumor_cells,1);
         self.generate_agents(Endothelial, 300);
@@ -75,7 +75,7 @@ def agent_portrayal(agent):
         portrayal["Shape"] = "circle"
         portrayal["r"] = 1  # radius of the circle
         portrayal["Filled"] = "true"
-        portrayal["Color"] = "blue"
+        portrayal["Color"] = "red"
         portrayal["Layer"] = 0  # Layer position on the grid
     
     # Add other agents' representations here if needed, e.g. Tumor_cells, M1, M2, etc.
