@@ -7,9 +7,9 @@ from mesa import Agent;
 
 '''
 class M2(Agent):
-    def __init__(self, unique_id, model):
-        super.__init__(unique_id, model);
-
+    def __init__(self, unique_id, position, model): #Position inputed as (x,y)
+        super().__init__(unique_id, model)
+        self.position = position;
         self.killing_capacity = 11 #M2kmax
         self.prob_kill = 0.0127 #M2pkill
         self.prob_migrate = 0.2667 #M2pmig

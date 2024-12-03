@@ -7,9 +7,9 @@ from mesa import Agent;
 
 '''
 class M1(Agent): # This class contains every action and interaction that the macrophages will have
-    def __init__(self, unique_id, model):
-        super.__init__(unique_id, model);
-        
+    def __init__(self, unique_id, position, model): #Position inputed as (x,y)
+        super().__init__(unique_id, model)
+        self.position = position;
         self.killing_capacity = 11 #M1kmax
         self.prob_kill = 0.0306 #M1pkill
         self.prob_migrate = 0.2667 #M1pmig
@@ -21,18 +21,18 @@ class M1(Agent): # This class contains every action and interaction that the mac
         self.engaged = 0 #hur länge agenten är upptagen
         self.kills_left = self.killing_capacity #antal dödanden kvar
 
-        if self.engaged > 0: #Försök att döda en tumörcell
+        if self.engaged > 0: 
+            pass #Försök att döda en tumörcell
 
         if self.random.random() < self.prob_migrate: #om inte engagerad så ska den flytta
             self.move()
 
-        def move(self):
-            #Makrofagern kommer att röra på sig slummässigt eller mot ett mål beroende på närvaro av signaler
-            neighbors = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
-            if self.random.random() < self.random_walk_influence:
-                
-
-
+    def move(self):
+        #Makrofagern kommer att röra på sig slummässigt eller mot ett mål beroende på närvaro av signaler
+        neighbors = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
+        if self.random.random() < self.random_walk_influence:
+            pass
+    
     def step(self):
         #define behaviour for diff situations here
         pass
