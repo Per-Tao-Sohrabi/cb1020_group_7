@@ -13,10 +13,25 @@ from Endothelial import Endothelial;
 
 class MainModel(Model):
     #GENERATE AGENTS 
-    def generate_agents(self, agent_type, amount):
+    """
+    # generate_methods(self, <class type>agent_type, <String>brush_Stroke, <aint>amount)
+    ### Description
+    This method belongs to MainModel.MainModel() which allows for specified generation patterns of mesa agents containing a self.position parmeter. 
+    """
+    def generate_agents(self, agent_type, brush_stroke, amount):
           agent_cache = {};
           for i in range(amount):
-            if agent_type == Endothelial:
+            if brush_stroke == "default": #default
+                agent_type = agent_type;
+                agent = agent_type(i, (x,y), self) #declare new instance of agent according to mesa Agent initation.
+                self.schedule.add(agent);
+                #Declare Agent Coordinates:
+                x = self.random.randrange(self.grid.width);
+                y = self.random.randrange(self.grid.height);
+                self.grid.place_agent(agent, (x, y));
+                i+=1
+                #add the agents to the grid.
+            elif brush_stroke == "horizontal blood vessle" or brush_stroke == "vertical blood vessle": #For other agents
                 if i == 0:
                     x = 0;
                     y = random.randrange(self.grid.height);
@@ -27,32 +42,30 @@ class MainModel(Model):
                 else:
                     prev_agent = agent_cache[i-1];
                     prev_x, prev_y = prev_agent.position;
-                    x_inc = random.randint(0,1)
-                    y_inc = random.randint(-1,1)
+                    if brush_stroke == "horizontal blood vessle":
+                        x_inc = random.randint(0,1)
+                        y_inc = random.randint(-1,1)
+                    else:
+                        x_inc = random.randint(-1,1)
+                        y_inc = random.randint(0,1)
                     new_x, new_y = prev_x+x_inc, prev_y+y_inc;
                     agent = Endothelial(i, (new_x, new_y), self)
                     agent_cache[i] = agent;
                     self.schedule.add(agent);
                     if new_x < self.grid.width and new_y < self.grid.height: #Handles the edge case when cells get generated outside the grid.
                         self.grid.place_agent(agent, (new_x, new_y));
-            else: #For other agents
-                agent_type = agent_type;
-                agent = agent_type(i, (x,y), self) #declare new instance of agent according to mesa Agent initation.
-                self.schedule.add(agent);
-                #Declare Agent Coordinates:
-                x = self.random.randrange(self.grid.width);
-                y = self.random.randrange(self.grid.height);
-                self.grid.place_agent(agent, (x, y));
-                i+=1
-                #add the agents to the grid.
+
+
+                
             
     #INSTANCE MODEL FIELDS
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.grid = MultiGrid(125, 135, torus=False);
+        self.grid = MultiGrid(125, 135, torus=True);
         self.schedule = SimultaneousActivation(self);
         #self.generate_agents(Tumor_cells,1);
-        self.generate_agents(Endothelial, 300);
+        self.generate_agents(Endothelial,"horizontal blood vessle", 1000);
+        self.generate_agents(Endothelial,"vertical blood vessle", 1000);
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
