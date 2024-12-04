@@ -1,38 +1,89 @@
-from mesa import Agent;
-'''
-# M1 class
-### Desricption:
-. . .
+from mesa import Agent, Model
+from mesa.time import RandomActivation
+from mesa.space import MultiGrid
+from mesa.visualization.modules import CanvasGrid
+from mesa.visualization.ModularVisualization import ModularServer
 
-
-'''
-class M1(Agent): # This class contains every action and interaction that the macrophages will have
-    def __init__(self, unique_id, model):
-        super.__init__(unique_id, model);
-        
-        self.killing_capacity = 11 #M1kmax
-        self.prob_kill = 0.0306 #M1pkill
-        self.prob_migrate = 0.2667 #M1pmig
-        self.prob_death = 0.0049 #M1pdeath
-        self.random_walk_influence = 0.8 #M1rwalk, vet inte om detta är relevant
-        self.speed = 40 #M1speed, också ondöigt kanske
-        self.engagement_duration = 60 #antal steg som immuna celler integerar
-
-        self.engaged = 0 #hur länge agenten är upptagen
-        self.kills_left = self.killing_capacity #antal dödanden kvar
-
-        if self.engaged > 0: #Försök att döda en tumörcell
-
-        if self.random.random() < self.prob_migrate: #om inte engagerad så ska den flytta
-            self.move()
-
-        def move(self):
-            #Makrofagern kommer att röra på sig slummässigt eller mot ett mål beroende på närvaro av signaler
-            neighbors = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
-            if self.random.random() < self.random_walk_influence:
-                
-
+class M1Macrophage(Agent):
+    def __init__(self, agent_id, model):
+        super().__init__(agent_id, model)
+        self.killing_capacity = model.params["M1kmax"]
+        self.prob_kill = model.params["M1pkill"]
+        self.prob_migrate = model.params["M1pmig"]
+        self.prob_death = model.params["M1pdeath"]
+        self.alive = True
 
     def step(self):
-        #define behaviour for diff situations here
-        pass
+        if not self.alive:
+            return
+
+        if self.random.random() < self.prob_death:
+            self.alive = False
+            self.model.grid.remove_agent(self)
+            self.model.schedule_cell.remove(self)
+            return
+
+        if self.random.random() < self.prob_migrate:
+            self.migrate()
+
+        if self.random.random() < self.prob_kill:
+            self.kill_tumor_cell()
+
+    def migrate(self):
+        possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
+        new_position = self.random.choice(possible_steps)
+        if self.model.grid.is_cell_empty(new_position):
+            self.model.grid.move_agent(self, new_position)
+
+    def kill_tumor_cell(self):
+        neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False)
+        tumor_cells = [cell for cell in neighbors if isinstance(cell, TumorCell)]
+        if tumor_cells:
+            target = self.random.choice(tumor_cells)
+            self.model.grid.remove_agent(target)
+            self.model.schedule_cell.remove(target)
+            self.killing_capacity -= 1
+
+# Main Model
+class MacrophageModel(Model):
+    def __init__(self, width, height, initial_m1, params):
+        super().__init__()
+        self.grid = MultiGrid(width, height, torus=False)
+        self.schedule = RandomActivation(self)
+        self.params = params
+
+        # Add M1 Macrophages
+        for i in range(initial_m1):
+            x, y = self.random.randrange(width), self.random.randrange(height)
+            m1 = M1Macrophage(self.next_id(), self)
+            self.grid.place_agent(m1, (x, y))
+            self.schedule.add(m1)
+
+    def step(self):
+        self.schedule.step()
+
+
+# Visualization Function
+def portray_agent(agent):
+    if isinstance(agent, M1Macrophage):
+        return {"Shape": "circle", "Color": "red", "Filled": True, "Layer": 0, "r": 0.5} if agent.alive else None
+
+
+# Model Parameters
+params = {
+    "M1kmax": 11,       # Killing capacity (not relevant here)
+    "M1pmig": 0.4,      # Probability of migration
+    "M1pdeath": 0.005,   # Probability of death
+    "M1pkill": 0.03     # Probability of killing
+}
+
+# Visualization
+grid = CanvasGrid(portray_agent, 20, 20, 500, 500)
+server = ModularServer(MacrophageModel, [grid], "Macrophage Model", {
+    "width": 20,
+    "height": 20,
+    "initial_m1": 10,
+    "params": params
+})
+server.port = 8527
+server.launch()

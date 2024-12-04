@@ -1,13 +1,14 @@
 from mesa import Agent, Model
 from mesa.time import RandomActivation
 from mesa.space import MultiGrid
-from mesa.visualization.modules import CanvasGrid
-from mesa.visualization.ModularVisualization import ModularServer
+#from mesa.visualization.modules import CanvasGrid
+#from mesa.visualization.ModularVisualization import ModularServer
 
 # Fibroblast Agent
 class Fibroblast(Agent):
-    def __init__(self, unique_id, model):
+    def __init__(self, unique_id, position, model): #Position inputed as (x,y)
         super().__init__(unique_id, model)
+        self.position = position;
         self.alive = True
         self.proliferation_capacity = self.model.params["Fpmax"]
 
@@ -41,7 +42,7 @@ class Fibroblast(Agent):
             self.model.schedule.add(new_agent)
             self.proliferation_capacity -= 1
 
-
+'''
 # Fibroblast Model
 class FibroblastModel(Model):
     def __init__(self, width, height, initial_cell_ratio, params):
@@ -86,4 +87,4 @@ server = ModularServer(FibroblastModel, [grid], "Fibroblast Model", {
 server.port = 8521
 server.launch()
 
-
+'''
