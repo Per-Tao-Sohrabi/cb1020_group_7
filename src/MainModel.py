@@ -19,8 +19,8 @@ class MainModel(Model):
     This method belongs to MainModel.MainModel() which allows for specified generation patterns of mesa agents containing a self.position parmeter. 
     """
     def generate_agents(self, agent_type, brush_stroke, amount):
-          agent_cache = {};
-          for i in range(amount):
+        agent_cache = {};
+        for i in range(amount):
             if brush_stroke == "default": #default
                 agent_type = agent_type;
                 agent = agent_type(i, (x,y), self) #declare new instance of agent according to mesa Agent initation.
@@ -54,18 +54,22 @@ class MainModel(Model):
                     self.schedule.add(agent);
                     if new_x < self.grid.width and new_y < self.grid.height: #Handles the edge case when cells get generated outside the grid.
                         self.grid.place_agent(agent, (new_x, new_y));
+        return agent_cache; #allows the agents that exist in the chace to be saved in the model's agent storage. 
 
-
-                
-            
     #INSTANCE MODEL FIELDS
     def __init__(self, *args, **kwargs):
+
         super().__init__(*args, **kwargs)
+
         self.grid = MultiGrid(125, 135, torus=True);
+
         self.schedule = SimultaneousActivation(self);
+
+        self.agent_storage = {}; #saves agent_chaces from self.generate_agents(*args);
+
         #self.generate_agents(Tumor_cells,1);
-        self.generate_agents(Endothelial,"horizontal blood vessle", 1000);
-        self.generate_agents(Endothelial,"vertical blood vessle", 1000);
+        self.agent_storage[0] = self.generate_agents(Endothelial,"horizontal blood vessle", 1000);
+        self.agent_storage[1] = self.generate_agents(Endothelial,"vertical blood vessle", 1000);
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
@@ -110,6 +114,7 @@ server.port = 8521  # You can set a custom port
 
 # Run the visualization server
 server.launch()
+
 
 
 
