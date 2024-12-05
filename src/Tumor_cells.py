@@ -23,7 +23,7 @@ class Tumor_cells(Agent):
 
         self.proliferation_prob = 0.0846
         self.migration_prob = 0.1167
-        self.death_prob = 0.007 #0.00284
+        self.death_prob = 0.00284
         self.initial_resist_M1_prob = 0
         self.resistance_M1_prob = 0.004
     '''
