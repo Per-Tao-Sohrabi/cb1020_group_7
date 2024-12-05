@@ -1,5 +1,6 @@
 from mesa import Agent;
 from mesa.datacollection import DataCollector
+
 '''
 #Tumor cells class
 ### Description:
@@ -9,28 +10,31 @@ These cells might also only be cancerous. To be decided.
 '''
 class Tumor_cells(Agent): 
     #Constructor
-    def __init__(self, unique_id, model, position): #Position inputed as (x,y)
+    def __init__(self, unique_id, position, model): #Position inputed as (x,y)
         super().__init__(unique_id, model);
-        self.unique_id = unique_id
+        self.model = model;
+        self.unique_id = unique_id;
         self.position = position;
-        self.cancerous = True                           # All the relevant properties (instance variables) for the tumor cell are initiated 
         self.viable = True
+
+        self.cancerous = True     
+        # All the relevant properties (instance variables) for the tumor cell are initiated 
+
         self.proliferation_prob = 0.0846
         self.migration_prob = 0.1167
         self.death_prob = 0.00284
         self.initial_resist_M1_prob = 0
         self.resistance_M1_prob = 0.004
-        
     '''
     # STEP METHOD ()
     ### Description:
     Define behaviour for diff situations here.
     '''
     def step(self):
+        self.proliferate();
         #if adjacent or diagonal cell contain(fibroblast) do Apoptosis * death_prob?
         #if cell_M.._dist < critDistToM:do Proliferation in empty cell * prolifiration_prob;
         #if cell_endo_dist > critDistHypoxia:Induce Endothelial Proliferation;
-        pass
 
     #APOPTOSIS METHOD:
     def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
@@ -38,13 +42,17 @@ class Tumor_cells(Agent):
 
     #PROLIFERATION METHOD
     def proliferate(self):
-         adjacent_grid_cells = [(-1, -1), (-1, 0), (-1, 1),(0, -1),(0, 1),(1, -1), (1, 0), (1, 1)]
-         valid_grid_cells = []; #Save Identified empty grid cells here. 
+         try:
+            self.model.generate_agents(Tumor_cells, "proliferate", 2, self.position); #will be changed to proliferate
+            print("Tumor cell generated, id = ", self.unique_id);
+         except Exception as e:
+              print(f"Error while generating Tumor cell from agent  {self.unique_id} {e}")
 
     #Induce Endothelial Proliferation
     def induce_endothelial_growth(self, other):
          # other.proliferate()
          pass
+    
 # Imports all the required classes from the needed modules for creating the Mesa-model
                     # Add the type of cell as an additional instance variable
         # OBS: Lägg till flera relevanta instansvariabler!!
