@@ -37,13 +37,26 @@ class MainModel(Model):
                 agent_type = agent_type;
                 # Handle tumor cell proliferation here without removing the original
                 position = args[0];
-                x, y = position
-                dx, dy = (random.randint(-1,1),random.randint(-1,1))
-                next_position = (x+dx, y+dy);
-                agent = agent_type(unique_id, next_position, self) # Generate new instance of Tumor_cell
-                self.schedule.add(agent) 
-                self.grid.place_agent(agent, next_position);
-                agent_cache[unique_id] = agent 
+                # Get all adjacent positions (Moore neighborhood, excluding center)
+                adjacent_positions = self.grid.get_neighborhood(
+                    pos=position, moore=True, include_center=False, radius=1
+                )
+                # Filter positions to only include empty cells
+                empty_positions = [pos for pos in adjacent_positions if self.grid.is_cell_empty(pos)]
+                
+                if empty_positions:
+                    # Randomly select one of the valid empty positions
+                    next_position = random.choice(empty_positions)
+                    
+                    # Generate new Tumor_cell instance and place it
+                    agent = agent_type(unique_id, next_position, self)
+                    self.schedule.add(agent)
+                    self.grid.place_agent(agent, next_position)
+                    agent_cache[unique_id] = agent
+                else:
+                    print(f"No empty cells available for tumor cell {unique_id} at position {position}.")
+                    
+                
 
             elif brush_stroke == "default": #default
                 agent_type = agent_type;
@@ -54,7 +67,6 @@ class MainModel(Model):
                 agent = agent_type(unique_id, (x,y), self) #declare new instance of agent according to mesa Agent initation.
                 self.schedule.add(agent);
                 self.grid.place_agent(agent, (x, y));
-
             #add the agents to the grid.
             elif brush_stroke == "horizontal blood vessle" or brush_stroke == "vertical blood vessle": #For other agents
                 if i == 0:
@@ -79,6 +91,7 @@ class MainModel(Model):
                     self.schedule.add(agent);
                     if new_x < self.grid.width and new_y < self.grid.height: #Handles the edge case when cells get generated outside the grid.
                         self.grid.place_agent(agent, (new_x, new_y));
+        
         return agent_cache; #allows the agents that exist in the chace to be saved in the model's agent storage. 
     
     #Helper method for maintaining proliferation-orgin agents. (They dissapear if "default" is inputed in generate_agents())
