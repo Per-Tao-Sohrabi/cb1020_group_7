@@ -1,5 +1,6 @@
 from mesa import Agent;
 from mesa.datacollection import DataCollector
+import random
 
 '''
 #Tumor cells class
@@ -31,7 +32,11 @@ class Tumor_cells(Agent):
     Define behaviour for diff situations here.
     '''
     def step(self):
-        self.proliferate();
+        r = random.randint(0,100)
+        if r > 100*self.proliferation_prob:
+            self.proliferate();
+        else:
+             pass
         #if adjacent or diagonal cell contain(fibroblast) do Apoptosis * death_prob?
         #if cell_M.._dist < critDistToM:do Proliferation in empty cell * prolifiration_prob;
         #if cell_endo_dist > critDistHypoxia:Induce Endothelial Proliferation;
@@ -43,7 +48,7 @@ class Tumor_cells(Agent):
     #PROLIFERATION METHOD
     def proliferate(self):
          try:
-            self.model.generate_agents(Tumor_cells, "proliferate", 2, self.position); #will be changed to proliferate
+            self.model.generate_agents(Tumor_cells, "proliferate", 1, self.position); #will be changed to proliferate
             print("Tumor cell generated, id = ", self.unique_id);
          except Exception as e:
               print(f"Error while generating Tumor cell from agent  {self.unique_id} {e}")
