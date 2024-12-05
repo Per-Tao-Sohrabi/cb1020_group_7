@@ -100,7 +100,7 @@ class MainModel(Model):
     def __init__(self, *args, **kwargs):
         #Model fields
         super().__init__(*args, **kwargs)
-        self.grid = MultiGrid(150, 150, torus=True);
+        self.grid = MultiGrid(300, 300, torus=False);
         self.schedule = SimultaneousActivation(self);
         self.agent_storage = {};
          #saves agent_chaces from self.generate_agents(*args);
@@ -112,6 +112,7 @@ class MainModel(Model):
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
+        
     
     #STEP METHOD
     def step(self):
@@ -143,7 +144,7 @@ def agent_portrayal(agent):
     return portrayal
 
 # Set up the visualization canvas
-canvas_element = CanvasGrid(agent_portrayal, 150, 150, 600, 600) 
+canvas_element = CanvasGrid(agent_portrayal, 300, 300, 1200, 1200) 
 
 # Create the ModularServer to run the visualization
 server = ModularServer(MainModel, [canvas_element], "Prostate Environment Simulation")

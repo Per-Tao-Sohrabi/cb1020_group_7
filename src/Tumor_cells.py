@@ -23,7 +23,7 @@ class Tumor_cells(Agent):
 
         self.proliferation_prob = 0.0846
         self.migration_prob = 0.1167
-        self.death_prob = 0.00284
+        self.death_prob = 0.007 #0.00284
         self.initial_resist_M1_prob = 0
         self.resistance_M1_prob = 0.004
     '''
@@ -32,11 +32,12 @@ class Tumor_cells(Agent):
     Define behaviour for diff situations here.
     '''
     def step(self):
-        r = random.randint(0,100)
-        if r > 100*self.proliferation_prob:
+        #First check interactions
+        #Then check self induced states
+        if random.randint(0,100) < 100*self.proliferation_prob:
             self.proliferate();
-        else:
-             pass
+        if random.randint(0,100) < 100*self.death_prob:
+            self.apoptosis()
         #if adjacent or diagonal cell contain(fibroblast) do Apoptosis * death_prob?
         #if cell_M.._dist < critDistToM:do Proliferation in empty cell * prolifiration_prob;
         #if cell_endo_dist > critDistHypoxia:Induce Endothelial Proliferation;
@@ -44,6 +45,8 @@ class Tumor_cells(Agent):
     #APOPTOSIS METHOD:
     def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
             self.viable = False
+            self.model.grid.remove_agent(self);
+            self.model.schedule.remove(self);
 
     #PROLIFERATION METHOD
     def proliferate(self):
