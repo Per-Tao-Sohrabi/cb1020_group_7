@@ -32,16 +32,29 @@ class Tumor_cells(Agent):
     Define behaviour for diff situations here.
     '''
     def step(self):
-        #First check interactions
+        #ENDOTHELIAL-TUMOR_CELL INTERACTION:
+        #1. Identify nearest endo obj
+        nearest_endo_obj, distance = self.identify_nearest_endo_obj()
+
+
+        #NORMAL TUMOR CELL LIFE CYCLE BEHAVIOUR
         #Then check self induced states
         if random.randint(0,100) < 100*self.proliferation_prob:
             self.proliferate();
         if random.randint(0,100) < 100*self.death_prob:
             self.apoptosis()
-        #if adjacent or diagonal cell contain(fibroblast) do Apoptosis * death_prob?
+
+
+        #if adjacent or diagonal cell contain(fibroblast) do Increase  * death_prob?
         #if cell_M.._dist < critDistToM:do Proliferation in empty cell * prolifiration_prob;
         #if cell_endo_dist > critDistHypoxia:Induce Endothelial Proliferation;
 
+    #IDENTIFY NEAREST ENDO. CELL OBJ. 
+    def identify_nearest_endo_obj(self):
+         nearest_endo_obj = None
+         distance = None
+         return nearest_endo_obj, distance
+    
     #APOPTOSIS METHOD:
     def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
             self.viable = False
@@ -56,10 +69,10 @@ class Tumor_cells(Agent):
          except Exception as e:
               print(f"Error while generating Tumor cell from agent  {self.unique_id} {e}")
 
-    #Induce Endothelial Proliferation
-    def induce_endothelial_growth(self, other):
-         # other.proliferate()
-         pass
+
+
+    
+
     
 # Imports all the required classes from the needed modules for creating the Mesa-model
                     # Add the type of cell as an additional instance variable
