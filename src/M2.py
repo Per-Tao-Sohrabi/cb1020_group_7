@@ -6,7 +6,7 @@ from mesa.visualization.ModularVisualization import ModularServer
 import random
 
 
-# Tumor Cell Class
+#Tumor Cell Class
 class TumorCell(Agent):
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
@@ -22,63 +22,42 @@ class TumorCell(Agent):
         new_position = self.random.choice(possible_steps)
         self.model.grid.move_agent(self, new_position)
 
-#kanske behöver ändras beroende på vad main har osv, men använde detta bara för att kunna köra
+ #kanske behöver ändras beroende på vad main har osv, men använde detta bara för att kunna köra
 # M2 Macrophage Class
 class M2Macrophage(Agent):
-   def __init__(self, unique_id, model, params):
-       super().__init__(unique_id, model)
-       self.prob_migrate = params["M2pmig"]
-       self.prob_death = params["M2pdeath"]
-       self.prob_support_growth = params["M2psupport_growth"]
-       self.prob_reproduce = params["M2preproduce"]  # Ny sannolikhet för reproduktion
-       self.supported_tumors = 0
+    def __init__(self, unique_id, model, params):
+        super().__init__(unique_id, model)
+        self.killing_capacity = params["M2kmax"] #osäker på vad vi gör med denna
+        self.prob_migrate = params["M2pmig"]
+        self.prob_death = params["M2pdeath"]
+        self.prob_support_growth = params["M2psupport_growth"]
+        self.engagement_duration = params["M2engagement_duration"] #används inte i koden, tror inte vi behöver den
+        self.supported_tumors = 0
+        self.kills_left = self.killing_capacity
 
+    def step(self):
+        # Check if macrophage should die
+        if random.random() < self.prob_death:
+            self.model.grid.remove_agent(self)
+            return
 
-   def step(self):
-       # Check if macrophage should die
-       if random.random() < self.prob_death:
-           self.model.grid.remove_agent(self)
-           self.model.schedule.remove(self)
-           return
+        # Attempt to migrate
+        if random.random() < self.prob_migrate:
+            self.random_move()
 
+        # Check neighbors for tumor cells
+        neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False)
+        for neighbor in neighbors:
+            if isinstance(neighbor, TumorCell):
+                # Support tumor growth with probability
+                if random.random() < self.prob_support_growth:
+                    neighbor.size += 0.2
+                    self.supported_tumors += 1
 
-       # Attempt to migrate
-       if random.random() < self.prob_migrate:
-           self.random_move()
-
-
-       # Attempt to reproduce
-       if random.random() < self.prob_reproduce:
-           self.reproduce()
-
-
-       # Check neighbors for tumor cells
-       neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False)
-       for neighbor in neighbors:
-           if isinstance(neighbor, TumorCell):
-               # Support tumor growth with probability
-               if random.random() < self.prob_support_growth:
-                   neighbor.size += 0.2
-                   self.supported_tumors += 1
-
-
-   def random_move(self):
-       possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
-       new_position = self.random.choice(possible_steps)
-       self.model.grid.move_agent(self, new_position)
-
-
-   def reproduce(self):
-       # Find empty cells around the macrophage
-       empty_cells = [pos for pos in self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
-                      if self.model.grid.is_cell_empty(pos)]
-       if empty_cells:
-           new_position = self.random.choice(empty_cells)
-           new_macrophage = M2Macrophage(self.model.next_agent_id(), self.model, self.model.params)
-           self.model.grid.place_agent(new_macrophage, new_position)
-           self.model.schedule.add(new_macrophage)
-
-
+    def random_move(self):
+        possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
+        new_position = self.random.choice(possible_steps)
+        self.model.grid.move_agent(self, new_position)
 
 
 # Cancer Growth Model
@@ -139,7 +118,6 @@ params = {
     "M2pmig": 0.4,         # Probability of migration
     "M2pdeath": 0.005,     # Probability of death
     "M2psupport_growth": 0.05,  # Probability of supporting tumor growth
-    "M2preproduce": 0.02,    # Probability of reproduction
     "M2engagement_duration": 5  # Engagement duration (optional)
 }
 
@@ -157,5 +135,6 @@ server = ModularServer(
         "params": params
     }
 )
-server.port = 8526
+server.port = 8527
 server.launch()
+

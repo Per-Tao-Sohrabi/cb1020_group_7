@@ -1,4 +1,4 @@
-
+from mesa import Agent, Model
 
 # # OBS: Varje klass som hör till en unik cell-typ bör vara i en separat fil sen (nu är dem här för att kunna testköra koden)
 # class Macrophage_M1(TU_Cell_Agent): 
@@ -51,7 +51,7 @@ class Main_simulation(Model):
 
 
 # This function runs the whole simulation 
-def run_AMB_sim(width=125, height=125, steps=100): 
+def run_ABM_sim(width=125, height=125, steps=100): 
     model = Main_simulation(width, height)
     for _ in range(steps):
         model.step()
