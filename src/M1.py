@@ -5,8 +5,9 @@ from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
 
 class M1(Agent):
-    def __init__(self, agent_id, model):
+    def __init__(self, agent_id, position, model):
         super().__init__(agent_id, model)
+        self.position = position
         self.killing_capacity = 11       # Killing capacity 
         self.prob_kill = 0.03            # Probability of killing
         self.prob_migrate = 0.4          # Probability of migration
@@ -20,7 +21,7 @@ class M1(Agent):
         if self.random.random() < self.prob_death:
             self.alive = False
             self.model.grid.remove_agent(self)
-            self.model.schedule_cell.remove(self)
+            self.model.schedule.remove(self)
             return
 
         if self.random.random() < self.prob_migrate:
@@ -37,7 +38,7 @@ class M1(Agent):
 
     def kill_tumor_cell(self):
         neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False)
-        tumor_cells = [cell for cell in neighbors if isinstance(cell, TumorCell)]
+        tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cell)]
         if tumor_cells:
             target = self.random.choice(tumor_cells)
             self.model.grid.remove_agent(target)

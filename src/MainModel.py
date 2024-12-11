@@ -31,7 +31,7 @@ class MainModel(Model):
     """
     def generate_agents(self, agent_type, brush_stroke, amount, *args):
         agent_cache = {};
-        for i in range(amount):
+        for i in range(amount): 
             unique_id = self.get_next_unique_id()
             if brush_stroke == "proliferate":
                 agent_type = agent_type;
@@ -42,22 +42,16 @@ class MainModel(Model):
                     pos=position, moore=True, include_center=False, radius=1
                 )
                 # Filter positions to only include empty cells
-                empty_positions = [pos for pos in adjacent_positions if self.grid.is_cell_empty(pos)]
-                
+                empty_positions = [pos for pos in adjacent_positions if self.grid.is_cell_empty(pos)]  
                 if empty_positions:
                     # Randomly select one of the valid empty positions
                     next_position = random.choice(empty_positions)
-                    
+                    x = next_position[0];
+                    y = next_position[1];
                     # Generate new Tumor_cell instance and place it
-                    agent = agent_type(unique_id, next_position, self)
-                    self.schedule.add(agent)
-                    self.grid.place_agent(agent, next_position)
-                    agent_cache[unique_id] = agent
+                    agent = agent_type(unique_id, (x,y), self)
                 else:
                     print(f"No empty cells available for tumor cell {unique_id} at position {position}.")
-                    
-                
-
             elif brush_stroke == "default": #default
                 agent_type = agent_type;
                 #Declare Agent Coordinates:
@@ -65,17 +59,12 @@ class MainModel(Model):
                 y = self.random.randrange(self.grid.height);
                 #Add agent tp grid
                 agent = agent_type(unique_id, (x,y), self) #declare new instance of agent according to mesa Agent initation.
-                self.schedule.add(agent);
-                self.grid.place_agent(agent, (x, y));
             #add the agents to the grid.
             elif brush_stroke == "horizontal blood vessle" or brush_stroke == "vertical blood vessle": #For other agents
                 if i == 0:
                     x = 0;
                     y = random.randrange(self.grid.height);
-                    agent = Endothelial(unique_id, (x,y), self); #uses i as id
-                    agent_cache[unique_id] = agent;
-                    self.schedule.add(agent);  
-                    self.grid.place_agent(agent, (x, y));
+                    agent = agent_type(unique_id, (x,y), self); #uses i as id
                 else:
                     prev_agent = agent_cache[unique_id-1]; #should not cause an indexing inconsistency if the blood vessle is generated in one instance. 
                     prev_x, prev_y = prev_agent.position;
@@ -85,13 +74,15 @@ class MainModel(Model):
                     else:
                         x_inc = random.randint(-1,1)
                         y_inc = random.randint(0,1)
-                    new_x, new_y = prev_x+x_inc, prev_y+y_inc;
-                    agent = Endothelial(unique_id, (new_x, new_y), self)
-                    agent_cache[unique_id] = agent;
-                    self.schedule.add(agent);
-                    if new_x < self.grid.width and new_y < self.grid.height: #Handles the edge case when cells get generated outside the grid.
-                        self.grid.place_agent(agent, (new_x, new_y));
-        
+                    if x < self.grid.width and y < self.grid.height: #Handles the edge case when cells get generated outside the grid.
+                        x, y = prev_x+x_inc, prev_y+y_inc;
+                        agent = agent_type(unique_id, (x, y), self)
+                    
+                        continue
+            #ADD agent to cache and schedule and grid 
+            agent_cache[unique_id] = agent;
+            self.schedule.add(agent);
+            self.grid.place_agent(agent, (x, y));
         return agent_cache; #allows the agents that exist in the chace to be saved in the model's agent storage. 
     
     #Helper method for maintaining proliferation-orgin agents. (They dissapear if "default" is inputed in generate_agents())
@@ -100,7 +91,7 @@ class MainModel(Model):
     def __init__(self, *args, **kwargs):
         #Model fields
         super().__init__(*args, **kwargs)
-        self.grid = MultiGrid(300, 300, torus=False);
+        self.grid = MultiGrid(150, 150, torus=False);
         self.schedule = SimultaneousActivation(self);
         self.agent_storage = {};
          #saves agent_chaces from self.generate_agents(*args);
@@ -109,7 +100,7 @@ class MainModel(Model):
         self.agent_storage["Endothelial horizontal"] = self.generate_agents(Endothelial,"horizontal blood vessle", 1000);
         self.agent_storage["Endothelial vertical"] = self.generate_agents(Endothelial,"vertical blood vessle", 1000);
         self.agent_storage["Tumor cells"] = self.generate_agents(Tumor_cells, "default", 1);
-        self.agent_storage["M1 cells"] = self.generate_agent(M1, "default", 10);
+        self.agent_storage["M1 cells"] = self.generate_agents(M1, "default", 10);
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
@@ -151,7 +142,7 @@ def agent_portrayal(agent):
     return portrayal
 
 # Set up the visualization canvas
-canvas_element = CanvasGrid(agent_portrayal, 300, 300, 1200, 1200) 
+canvas_element = CanvasGrid(agent_portrayal, 150, 150, 1200, 1200) 
 
 # Create the ModularServer to run the visualization
 server = ModularServer(MainModel, [canvas_element], "Prostate Environment Simulation")
