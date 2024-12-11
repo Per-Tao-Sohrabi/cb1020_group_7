@@ -4,13 +4,13 @@ from mesa.space import MultiGrid
 from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
 
-class M1Macrophage(Agent):
+class M1(Agent):
     def __init__(self, agent_id, model):
         super().__init__(agent_id, model)
-        self.killing_capacity = model.params["M1kmax"]
-        self.prob_kill = model.params["M1pkill"]
-        self.prob_migrate = model.params["M1pmig"]
-        self.prob_death = model.params["M1pdeath"]
+        self.killing_capacity = 11       # Killing capacity 
+        self.prob_kill = 0.03            # Probability of killing
+        self.prob_migrate = 0.4          # Probability of migration
+        self.prob_death = 0.005          # Probability of death
         self.alive = True
 
     def step(self):
@@ -43,7 +43,7 @@ class M1Macrophage(Agent):
             self.model.grid.remove_agent(target)
             self.model.schedule_cell.remove(target)
             self.killing_capacity -= 1
-
+'''
 # Main Model
 class MacrophageModel(Model):
     def __init__(self, width, height, initial_m1, params):
@@ -86,4 +86,4 @@ server = ModularServer(MacrophageModel, [grid], "Macrophage Model", {
     "params": params
 })
 server.port = 8527
-server.launch()
+server.launch() '''
