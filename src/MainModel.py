@@ -24,12 +24,14 @@ class MainModel(Model):
         return unique_id
     
     #GENERATE AGENTS 
-    """
-    # generate_methods(self, <class type>agent_type, <String>brush_Stroke, <aint>amount)
+
+    ## generate_methods(self, <class type>agent_type, <String>brush_Stroke, <aint>amount)
     ### Description
-    This method belongs to MainModel.MainModel() which allows for specified generation patterns of mesa agents containing a self.position parmeter. 
-    """
+    # This method belongs to MainModel.MainModel() which allows for specified generation patterns of mesa agents containing a self.position parmeter. 
+
+    
     def generate_agents(self, agent_type, brush_stroke, amount, *args):
+        
         agent_cache = {};
         for i in range(amount):
             unique_id = self.get_next_unique_id()
@@ -52,11 +54,9 @@ class MainModel(Model):
                     agent = agent_type(unique_id, next_position, self)
                     self.schedule.add(agent)
                     self.grid.place_agent(agent, next_position)
-                    agent_cache[unique_id] = agent
+                    self.agent_storage[agent_type.get_class_name][unique_id] = agent
                 else:
-                    print(f"No empty cells available for tumor cell {unique_id} at position {position}.")
-                    
-                
+                    print(f"No empty cells available for tumor cell {unique_id} at position {position}.")  
 
             elif brush_stroke == "default": #default
                 agent_type = agent_type;
@@ -72,12 +72,12 @@ class MainModel(Model):
                 if i == 0:
                     x = 0;
                     y = random.randrange(self.grid.height);
-                    agent = Endothelial(unique_id, (x,y), self); #uses i as id
-                    agent_cache[unique_id] = agent;
+                    agent = agent_type(unique_id, (x,y), self); #uses i as id
+                    self.agent_storage[agent_type.get_class_name][unique_id] = agent;
                     self.schedule.add(agent);  
                     self.grid.place_agent(agent, (x, y));
                 else:
-                    prev_agent = agent_cache[unique_id-1]; #should not cause an indexing inconsistency if the blood vessle is generated in one instance. 
+                    prev_agent = self.agent_storage[agent_type.get_class_name][unique_id-1]; #should not cause an indexing inconsistency if the blood vessle is generated in one instance. 
                     prev_x, prev_y = prev_agent.position;
                     if brush_stroke == "horizontal blood vessle":
                         x_inc = random.randint(0,1)
@@ -86,12 +86,11 @@ class MainModel(Model):
                         x_inc = random.randint(-1,1)
                         y_inc = random.randint(0,1)
                     new_x, new_y = prev_x+x_inc, prev_y+y_inc;
-                    agent = Endothelial(unique_id, (new_x, new_y), self)
-                    agent_cache[unique_id] = agent;
+                    agent = agent_type(unique_id, (new_x, new_y), self)
+                    self.agent_storage[agent_type.get_class_name()][unique_id] = agent;
                     self.schedule.add(agent);
                     if new_x < self.grid.width and new_y < self.grid.height: #Handles the edge case when cells get generated outside the grid.
-                        self.grid.place_agent(agent, (new_x, new_y));
-        
+                        self.grid.place_agent(agent, (new_x, new_y));    
         return agent_cache; #allows the agents that exist in the chace to be saved in the model's agent storage. 
     
     #Helper method for maintaining proliferation-orgin agents. (They dissapear if "default" is inputed in generate_agents())
