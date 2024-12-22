@@ -59,10 +59,10 @@ class M1(Agent):
         new_position = self.random.choice(possible_steps)
         if self.model.grid.is_cell_empty(new_position):
             self.model.grid.move_agent(self, new_position)
-   """
-        Kills a neighboring tumor cell if one exists.
-        Reduces the killing capacity of the agent by 1.
-        """
+    """
+    Kills a neighboring tumor cell if one exists.
+    Reduces the killing capacity of the agent by 1.
+    """
     def kill_tumor_cell(self):
         neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False)
         tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cells)]
