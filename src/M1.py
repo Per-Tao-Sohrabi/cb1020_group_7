@@ -31,7 +31,7 @@ class M1(Agent):
         self.killing_capacity = 11       # Killing capacity 
         self.prob_kill = 0.03            # Probability of killing
         self.prob_migrate = 0.4          # Probability of migration
-        self.prob_death = 0.005          # Probability of death
+        self.prob_death = 0.001          # Probability of death
         self.alive = True
         """
         Executes one step of the agent's behavior:
@@ -71,47 +71,3 @@ class M1(Agent):
             self.model.grid.remove_agent(target)
             self.model.schedule.remove(target)
             self.killing_capacity -= 1
-'''
-# Main Model
-class MacrophageModel(Model):
-    def __init__(self, width, height, initial_m1, params):
-        super().__init__()
-        self.grid = MultiGrid(width, height, torus=False)
-        self.schedule = RandomActivation(self)
-        self.params = params
-
-        # Add M1 Macrophages
-        for i in range(initial_m1):
-            x, y = self.random.randrange(width), self.random.randrange(height)
-            m1 = M1Macrophage(self.next_id(), self)
-            self.grid.place_agent(m1, (x, y))
-            self.schedule.add(m1)
-
-    def step(self):
-        self.schedule.step()
-
-
-# Visualization Function
-def portray_agent(agent):
-    if isinstance(agent, M1Macrophage):
-        return {"Shape": "circle", "Color": "red", "Filled": True, "Layer": 0, "r": 0.5} if agent.alive else None
-
-
-# Model Parameters
-params = {
-    "M1kmax": 11,       # Killing capacity (not relevant here)
-    "M1pmig": 0.4,      # Probability of migration
-    "M1pdeath": 0.005,   # Probability of death
-    "M1pkill": 0.03     # Probability of killing
-}
-
-# Visualization
-grid = CanvasGrid(portray_agent, 20, 20, 500, 500)
-server = ModularServer(MacrophageModel, [grid], "Macrophage Model", {
-    "width": 20,
-    "height": 20,
-    "initial_m1": 10,
-    "params": params
-})
-server.port = 8527
-server.launch() '''
