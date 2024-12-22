@@ -5,7 +5,7 @@ from mesa.space import MultiGrid
 #from mesa.visualization.ModularVisualization import ModularServer
 
 # Fibroblast Agent
- """
+"""
     Represents a fibroblast agent in the model.
 
     Attributes:
@@ -14,7 +14,8 @@ from mesa.space import MultiGrid
         proliferation_capacity (int): The remaining capacity for the agent to proliferate.
     """
 class Fibroblast(Agent):
- """
+
+    """
         Initializes a Fibroblast agent.
 
         Args:
@@ -27,13 +28,14 @@ class Fibroblast(Agent):
         self.position = position;
         self.alive = True
         self.proliferation_capacity = self.model.params["Fpmax"]
- """
-        Executes one step for the fibroblast agent, including:
-        - Death: Agent may die based on the `Fpdeath` probability.
-        - Migration: Agent may move to a neighboring cell based on the `Fpmig` probability.
-        - Proliferation: Agent may create a new fibroblast in an adjacent cell if it has 
-          proliferation capacity and the `Fpprol` probability is met.
-        """
+    
+    """
+            Executes one step for the fibroblast agent, including:
+            - Death: Agent may die based on the `Fpdeath` probability.
+            - Migration: Agent may move to a neighboring cell based on the `Fpmig` probability.
+            - Proliferation: Agent may create a new fibroblast in an adjacent cell if it has 
+            proliferation capacity and the `Fpprol` probability is met.
+        """ 
     def step(self):
         # Death
         if self.random.random() < self.model.params["Fpdeath"]:
@@ -48,14 +50,16 @@ class Fibroblast(Agent):
         # Proliferation
         if self.proliferation_capacity > 0 and self.random.random() < self.model.params["Fpprol"]:
             self.proliferate()
- """
+    
+    """
         Moves the agent to a random neighboring cell if possible.
         """
     def migrate(self):
         possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
         new_position = self.random.choice(possible_steps)
         self.model.grid.move_agent(self, new_position)
-  """
+        
+    """
         Creates a new fibroblast agent in an empty neighboring cell if one exists.
         Reduces the proliferation capacity of the current agent by 1.
         """

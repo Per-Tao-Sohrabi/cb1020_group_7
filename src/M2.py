@@ -122,6 +122,7 @@ class M2Macrophage(Agent):
         agent_id (int): Counter to assign unique IDs to agents.
     """
 class CancerModel(Model):
+    
     """
         Initializes the cancer growth model.
 
