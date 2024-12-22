@@ -2,6 +2,7 @@ from mesa import Agent, Model
 from mesa.time import RandomActivation
 from mesa.space import MultiGrid
 from mesa.visualization.modules import CanvasGrid
+from Tumor_cells import Tumor_cells
 from mesa.visualization.ModularVisualization import ModularServer
 
 class M1(Agent):
@@ -17,16 +18,13 @@ class M1(Agent):
     def step(self):
         if not self.alive:
             return
-
         if self.random.random() < self.prob_death:
             self.alive = False
             self.model.grid.remove_agent(self)
             self.model.schedule.remove(self)
             return
-
         if self.random.random() < self.prob_migrate:
             self.migrate()
-
         if self.random.random() < self.prob_kill:
             self.kill_tumor_cell()
 
@@ -42,7 +40,7 @@ class M1(Agent):
         if tumor_cells:
             target = self.random.choice(tumor_cells)
             self.model.grid.remove_agent(target)
-            self.model.schedule_cell.remove(target)
+            self.model.schedule.remove(target)
             self.killing_capacity -= 1
 '''
 # Main Model
