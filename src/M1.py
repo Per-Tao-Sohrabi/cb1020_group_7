@@ -5,7 +5,7 @@ from mesa.visualization.modules import CanvasGrid
 from Tumor_cells import Tumor_cells
 from mesa.visualization.ModularVisualization import ModularServer
 
- """
+"""
     Represents an M1 macrophage agent in the model.
 
     Attributes:
@@ -15,16 +15,16 @@ from mesa.visualization.ModularVisualization import ModularServer
         prob_migrate (float): Probability of moving to a new position in a step.
         prob_death (float): Probability of dying in a step.
         alive (bool): Indicates whether the agent is alive.
-    """
+"""
 class M1(Agent):
-      """
+    """
         Initializes an M1 macrophage agent.
 
         Args:
             agent_id (int): Unique identifier for the agent.
             position (tuple): Initial position of the agent in the grid.
             model (Model): The model the agent belongs to.
-        """
+    """
     def __init__(self, agent_id, position, model):
         super().__init__(agent_id, model)
         self.position = position
@@ -51,9 +51,9 @@ class M1(Agent):
             self.migrate()
         if self.random.random() < self.prob_kill:
             self.kill_tumor_cell()
-"""
-        Moves the agent to a random neighboring cell if the new cell is empty.
-        """
+    """
+    Moves the agent to a random neighboring cell if the new cell is empty.
+    """
     def migrate(self):
         possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
         new_position = self.random.choice(possible_steps)
