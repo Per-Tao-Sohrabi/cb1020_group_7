@@ -3,16 +3,39 @@ from mesa.time import RandomActivation
 from mesa.space import MultiGrid
 #from mesa.visualization.modules import CanvasGrid
 #from mesa.visualization.ModularVisualization import ModularServer
-
+'''Definera vår fibroblast agent'''
 # Fibroblast Agent
 class Fibroblast(Agent):
+ """
+    Represents a fibroblast agent in the model.
+
+    Attributes:
+        position (tuple): The (x, y) position of the agent in the grid.
+        alive (bool): Indicates whether the agent is alive.
+        proliferation_capacity (int): The remaining capacity for the agent to proliferate.
+    """
     def __init__(self, unique_id, position, model): #Position inputed as (x,y)
+ """
+        Initializes a Fibroblast agent.
+
+        Args:
+            unique_id (int): Unique identifier for the agent.
+            position (tuple): Initial position of the agent in the grid (x, y).
+            model (Model): The model the agent belongs to.
+        """
         super().__init__(unique_id, model)
         self.position = position;
         self.alive = True
         self.proliferation_capacity = self.model.params["Fpmax"]
 
     def step(self):
+ """
+        Executes one step for the fibroblast agent, including:
+        - Death: Agent may die based on the `Fpdeath` probability.
+        - Migration: Agent may move to a neighboring cell based on the `Fpmig` probability.
+        - Proliferation: Agent may create a new fibroblast in an adjacent cell if it has 
+          proliferation capacity and the `Fpprol` probability is met.
+        """
         # Death
         if self.random.random() < self.model.params["Fpdeath"]:
             self.alive = False
@@ -26,13 +49,20 @@ class Fibroblast(Agent):
         # Proliferation
         if self.proliferation_capacity > 0 and self.random.random() < self.model.params["Fpprol"]:
             self.proliferate()
-
+'''migrate defined through randomization'''
     def migrate(self):
+ """
+        Moves the agent to a random neighboring cell if possible.
+        """
         possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
         new_position = self.random.choice(possible_steps)
         self.model.grid.move_agent(self, new_position)
 
     def proliferate(self):
+   """
+        Creates a new fibroblast agent in an empty neighboring cell if one exists.
+        Reduces the proliferation capacity of the current agent by 1.
+        """
         empty_cells = [cell for cell in self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
                        if self.model.grid.is_cell_empty(cell)]
         if empty_cells:
