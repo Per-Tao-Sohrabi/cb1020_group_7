@@ -20,7 +20,7 @@ from mesa import Agent, Model
 
 
 # The main class definies the key-parameters for the run of the ABM prostate cancer simulation
-    """
+"""
     Main simulation class for prostate cancer ABM.
 
     Attributes:
@@ -29,15 +29,15 @@ from mesa import Agent, Model
         agent_id (int): Counter for unique agent IDs.
         run_ABM (bool): Flag to control simulation runtime.
         datacollector (DataCollector): Collects data during the simulation.
-    """
+"""
 class Main_simulation(Model):
-      """
+    """
         Initialize the simulation model.
 
         Args:
             width (int): Width of the simulation grid.
             height (int): Height of the simulation grid.
-        """
+    """
     def __init__(self, width, height):
         super().__init__()
         self.grid = MultiGrid(width, height, True)   # Creates a 2D-grid
@@ -57,26 +57,26 @@ class Main_simulation(Model):
         self.datacollector = DataCollector(
             model_reporters={"Number_tumor_Cells": lambda m: sum(1 for agent in m.schedule_cell.agents if isinstance(agent, Tumor_Cell))}
         )
-  """
+    """
         Advance the simulation by one step, collecting data and activating agents.
-        """
+    """
     def step(self):                                       # This method takes steps in the simulation
     
         self.datacollector.collect(self)                  # It collects all the required data as well
         self.schedule_cell.step()                         
-"""
+    """
         Generate a unique ID for a new agent.
 
         Returns:
             int: Unique agent ID.
-        """
+    """
     def next_agent_id(self):                              # Keeps track of the "agent_id", crucial for knowing the composition of the cells in the end
         self.agent_id += 1
         return self.agent_id
 
 
 # This function runs the whole simulation 
-   """
+"""
     Run the ABM simulation and return collected data.
 
     Args:
@@ -86,7 +86,7 @@ class Main_simulation(Model):
 
     Returns:
         DataFrame: Simulation results with collected data.
-    """
+"""
 def run_ABM_sim(width=125, height=125, steps=100): 
     model = Main_simulation(width, height)
     for _ in range(steps):
