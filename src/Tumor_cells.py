@@ -32,6 +32,7 @@ class Tumor_cells(Agent):
     Define behaviour for diff situations here.
     '''
     def step(self):
+        '''
         #ENDOTHELIAL-TUMOR_CELL INTERACTION:
         #1. Identify nearest endo obj
         nearest_endo_obj, distance = self.identify_nearest_endo_obj()
@@ -39,6 +40,7 @@ class Tumor_cells(Agent):
 
         #NORMAL TUMOR CELL LIFE CYCLE BEHAVIOUR
         #Then check self induced states
+        '''
         if random.randint(0,100) < 100*self.proliferation_prob:
             self.proliferate();
         if random.randint(0,100) < 100*self.death_prob:
