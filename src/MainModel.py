@@ -12,17 +12,17 @@ from M1 import M1;
 # from Fibroblast import Fibroblast;
 
 
-    """
+"""
     MainModel represents the prostate cancer simulation environment.
-    """
+"""
 class MainModel(Model):
     # GENERATE A UNIQUE ID (not random)
-        """
+    """
         Generate a unique ID for agents.
 
         Returns:
             int: A unique ID that has not been used before.
-        """
+    """
     def get_next_unique_id(self):               
         unique_id = len(self.used_ids)          # Start with a base unique_id
         while unique_id in self.used_ids:       # Ensure the unique_id hasn't been used already
@@ -36,7 +36,7 @@ class MainModel(Model):
     ### Description
     This method belongs to MainModel.MainModel() which allows for specified generation patterns of mesa agents containing a self.position parmeter. 
     """
-        """
+    """
         Generate and place agents on the grid based on specified patterns.
 
         Args:
@@ -47,7 +47,7 @@ class MainModel(Model):
 
         Returns:
             dict: A cache of generated agents indexed by their unique IDs.
-        """
+    """
     def generate_agents(self, agent_type, brush_stroke, amount, *args):
         agent_cache = {}
         for i in range(amount):
@@ -106,13 +106,13 @@ class MainModel(Model):
     # Helper method for maintaining proliferation-orgin agents. (They dissapear if "default" is inputed in generate_agents())
     
     # INITIALIZE MODEL - initialize the agents put on the grid by the previous method
-        """
+    """
         Initialize the MainModel.
 
         Args:
             *args: Additional arguments.
             **kwargs: Additional keyword arguments.
-        """
+    """
     def __init__(self, *args, **kwargs):
         #Model fields
         super().__init__(*args, **kwargs)
@@ -137,9 +137,9 @@ class MainModel(Model):
             self.step_data[agent_type] = {}            
 
     # STEP METHOD 
-        """
+    """
         Advance the simulation by one step, updating the model and agents.
-        """
+    """
     def step(self):  # OBS: preliminary code, have not tested it yet!
 
         now_step = self.schedule.steps
@@ -160,7 +160,7 @@ class MainModel(Model):
 
 #-------------------------------------------------#-------------------------------------------------
 # Create a CanvasGrid for visualization
-    """
+"""
     Define how agents are portrayed in the visualization.
 
     Args:
@@ -168,7 +168,7 @@ class MainModel(Model):
 
     Returns:
         dict: A portrayal dictionary specifying agent appearance.
-    """
+"""
 def agent_portrayal(agent):
     portrayal = {}
 
