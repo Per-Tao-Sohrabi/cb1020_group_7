@@ -38,7 +38,7 @@ class M1(Agent):
 
     def kill_tumor_cell(self):
         neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False)
-        tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cell)]
+        tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cells)]
         if tumor_cells:
             target = self.random.choice(tumor_cells)
             self.model.grid.remove_agent(target)

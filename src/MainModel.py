@@ -88,6 +88,7 @@ class MainModel(Model):
                     if x < self.grid.width and y < self.grid.height: #Handles the edge case when cells get generated outside the grid.
                         self.grid.place_agent(agent, (x, y));
         return agent_cache; #allows the agents that exist in the chace to be saved in the model's agent storage. 
+    #Helpet method for adding agent to schedule and 
     
     #Helper method for maintaining proliferation-orgin agents. (They dissapear if "default" is inputed in generate_agents())
     
