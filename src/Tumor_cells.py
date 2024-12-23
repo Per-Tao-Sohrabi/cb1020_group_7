@@ -17,7 +17,6 @@ class Tumor_cells(Agent):
         self.unique_id = unique_id;
         self.position = position;
         self.viable = True   
-        
         # All the relevant properties (instance variables) for the tumor cell are initiated 
         self.proliferation_prob = 0.0846
         self.migration_prob = 0.1167
