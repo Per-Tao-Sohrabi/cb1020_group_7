@@ -119,14 +119,19 @@ class MainModel(Model):
         '''
         x, y = agent.position
         if x < self.grid.width and y < self.grid.height:
-            self.agent_storage[f"{agent_type}"][agent.unique_id]= agent
+            self.agent_storage[agent_type][agent.unique_id]= agent
             self.schedule.add(agent)  
             self.grid.place_agent(agent, agent.position)
         else:
             pass
+
+    #GET POSITION SORTED LIST OF AGENTS OF SPECFIC TYPE
+    def get_position_sorted_endothelial_list(self):
+        sorted_endothelial = {}
+        for agent in self.agent_storage[Endothelial]:
+            sorted_endothelial[agent.position] = agent
+        return sorted_endothelial
     
-
-
     # INITIALIZE MODEL - initialize the agents put on the grid by the previous method
     def __init__(self, *args, **kwargs):
         """
@@ -163,26 +168,18 @@ class MainModel(Model):
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
         self.step_data = {};
-        
-        for agent_type in self.agent_storage:      # Initialize "step_data" for each agent-type (cell-type)
-            self.step_data[agent_type] = {}        # Generate a nested dictionary for each agent type that is empty
+        self.pos_sorted_endo_list = self.get_position_sorted_endothelial_list()
 
     # STEP METHOD 
     def step(self):  # OBS: preliminary code, have not tested it yet!
         """
         Advance the simulation by one step, updating the model and agents.
         """
-        #UPDATE AGENT_TYPE STEP DATA
-        '''
-        now_step = self.schedule.steps
-        for agent_type, agents in self.agent_storage.items():       #Checks out list of agents of specific class.
-            self.step_data[agent_type][now_step] = {                #Checks each agent's position.
-                "number": len(agents),
-                "position": [agent.position for agent in agents]
-            }
-        '''
+        #GENERATE LIST OF ENDOTHELIAL CELLS
+        pos_sorted_endo_list = self.get_position_sorted_endothelial_list()
         # The step is taken 
         self.schedule.step()               
+
         '''
         # After the step, update "agent_storage" based on the new list of agents
         for agent_type_name, agents in self.agent_storage.items():
