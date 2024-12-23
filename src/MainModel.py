@@ -126,12 +126,13 @@ class MainModel(Model):
             pass
 
     #GET POSITION SORTED LIST OF AGENTS OF SPECFIC TYPE
+    '''
     def get_position_sorted_endothelial_list(self):
         sorted_endothelial = {}
         for agent in self.agent_storage[Endothelial]:
             sorted_endothelial[agent.position] = agent
         return sorted_endothelial
-    
+    '''
     # INITIALIZE MODEL - initialize the agents put on the grid by the previous method
     def __init__(self, *args, **kwargs):
         """
@@ -146,9 +147,9 @@ class MainModel(Model):
         self.grid = MultiGrid(150, 150, torus=False);
         self.schedule = SimultaneousActivation(self);
         self.agent_storage = {
-            "<class 'Endothelial.Endothelial'>": {},
-            "<class 'Tumor_cells.Tumor_cells'>": {},
-            "<class 'M1.M1'>": {},
+            Endothelial: {},
+            Tumor_cells: {},
+            M1: {},
             # Add other agent types here if needed
         }
         self.class_to_class_reference = {
@@ -168,7 +169,7 @@ class MainModel(Model):
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
         self.step_data = {};
-        self.pos_sorted_endo_list = self.get_position_sorted_endothelial_list()
+        #self.pos_sorted_endo_list = self.get_position_sorted_endothelial_list()
 
     # STEP METHOD 
     def step(self):  # OBS: preliminary code, have not tested it yet!
@@ -176,7 +177,7 @@ class MainModel(Model):
         Advance the simulation by one step, updating the model and agents.
         """
         #GENERATE LIST OF ENDOTHELIAL CELLS
-        pos_sorted_endo_list = self.get_position_sorted_endothelial_list()
+        #pos_sorted_endo_list = self.get_position_sorted_endothelial_list()
         # The step is taken 
         self.schedule.step()               
 
