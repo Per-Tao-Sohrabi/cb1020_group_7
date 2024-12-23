@@ -29,14 +29,23 @@ class Tumor_cells(Agent):
     def set_nearest_endo(self):
         endothelial_agents = self.model.endothelial_list; #endothelial_list is a list containing class type objects as elements.
         counter = 1
+        nearest_endo = None
+        nearest_dist = None
         for agent in endothelial_agents:
-             x_other, y_other = agent.position
-             x_self, y_self, = self.position
-             distance = ((y_other-y_self)**2 + (x_other-x_self)**2)**(1/2)
-             #print("SET!")
-             print(counter)
-             print(f'The distance between tumor_cell {self.unique_id} and endo cell {agent.unique_id} is {distance}')
-             counter += 1
+            x_other, y_other = agent.position
+            x_self, y_self, = self.position
+            distance = ((y_other-y_self)**2 + (x_other-x_self)**2)**(1/2)
+            #print("SET!")
+            print(counter)
+            #print(f'The distance between tumor_cell {self.unique_id} and endo cell {agent.unique_id} is {distance}')
+            if nearest_endo == None:
+                nearest_endo = agent
+                nearest_dist = distance
+            elif nearest_dist > distance:
+                nearest_dist = distance
+                nearest_endo = agent;
+            counter += 1
+        print(f'Nearest distance between TC {self.unique_id} and endo {nearest_endo.unique_id} = {nearest_dist}')
         pass
 
     #APOPTOSIS METHOD:
