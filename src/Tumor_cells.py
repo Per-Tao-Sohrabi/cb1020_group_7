@@ -16,47 +16,28 @@ class Tumor_cells(Agent):
         self.model = model;
         self.unique_id = unique_id;
         self.position = position;
-        self.viable = True
-
-        self.cancerous = True     
+        self.viable = True   
+        
         # All the relevant properties (instance variables) for the tumor cell are initiated 
-
         self.proliferation_prob = 0.0846
         self.migration_prob = 0.1167
         self.death_prob = 0.00284
         self.initial_resist_M1_prob = 0
         self.resistance_M1_prob = 0.004
-    '''
-    # STEP METHOD ()
-    ### Description:
-    Define behaviour for diff situations here.
-    '''
+        self.nearest_endo = None;
+    #SETTERS
+    def set_nearest_endo(self):
+         pass
+    
     def step(self):
-        '''
-        #ENDOTHELIAL-TUMOR_CELL INTERACTION:
-        #1. Identify nearest endo obj
-        nearest_endo_obj, distance = self.identify_nearest_endo_obj()
-
-
-        #NORMAL TUMOR CELL LIFE CYCLE BEHAVIOUR
-        #Then check self induced states
-        '''
         if random.randint(0,100) < 100*self.proliferation_prob:
             self.proliferate();
         if random.randint(0,100) < 100*self.death_prob:
             self.apoptosis()
-
-
         #if adjacent or diagonal cell contain(fibroblast) do Increase  * death_prob?
         #if cell_M.._dist < critDistToM:do Proliferation in empty cell * prolifiration_prob;
         #if cell_endo_dist > critDistHypoxia:Induce Endothelial Proliferation;
 
-    #IDENTIFY NEAREST ENDO. CELL OBJ. 
-    def identify_nearest_endo_obj(self):
-         nearest_endo_obj = None
-         distance = None
-         return nearest_endo_obj, distance
-    
     #APOPTOSIS METHOD:
     def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
             self.viable = False
