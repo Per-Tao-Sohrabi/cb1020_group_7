@@ -146,6 +146,12 @@ class MainModel(Model):
             "<class 'M1.M1'>": {},
             # Add other agent types here if needed
         }
+        self.class_to_class_reference = {
+            "<class 'Endothelial.Endothelial'>": Endothelial,
+            "<class 'Tumor_cells.Tumor_cells'>": Tumor_cells,
+            "<class 'M1.M1'>": M1,
+            # Add other agent types if necessary
+        }
          #saves agent_chaces from self.generate_agents(*args);
         self.used_ids = set();
         #self.generate_agents(Tumor_cells,1);
@@ -159,7 +165,7 @@ class MainModel(Model):
         self.step_data = {};
         
         for agent_type in self.agent_storage:      # Initialize "step_data" for each agent-type (cell-type)
-            self.step_data[agent_type] = {}  
+            self.step_data[agent_type] = {}        # Generate a nested dictionary for each agent type that is empty
 
     # STEP METHOD 
     def step(self):  # OBS: preliminary code, have not tested it yet!
@@ -177,6 +183,18 @@ class MainModel(Model):
         '''
         # The step is taken 
         self.schedule.step()               
+        
+        # After the step, update "agent_storage" based on the new list of agents
+        for agent_type_name, agents in self.agent_storage.items():
+            # Use the class_to_class_reference dictionary to get the class
+            agent_type = self.class_to_class_reference.get(agent_type_name)
+
+            if agent_type:
+                # Filter agents that are instances of the correct class
+                self.agent_storage[agent_type_name] = [
+                    agent for agent in self.schedule.agents if isinstance(agent, agent_type)
+                ]
+
 
 #-------------------------------------------------#-------------------------------------------------
 # Create a CanvasGrid for visualization
