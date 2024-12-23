@@ -24,28 +24,30 @@ class M2(Agent):
         #self.engagement_duration = params["M2engagement_duration"] #används inte i koden, tror inte vi behöver den
         self.supported_tumors = 0
 
-    """
+        """
         Executes one step of the macrophage's behavior:
         - Checks if the macrophage dies.
         - Attempts to migrate to a neighboring cell.
         - Supports the growth of nearby tumor cells with a given probability.
-    """
+        """
     def step(self):
         # Check if macrophage should die
-        if random.random() < self.prob_death:
+        if self.random.random() < self.prob_death:
             self.model.grid.remove_agent(self)
+            self.model.schedule.remove(self)
             return
 
         # Attempt to migrate
-        if random.random() < self.prob_migrate:
+        if self.random.random() < self.prob_migrate:
             self.random_move()
 
         
 # Check neighbors for tumor cells
+
     def support_tumor_cells(self):
         neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False)
         for neighbor in neighbors:
-            if isinstance(neighbor, TumorCell):
+            if isinstance(neighbor, Tumor_cell):
             # Support tumor growth with probability
                 if random.random() < self.prob_support_growth:
                 # Create a new tumor cell in a random neighboring position
@@ -54,11 +56,12 @@ class M2(Agent):
                     if empty_neighbors:
                         new_tumor_cell = self.random.choice(empty_neighbors)
                         new_tumor_cell.set_proliferation_prob(1)
-                        
+                
     """
         Moves the macrophage to a random neighboring position.
     """
     def random_move(self):
-        possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
+        possible_steps = self.model.grid.get_neighborhood(self.position, moore=True, include_center=False)
         new_position = self.random.choice(possible_steps)
-        self.model.grid.move_agent(self, new_position)
+        if self.model.grid.is_cell_empty(new_position):
+            self.model.grid.move_agent(self, new_position)

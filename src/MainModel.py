@@ -8,7 +8,7 @@ import random as random;
 from Endothelial import Endothelial;
 from Tumor_cells import Tumor_cells; 
 from M1 import M1;
-# from M2 import M2
+from M2 import M2
 # from Fibroblast import Fibroblast;
 
 
