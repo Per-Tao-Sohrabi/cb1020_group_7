@@ -26,11 +26,12 @@ class Tumor_cells(Agent):
         self.death_prob = 0.00284
         self.initial_resist_M1_prob = 0
         self.resistance_M1_prob = 0.004
-    '''
-    # STEP METHOD ()
-    ### Description:
-    Define behaviour for diff situations here.
-    '''
+    
+    #SETTERS
+    def set_death_prob(self, delta):
+         self.death_prob += delta
+         
+    #STEP
     def step(self):
         '''
         #ENDOTHELIAL-TUMOR_CELL INTERACTION:
