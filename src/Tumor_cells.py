@@ -24,14 +24,18 @@ class Tumor_cells(Agent):
         self.initial_resist_M1_prob = 0
         self.resistance_M1_prob = 0.004
         self.nearest_endo = None;
+    
     #SETTERS
     def set_nearest_endo(self):
         endothelial_agents = self.model.endothelial_list; #endothelial_list is a list containing class type objects as elements.
         counter = 1
-        for agents in endothelial_agents:
-             other_position = agents.position
+        for agent in endothelial_agents:
+             x_other, y_other = agent.position
+             x_self, y_self, = self.position
+             distance = ((y_other-y_self)**2 + (x_other-x_self)**2)**(1/2)
              #print("SET!")
              print(counter)
+             print(f'The distance between tumor_cell {self.unique_id} and endo cell {agent.unique_id} is {distance}')
              counter += 1
         pass
 
