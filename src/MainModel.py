@@ -183,7 +183,7 @@ class MainModel(Model):
         '''
         # The step is taken 
         self.schedule.step()               
-        
+        '''
         # After the step, update "agent_storage" based on the new list of agents
         for agent_type_name, agents in self.agent_storage.items():
             # Use the class_to_class_reference dictionary to get the class
@@ -194,7 +194,7 @@ class MainModel(Model):
                 self.agent_storage[agent_type_name] = [
                     agent for agent in self.schedule.agents if isinstance(agent, agent_type)
                 ]
-
+        '''
 
 #-------------------------------------------------#-------------------------------------------------
 # Create a CanvasGrid for visualization
