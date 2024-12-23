@@ -140,21 +140,21 @@ class MainModel(Model):
         Advance the simulation by one step, updating the model and agents.
     """
     def step(self):  # OBS: preliminary code, have not tested it yet!
-
+        '''
         now_step = self.schedule.steps
         for agent_type, agents in self.agent_storage.items():       #Checks out list of agents of specific class.
             self.step_data[agent_type][now_step] = {                #Checks each agent's position.
                 "number": len(agents),
                 "position": [agent.position for agent in agents]
             }
-
+        '''
         # The step is taken 
         self.schedule.step()               
-
+        '''
         # After the step, "agent_storage" is updated if needed, for instance if new agents have been added or removed
         for agent_type in self.agent_storage:
             self.agent_storage[agent_type] = [agent for agent in self.schedule.agents if isinstance(agent, eval(agent_type.split()[0]))]
-
+        '''
    
 
 #-------------------------------------------------#-------------------------------------------------
