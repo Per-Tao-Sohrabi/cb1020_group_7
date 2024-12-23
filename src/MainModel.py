@@ -118,7 +118,7 @@ class MainModel(Model):
 
         Adds an agent to (1) self.agent_storage, (2) self.schedule, and (3) self.grid.
         '''
-        self.agent_storage[agent_type][agent.unique_id]= agent
+        self.agent_storage[f"{agent_type}"][agent.unique_id]= agent
         self.schedule.add(agent)  
         self.grid.place_agent(agent, agent.position)
 
@@ -137,7 +137,12 @@ class MainModel(Model):
         super().__init__(*args, **kwargs)
         self.grid = MultiGrid(150, 150, torus=False);
         self.schedule = SimultaneousActivation(self);
-        self.agent_storage = {};
+        self.agent_storage = {
+            "<class 'Endothelial.Endothelial'>": {},
+            "<class 'Tumor_cells.Tumor_cells'>": {},
+            "<class 'M1.M1'>": {},
+            # Add other agent types here if needed
+        }
          #saves agent_chaces from self.generate_agents(*args);
         self.used_ids = set();
         #self.generate_agents(Tumor_cells,1);
