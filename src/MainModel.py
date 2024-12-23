@@ -87,8 +87,7 @@ class MainModel(Model):
                     x = 0;
                     y = random.randrange(self.grid.height);
                     agent = Endothelial(unique_id, (x,y), self); #uses i as id
-                    self.add_agent(agent_type, agent)
-                    #agent_cache[unique_id] = agent;
+                    agent_cache[unique_id] = agent;
                     #self.schedule.add(agent);  
                     #self.grid.place_agent(agent, (x, y));
                 else:
@@ -104,10 +103,10 @@ class MainModel(Model):
                     agent = Endothelial(unique_id, (new_x, new_y), self)
                     agent_cache[unique_id] = agent
                     #self.schedule.add(agent)
-                    if new_x < self.grid.width and new_y < self.grid.height: # Handles the edge case when cells get generated outside the grid
+                     # Handles the edge case when cells get generated outside the grid
                         #self.add_agent(agent_type, agent)
                         #self.grid.place_agent(agent, (new_x, new_y))
-                        continue
+
             self.add_agent(agent_type, agent)
         pass # allows the agents that exist in the cache to be saved in the model's agent storage 
 
@@ -118,10 +117,14 @@ class MainModel(Model):
 
         Adds an agent to (1) self.agent_storage, (2) self.schedule, and (3) self.grid.
         '''
-        self.agent_storage[f"{agent_type}"][agent.unique_id]= agent
-        self.schedule.add(agent)  
-        self.grid.place_agent(agent, agent.position)
-
+        x, y = agent.position
+        if x < self.grid.width and y < self.grid.height:
+            self.agent_storage[f"{agent_type}"][agent.unique_id]= agent
+            self.schedule.add(agent)  
+            self.grid.place_agent(agent, agent.position)
+        else:
+            pass
+    
 
 
     # INITIALIZE MODEL - initialize the agents put on the grid by the previous method
@@ -164,13 +167,14 @@ class MainModel(Model):
         Advance the simulation by one step, updating the model and agents.
         """
         #UPDATE AGENT_TYPE STEP DATA
+        '''
         now_step = self.schedule.steps
         for agent_type, agents in self.agent_storage.items():       #Checks out list of agents of specific class.
             self.step_data[agent_type][now_step] = {                #Checks each agent's position.
                 "number": len(agents),
                 "position": [agent.position for agent in agents]
             }
-
+        '''
         # The step is taken 
         self.schedule.step()               
 
