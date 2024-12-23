@@ -68,6 +68,6 @@ class M1(Agent):
         tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cells)]
         if tumor_cells:
             target = self.random.choice(tumor_cells)
-            self.model.grid.remove_agent(target)
-            self.model.schedule.remove(target)
-            self.killing_capacity -= 1
+            target.set_death_prob(1)
+            self.killing_capacity -= 0
+

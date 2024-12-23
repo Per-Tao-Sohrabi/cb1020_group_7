@@ -28,8 +28,8 @@ class Tumor_cells(Agent):
         self.resistance_M1_prob = 0.004
     
     #SETTERS
-    def set_death_prob(self, delta):
-         self.death_prob += delta
+    def set_death_prob(self, number):
+         self.death_prob = number
          
     #STEP
     def step(self):
