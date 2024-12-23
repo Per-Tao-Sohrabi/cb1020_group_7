@@ -70,8 +70,8 @@ class MainModel(Model):
                     #self.grid.place_agent(agent, next_position)
                     agent_cache[unique_id] = agent
                 else:
-                    print(f"No empty cells available for tumor cell {unique_id} at position {position}.")
-
+                    #print(f"No empty cells available for tumor cell {unique_id} at position {position}.")
+                    pass
             elif brush_stroke == "default":                  # Default settings for generating agents
                 agent_type = agent_type
                 x = self.random.randrange(self.grid.width)   # Declare Agent Coordinates
@@ -125,13 +125,12 @@ class MainModel(Model):
         else:
             pass
 
-    #GENERATE POSITION SORTED LIST OF AGENTS OF SPECFIC TYPE
-    
-    def get_endothelial_list(self):
-        endothelial_list = set()
-        for agent in self.agent_storage[Endothelial]:
-            endothelial_list.add(agent)
-        return endothelial_list
+    #GENERATE POSITION SORTED LIST OF AGENTS OF SPECFIC TYPE 
+    def get_agent_type_list(self, agent_type):
+        agent_type_list = set()
+        for agent in self.agent_storage[agent_type]:
+            agent_type_list.add(agent)
+        return agent_type_list
     
     # INITIALIZE MODEL - initialize the agents put on the grid by the previous method
     def __init__(self, *args, **kwargs):
@@ -162,7 +161,10 @@ class MainModel(Model):
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
-        self.endothelial_list = self.get_endothelial_list()
+        self.endothelial_list = self.get_agent_type_list(Endothelial)
+        self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
+        self.m1_list = self.get_agent_type_list(M1)
+        #self.m2_list = self.get_agent_type_list(M2)
 
     # STEP METHOD 
     def step(self):  # OBS: preliminary code, have not tested it yet!
@@ -170,10 +172,17 @@ class MainModel(Model):
         Advance the simulation by one step, updating the model and agents.
         """
         #GENERATE LIST OF ENDOTHELIAL CELLS
-        self.endothelial_list = self.get_endothelial_list()
-        
-        # The step is taken 
+        self.endothelial_list = self.get_agent_type_list(Endothelial)
+        self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
+        self.m1_list = self.get_agent_type_list(M1)
+        #self.m2_list = self.get_agent_type_list(M2)
+
+        #PRINT STEP DATA:
+        print(f'Number of Endothelial cells: {len(self.endothelial_list)}')
+        print(f'Number of Tumor cells: {len(self.tumor_cell_list)}')
+        #NEXT STEP
         self.schedule.step()
+
 
         #Update self.agent_storage()
         #self.update_agent_storage()

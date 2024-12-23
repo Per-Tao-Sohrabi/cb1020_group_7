@@ -47,9 +47,10 @@ class Tumor_cells(Agent):
     def proliferate(self):
          try:
             self.model.generate_agents(Tumor_cells, "proliferate", 1, self.position); #will be changed to proliferate
-            print("Tumor cell generated, id = ", self.unique_id);
+            #print("Tumor cell generated, id = ", self.unique_id);
          except Exception as e:
-              print(f"Error while generating Tumor cell from agent  {self.unique_id} {e}")
+              #print(f"Error while generating Tumor cell from agent  {self.unique_id} {e}")
+              pass
 
 
 
