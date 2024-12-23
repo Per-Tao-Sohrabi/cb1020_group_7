@@ -125,14 +125,14 @@ class MainModel(Model):
         else:
             pass
 
-    #GET POSITION SORTED LIST OF AGENTS OF SPECFIC TYPE
-    '''
-    def get_position_sorted_endothelial_list(self):
-        sorted_endothelial = {}
+    #GENERATE POSITION SORTED LIST OF AGENTS OF SPECFIC TYPE
+    
+    def get_endothelial_list(self):
+        endothelial_list = set()
         for agent in self.agent_storage[Endothelial]:
-            sorted_endothelial[agent.position] = agent
-        return sorted_endothelial
-    '''
+            endothelial_list.add(agent)
+        return endothelial_list
+    
     # INITIALIZE MODEL - initialize the agents put on the grid by the previous method
     def __init__(self, *args, **kwargs):
         """
@@ -162,7 +162,7 @@ class MainModel(Model):
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
-        #self.pos_sorted_endo_list = self.get_position_sorted_endothelial_list()
+        self.endothelial_list = self.get_endothelial_list()
 
     # STEP METHOD 
     def step(self):  # OBS: preliminary code, have not tested it yet!
@@ -170,10 +170,13 @@ class MainModel(Model):
         Advance the simulation by one step, updating the model and agents.
         """
         #GENERATE LIST OF ENDOTHELIAL CELLS
-        #self.pos_sorted_endo_list = self.get_position_sorted_endothelial_list()
+        self.endothelial_list = self.get_endothelial_list()
         
         # The step is taken 
         self.schedule.step()
+
+        #Update self.agent_storage()
+        #self.update_agent_storage()
 
 #-------------------------------------------------#-------------------------------------------------
 # Create a CanvasGrid for visualization
