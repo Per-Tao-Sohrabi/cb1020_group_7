@@ -152,12 +152,6 @@ class MainModel(Model):
             M1: {},
             # Add other agent types here if needed
         }
-        self.class_to_class_reference = {
-            "<class 'Endothelial.Endothelial'>": Endothelial,
-            "<class 'Tumor_cells.Tumor_cells'>": Tumor_cells,
-            "<class 'M1.M1'>": M1,
-            # Add other agent types if necessary
-        }
          #saves agent_chaces from self.generate_agents(*args);
         self.used_ids = set();
         #self.generate_agents(Tumor_cells,1);
@@ -168,7 +162,6 @@ class MainModel(Model):
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
-        self.step_data = {};
         #self.pos_sorted_endo_list = self.get_position_sorted_endothelial_list()
 
     # STEP METHOD 
@@ -177,22 +170,10 @@ class MainModel(Model):
         Advance the simulation by one step, updating the model and agents.
         """
         #GENERATE LIST OF ENDOTHELIAL CELLS
-        #pos_sorted_endo_list = self.get_position_sorted_endothelial_list()
+        #self.pos_sorted_endo_list = self.get_position_sorted_endothelial_list()
+        
         # The step is taken 
-        self.schedule.step()               
-
-        '''
-        # After the step, update "agent_storage" based on the new list of agents
-        for agent_type_name, agents in self.agent_storage.items():
-            # Use the class_to_class_reference dictionary to get the class
-            agent_type = self.class_to_class_reference.get(agent_type_name)
-
-            if agent_type:
-                # Filter agents that are instances of the correct class
-                self.agent_storage[agent_type_name] = [
-                    agent for agent in self.schedule.agents if isinstance(agent, agent_type)
-                ]
-        '''
+        self.schedule.step()
 
 #-------------------------------------------------#-------------------------------------------------
 # Create a CanvasGrid for visualization
