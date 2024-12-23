@@ -166,11 +166,30 @@ class MainModel(Model):
         self.m1_list = self.get_agent_type_list(M1)
         #self.m2_list = self.get_agent_type_list(M2)
 
+    #UPDATE AGENT_STORAGE{}
+    def update_agent_storage(self):
+        schedule_agents_set = set(self.schedule.agents)
+        
+        # ITERATE THROUGH agent_storage{}
+        for agent_type, agents_dict in self.agent_storage.items():  # agents_dict contains {unique_id: agent}
+            
+            # Collect unique IDs of agents to remove
+            agents_to_remove = [
+                unique_id for unique_id, agent in agents_dict.items()
+                if agent not in schedule_agents_set
+            ]
+            
+            # Remove agents that are not in the schedule
+            for unique_id in agents_to_remove:
+                del agents_dict[unique_id]
+
     # STEP METHOD 
     def step(self):  # OBS: preliminary code, have not tested it yet!
         """
         Advance the simulation by one step, updating the model and agents.
         """
+        #NEXT STEP
+        self.schedule.step() 
         #GENERATE LIST OF ENDOTHELIAL CELLS
         self.endothelial_list = self.get_agent_type_list(Endothelial)
         self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
@@ -180,8 +199,9 @@ class MainModel(Model):
         #PRINT STEP DATA:
         print(f'Number of Endothelial cells: {len(self.endothelial_list)}')
         print(f'Number of Tumor cells: {len(self.tumor_cell_list)}')
-        #NEXT STEP
-        self.schedule.step()
+
+        #UPDATE self.agent_storage{} TO REMOVE AGENTS THAT DO NOT APPEAR IN self.scheduler
+        self.update_agent_storage()
 
 
         #Update self.agent_storage()
