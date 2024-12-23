@@ -68,7 +68,7 @@ class MainModel(Model):
                     #self.add_agent(agent_type, agent)
                     #self.schedule.add(agent)
                     #self.grid.place_agent(agent, next_position)
-                    #agent_cache[unique_id] = agent
+                    agent_cache[unique_id] = agent
                 else:
                     print(f"No empty cells available for tumor cell {unique_id} at position {position}.")
 
@@ -80,14 +80,14 @@ class MainModel(Model):
                 #self.add_agent(agent_type, agent)   # Declare new instance of agent according to mesa Agent initation.
                 #self.schedule.add(agent);                    
                 #self.grid.place_agent(agent, (x, y))         # Add the agents to the grid
-                #agent_cache[unique_id] = agent
+                agent_cache[unique_id] = agent
         
             elif brush_stroke == "horizontal blood vessle" or brush_stroke == "vertical blood vessle": # For other agents
                 if i == 0:
                     x = 0;
                     y = random.randrange(self.grid.height);
                     agent = Endothelial(unique_id, (x,y), self); #uses i as id
-                    #self.add_agent(agent_type, agent)
+                    self.add_agent(agent_type, agent)
                     #agent_cache[unique_id] = agent;
                     #self.schedule.add(agent);  
                     #self.grid.place_agent(agent, (x, y));
@@ -102,7 +102,7 @@ class MainModel(Model):
                         y_inc = random.randint(0,1)
                     new_x, new_y = prev_x+x_inc, prev_y+y_inc
                     agent = Endothelial(unique_id, (new_x, new_y), self)
-                    #agent_cache[unique_id] = agent
+                    agent_cache[unique_id] = agent
                     #self.schedule.add(agent)
                     if new_x < self.grid.width and new_y < self.grid.height: # Handles the edge case when cells get generated outside the grid
                         #self.add_agent(agent_type, agent)
@@ -146,10 +146,10 @@ class MainModel(Model):
          #saves agent_chaces from self.generate_agents(*args);
         self.used_ids = set();
         #self.generate_agents(Tumor_cells,1);
-        self.agent_storage["Endothelial horizontal"] = self.generate_agents(Endothelial,"horizontal blood vessle", 1000);
-        self.agent_storage["Endothelial vertical"] = self.generate_agents(Endothelial,"vertical blood vessle", 1000);
-        self.agent_storage["Tumor cells"] = self.generate_agents(Tumor_cells, "default", 1);
-        self.agent_storage["M1 cells"] = self.generate_agents(M1, "default", 10);
+        self.generate_agents(Endothelial,"horizontal blood vessle", 1000);
+        self.generate_agents(Endothelial,"vertical blood vessle", 1000);
+        self.generate_agents(Tumor_cells, "default", 1);
+        self.generate_agents(M1, "default", 10);
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
