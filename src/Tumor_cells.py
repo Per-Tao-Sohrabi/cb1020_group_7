@@ -30,6 +30,9 @@ class Tumor_cells(Agent):
     #SETTERS
     def set_death_prob(self, number):
          self.death_prob = number
+
+    def set_proliferation_prob(self, number):
+        self.proliferation_prob = number
          
     #STEP
     def step(self):
