@@ -26,16 +26,14 @@ class Tumor_cells(Agent):
         self.nearest_endo = None;
     #SETTERS
     def set_nearest_endo(self):
-         pass
-    
-    def step(self):
-        if random.randint(0,100) < 100*self.proliferation_prob:
-            self.proliferate();
-        if random.randint(0,100) < 100*self.death_prob:
-            self.apoptosis()
-        #if adjacent or diagonal cell contain(fibroblast) do Increase  * death_prob?
-        #if cell_M.._dist < critDistToM:do Proliferation in empty cell * prolifiration_prob;
-        #if cell_endo_dist > critDistHypoxia:Induce Endothelial Proliferation;
+        endothelial_agents = self.model.endothelial_list; #endothelial_list is a list containing class type objects as elements.
+        counter = 1
+        for agents in endothelial_agents:
+             other_position = agents.position
+             #print("SET!")
+             print(counter)
+             counter += 1
+        pass
 
     #APOPTOSIS METHOD:
     def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
@@ -52,6 +50,15 @@ class Tumor_cells(Agent):
               #print(f"Error while generating Tumor cell from agent  {self.unique_id} {e}")
               pass
 
+    def step(self):
+        self.set_nearest_endo()
+        if random.randint(0,100) < 100*self.proliferation_prob:
+            self.proliferate();
+        if random.randint(0,100) < 100*self.death_prob:
+            self.apoptosis()
+        #if adjacent or diagonal cell contain(fibroblast) do Increase  * death_prob?
+        #if cell_M.._dist < critDistToM:do Proliferation in empty cell * prolifiration_prob;
+        #if cell_endo_dist > critDistHypoxia:Induce Endothelial Proliferation;
 
 
     

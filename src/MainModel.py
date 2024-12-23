@@ -128,7 +128,7 @@ class MainModel(Model):
     #GENERATE POSITION SORTED LIST OF AGENTS OF SPECFIC TYPE 
     def get_agent_type_list(self, agent_type):
         agent_type_list = set()
-        for agent in self.agent_storage[agent_type]:
+        for unique_id, agent in self.agent_storage[agent_type].items():
             agent_type_list.add(agent)
         return agent_type_list
     
@@ -190,6 +190,7 @@ class MainModel(Model):
         """
         #NEXT STEP
         self.schedule.step() 
+
         #GENERATE LIST OF ENDOTHELIAL CELLS
         self.endothelial_list = self.get_agent_type_list(Endothelial)
         self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
@@ -199,6 +200,8 @@ class MainModel(Model):
         #PRINT STEP DATA:
         print(f'Number of Endothelial cells: {len(self.endothelial_list)}')
         print(f'Number of Tumor cells: {len(self.tumor_cell_list)}')
+        print(f'Number of M1 cells: {len(self.m1_list)}')
+        #print(f'Test sample : {self.m1_list}')
 
         #UPDATE self.agent_storage{} TO REMOVE AGENTS THAT DO NOT APPEAR IN self.scheduler
         self.update_agent_storage()
