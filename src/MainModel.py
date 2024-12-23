@@ -65,9 +65,10 @@ class MainModel(Model):
                     
                     # Generate new Tumor_cell instance and place it
                     agent = agent_type(unique_id, next_position, self)
-                    self.schedule.add(agent)
-                    self.grid.place_agent(agent, next_position)
-                    agent_cache[unique_id] = agent
+                    #self.add_agent(agent_type, agent)
+                    #self.schedule.add(agent)
+                    #self.grid.place_agent(agent, next_position)
+                    #agent_cache[unique_id] = agent
                 else:
                     print(f"No empty cells available for tumor cell {unique_id} at position {position}.")
 
@@ -75,19 +76,21 @@ class MainModel(Model):
                 agent_type = agent_type
                 x = self.random.randrange(self.grid.width)   # Declare Agent Coordinates
                 y = self.random.randrange(self.grid.height)
-                agent = agent_type(unique_id, (x,y), self)   # Declare new instance of agent according to mesa Agent initation.
-                self.schedule.add(agent);                    
-                self.grid.place_agent(agent, (x, y))         # Add the agents to the grid
-                agent_cache[unique_id] = agent
+                agent = agent_type(unique_id, (x,y), self)
+                #self.add_agent(agent_type, agent)   # Declare new instance of agent according to mesa Agent initation.
+                #self.schedule.add(agent);                    
+                #self.grid.place_agent(agent, (x, y))         # Add the agents to the grid
+                #agent_cache[unique_id] = agent
         
             elif brush_stroke == "horizontal blood vessle" or brush_stroke == "vertical blood vessle": # For other agents
                 if i == 0:
                     x = 0;
                     y = random.randrange(self.grid.height);
                     agent = Endothelial(unique_id, (x,y), self); #uses i as id
-                    agent_cache[unique_id] = agent;
-                    self.schedule.add(agent);  
-                    self.grid.place_agent(agent, (x, y));
+                    #self.add_agent(agent_type, agent)
+                    #agent_cache[unique_id] = agent;
+                    #self.schedule.add(agent);  
+                    #self.grid.place_agent(agent, (x, y));
                 else:
                     prev_agent = agent_cache[unique_id-1]; #should not cause an indexing inconsistency if the blood vessle is generated in one instance. 
                     prev_x, prev_y = prev_agent.position;
@@ -99,16 +102,29 @@ class MainModel(Model):
                         y_inc = random.randint(0,1)
                     new_x, new_y = prev_x+x_inc, prev_y+y_inc
                     agent = Endothelial(unique_id, (new_x, new_y), self)
-                    agent_cache[unique_id] = agent
-                    self.schedule.add(agent)
+                    #agent_cache[unique_id] = agent
+                    #self.schedule.add(agent)
                     if new_x < self.grid.width and new_y < self.grid.height: # Handles the edge case when cells get generated outside the grid
-                        self.grid.place_agent(agent, (new_x, new_y))
+                        #self.add_agent(agent_type, agent)
+                        #self.grid.place_agent(agent, (new_x, new_y))
+                        continue
+            self.add_agent(agent_type, agent)
+        pass # allows the agents that exist in the cache to be saved in the model's agent storage 
 
-        return agent_cache # allows the agents that exist in the cache to be saved in the model's agent storage 
-    # Helper method for maintaining proliferation-orgin agents. (They dissapear if "default" is inputed in generate_agents())
-    
+    #ADD AGENT TO MODEL (This is a helper method for the above method)
+    def add_agent(self, agent_type, agent):
+        '''
+        Helper method for MainModel.generate_agents()
+
+        Adds an agent to (1) self.agent_storage, (2) self.schedule, and (3) self.grid.
+        '''
+        self.agent_storage[agent_type][agent.unique_id]= agent
+        self.schedule.add(agent)  
+        self.grid.place_agent(agent, agent.position)
+
+
+
     # INITIALIZE MODEL - initialize the agents put on the grid by the previous method
-
     def __init__(self, *args, **kwargs):
         """
         Initialize the MainModel.
@@ -134,15 +150,21 @@ class MainModel(Model):
         #self.generate_agents(Fibroblast, 5);
         self.step_data = {};
         
-     
+        for agent_type in self.agent_storage:      # Initialize "step_data" for each agent-type (cell-type)
+            self.step_data[agent_type] = {}  
 
     # STEP METHOD 
-
     def step(self):  # OBS: preliminary code, have not tested it yet!
         """
         Advance the simulation by one step, updating the model and agents.
         """
-        
+        #UPDATE AGENT_TYPE STEP DATA
+        now_step = self.schedule.steps
+        for agent_type, agents in self.agent_storage.items():       #Checks out list of agents of specific class.
+            self.step_data[agent_type][now_step] = {                #Checks each agent's position.
+                "number": len(agents),
+                "position": [agent.position for agent in agents]
+            }
 
         # The step is taken 
         self.schedule.step()               
