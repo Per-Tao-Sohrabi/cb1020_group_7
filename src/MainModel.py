@@ -8,28 +8,44 @@ import random as random;
 from Endothelial import Endothelial;
 from Tumor_cells import Tumor_cells; 
 from M1 import M1;
-#from M2 import M2;
-#from Fibroblast import Fibroblast;
+# from M2 import M2
+# from Fibroblast import Fibroblast;
+
+
 
 class MainModel(Model):
-    #GENERATE A UNIQUE ID (not random);
-    def get_next_unique_id(self):
-        # Start with a base unique_id
-        unique_id = len(self.used_ids)
-        # Ensure the unique_id hasn't been used already
-        while unique_id in self.used_ids:
+    """
+    MainModel represents the prostate cancer simulation environment.
+    """
+    # GENERATE A UNIQUE ID (not random)
+    def get_next_unique_id(self):   
+        """
+        Generate a unique ID for agents.
+
+        Returns:
+            int: A unique ID that has not been used before.
+        """            
+        unique_id = len(self.used_ids)          # Start with a base unique_id
+        while unique_id in self.used_ids:       # Ensure the unique_id hasn't been used already
             unique_id += 1
         # Add the new ID to the used_ids set
         self.used_ids.add(unique_id)
         return unique_id
     
     #GENERATE AGENTS 
-    """
-    # generate_methods(self, <class type>agent_type, <String>brush_Stroke, <aint>amount)
-    ### Description
-    This method belongs to MainModel.MainModel() which allows for specified generation patterns of mesa agents containing a self.position parmeter. 
-    """
     def generate_agents(self, agent_type, brush_stroke, amount, *args):
+        """
+        Generate and place agents on the grid based on specified patterns.
+
+        Args:
+            agent_type (class): The type of agent to generate.
+            brush_stroke (str): The pattern in which to place agents.
+            amount (int): The number of agents to generate.
+            *args: Additional arguments for specific patterns.
+
+        Returns:
+            dict: A cache of generated agents indexed by their unique IDs.
+        """
         agent_cache = {};
         for i in range(amount):
             unique_id = self.get_next_unique_id()
@@ -53,18 +69,18 @@ class MainModel(Model):
                     self.grid.place_agent(agent, next_position)
                     agent_cache[unique_id] = agent
                 else:
-                    print(f"No empty cells available for tumor cell {unique_id} at position {position}.") 
-            elif brush_stroke == "default": #default
-                agent_type = agent_type;
-                #Declare Agent Coordinates:
-                x = self.random.randrange(self.grid.width);
-                y = self.random.randrange(self.grid.height);
-                #Add agent tp grid
-                agent = agent_type(unique_id, (x,y), self) #declare new instance of agent according to mesa Agent initation.
-                self.schedule.add(agent);
-                self.grid.place_agent(agent, (x, y));
-            #add the agents to the grid.
-            elif brush_stroke == "horizontal blood vessle" or brush_stroke == "vertical blood vessle": #For other agents
+                    print(f"No empty cells available for tumor cell {unique_id} at position {position}.")
+
+            elif brush_stroke == "default":                  # Default settings for generating agents
+                agent_type = agent_type
+                x = self.random.randrange(self.grid.width)   # Declare Agent Coordinates
+                y = self.random.randrange(self.grid.height)
+                agent = agent_type(unique_id, (x,y), self)   # Declare new instance of agent according to mesa Agent initation.
+                self.schedule.add(agent);                    
+                self.grid.place_agent(agent, (x, y))         # Add the agents to the grid
+                agent_cache[unique_id] = agent
+        
+            elif brush_stroke == "horizontal blood vessle" or brush_stroke == "vertical blood vessle": # For other agents
                 if i == 0:
                     x = 0;
                     y = random.randrange(self.grid.height);
@@ -81,19 +97,26 @@ class MainModel(Model):
                     else:
                         x_inc = random.randint(-1,1)
                         y_inc = random.randint(0,1)
-                    x, y = prev_x+x_inc, prev_y+y_inc;
-                    agent = Endothelial(unique_id, (x, y), self)
-                    agent_cache[unique_id] = agent;
-                    self.schedule.add(agent);
-                    if x < self.grid.width and y < self.grid.height: #Handles the edge case when cells get generated outside the grid.
-                        self.grid.place_agent(agent, (x, y));
-        return agent_cache; #allows the agents that exist in the chace to be saved in the model's agent storage. 
-    #Helpet method for adding agent to schedule and 
+                    new_x, new_y = prev_x+x_inc, prev_y+y_inc
+                    agent = Endothelial(unique_id, (new_x, new_y), self)
+                    agent_cache[unique_id] = agent
+                    self.schedule.add(agent)
+                    if new_x < self.grid.width and new_y < self.grid.height: # Handles the edge case when cells get generated outside the grid
+                        self.grid.place_agent(agent, (new_x, new_y))
+
+        return agent_cache # allows the agents that exist in the cache to be saved in the model's agent storage 
+    # Helper method for maintaining proliferation-orgin agents. (They dissapear if "default" is inputed in generate_agents())
     
-    #Helper method for maintaining proliferation-orgin agents. (They dissapear if "default" is inputed in generate_agents())
-    
-    #INITIALIZE MODEL
+    # INITIALIZE MODEL - initialize the agents put on the grid by the previous method
+
     def __init__(self, *args, **kwargs):
+        """
+        Initialize the MainModel.
+
+        Args:
+            *args: Additional arguments.
+            **kwargs: Additional keyword arguments.
+        """
         #Model fields
         super().__init__(*args, **kwargs)
         self.grid = MultiGrid(150, 150, torus=False);
@@ -109,14 +132,32 @@ class MainModel(Model):
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
+        self.step_data = {};
         
-    
-    #STEP METHOD
-    def step(self):
-        self.schedule.step()
+     
+
+    # STEP METHOD 
+
+    def step(self):  # OBS: preliminary code, have not tested it yet!
+        """
+        Advance the simulation by one step, updating the model and agents.
+        """
+        
+
+        # The step is taken 
+        self.schedule.step()               
 
 #-------------------------------------------------#-------------------------------------------------
 # Create a CanvasGrid for visualization
+"""
+    Define how agents are portrayed in the visualization.
+
+    Args:
+        agent (Agent): The agent to portray.
+
+    Returns:
+        dict: A portrayal dictionary specifying agent appearance.
+"""
 def agent_portrayal(agent):
     portrayal = {}
 

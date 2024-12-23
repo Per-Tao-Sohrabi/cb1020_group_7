@@ -6,28 +6,71 @@ from mesa.visualization.ModularVisualization import ModularServer
 import random
 
 
-#Tumor Cell Class
+# Tumor Cell Class
+"""
+    Represents a tumor cell in the model.
+
+    Attributes:
+        size (float): The current size of the tumor cell.
+"""
 class TumorCell(Agent):
+    
+    """
+        Initializes a TumorCell agent.
+
+        Args:
+            unique_id (int): Unique identifier for the agent.
+            model (Model): The model the agent belongs to.
+    """
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
         self.size = 1  # Tumor starts with size 1
-
+    
+    """
+        Executes one step of the tumor cell's behavior:
+        - Increases its size by a fixed growth rate.
+        - Randomly moves to a neighboring cell.
+    """
     def step(self):
         # Tumor grows independently at a base rate
         self.size += 0.1
         self.random_move()
 
+    """
+        Moves the tumor cell to a random neighboring position.
+    """
     def random_move(self):
         possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
         new_position = self.random.choice(possible_steps)
         self.model.grid.move_agent(self, new_position)
 
- #kanske behöver ändras beroende på vad main har osv, men använde detta bara för att kunna köra
+# kanske behöver ändras beroende på vad main har osv, men använde detta bara för att kunna köra
 # M2 Macrophage Class
+
+"""
+    Represents an M2 macrophage in the model.
+
+    Attributes:
+        killing_capacity (int): Maximum number of tumor cells the agent can kill (unused).
+        prob_migrate (float): Probability of migrating to a new position in a step.
+        prob_death (float): Probability of dying in a step.
+        prob_support_growth (float): Probability of supporting tumor cell growth in a step.
+        supported_tumors (int): Counter for the number of tumors supported by this macrophage.
+        kills_left (int): Remaining kills before the macrophage reaches its killing capacity.
+"""
 class M2Macrophage(Agent):
+    
+    """
+        Initializes an M2 macrophage agent.
+
+        Args:
+            unique_id (int): Unique identifier for the agent.
+            model (Model): The model the agent belongs to.
+            params (dict): Dictionary of model parameters.
+    """
     def __init__(self, unique_id, model, params):
         super().__init__(unique_id, model)
-        self.killing_capacity = params["M2kmax"] #osäker på vad vi gör med denna
+        self.killing_capacity = params["M2kmax"] # osäker på vad vi gör med denna
         self.prob_migrate = params["M2pmig"]
         self.prob_death = params["M2pdeath"]
         self.prob_support_growth = params["M2psupport_growth"]
@@ -35,6 +78,12 @@ class M2Macrophage(Agent):
         self.supported_tumors = 0
         self.kills_left = self.killing_capacity
 
+    """
+        Executes one step of the macrophage's behavior:
+        - Checks if the macrophage dies.
+        - Attempts to migrate to a neighboring cell.
+        - Supports the growth of nearby tumor cells with a given probability.
+    """
     def step(self):
         # Check if macrophage should die
         if random.random() < self.prob_death:
@@ -54,14 +103,36 @@ class M2Macrophage(Agent):
                     neighbor.size += 0.2
                     self.supported_tumors += 1
 
+    """
+        Moves the macrophage to a random neighboring position.
+    """
     def random_move(self):
         possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
         new_position = self.random.choice(possible_steps)
         self.model.grid.move_agent(self, new_position)
 
-
 # Cancer Growth Model
+"""
+    Represents the cancer growth model with tumor cells and M2 macrophages.
+
+    Attributes:
+        grid (MultiGrid): The spatial grid where agents are placed.
+        schedule (RandomActivation): Scheduler to manage agent activation.
+        params (dict): Dictionary of model parameters.
+        agent_id (int): Counter to assign unique IDs to agents.
+"""
 class CancerModel(Model):
+    
+    """
+        Initializes the cancer growth model.
+
+        Args:
+            width (int): Width of the grid.
+            height (int): Height of the grid.
+            initial_m2 (int): Number of initial M2 macrophages.
+            initial_tumors (int): Number of initial tumor cells.
+            params (dict): Dictionary of model parameters.
+    """
     def __init__(self, width, height, initial_m2, initial_tumors, params):
         self.grid = MultiGrid(width, height, torus=True)
         self.schedule = RandomActivation(self)
@@ -84,14 +155,32 @@ class CancerModel(Model):
             self.grid.place_agent(m2, (x, y))
             self.schedule.add(m2)
 
+    """
+        Advances the model by one step.
+    """
     def step(self):
         self.schedule.step()
 
+    """
+        Generates the next unique ID for a new agent.
+
+        Returns:
+            int: The next unique agent ID.
+    """
     def next_agent_id(self):
         self.agent_id += 1
         return self.agent_id
 
 
+"""
+    Returns a dictionary for visualizing an agent.
+
+    Args:
+        agent (Agent): The agent to portray.
+
+    Returns:
+        dict: Dictionary containing visualization properties of the agent.
+"""
 # Visualization Function
 def portray_agent(agent):
     if isinstance(agent, TumorCell):
@@ -110,7 +199,7 @@ def portray_agent(agent):
             "Layer": 1,
             "r": 0.5
         }
-
+    
 
 # Parameters
 params = {
@@ -137,4 +226,5 @@ server = ModularServer(
 )
 server.port = 8527
 server.launch()
+
 

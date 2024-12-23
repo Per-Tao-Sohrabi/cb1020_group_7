@@ -5,16 +5,40 @@ from mesa.visualization.modules import CanvasGrid
 from Tumor_cells import Tumor_cells
 from mesa.visualization.ModularVisualization import ModularServer
 
+"""
+    Represents an M1 macrophage agent in the model.
+
+    Attributes:
+        position (tuple): The (x, y) position of the agent in the grid.
+        killing_capacity (int): The number of tumor cells the agent can kill.
+        prob_kill (float): Probability of killing a tumor cell in a step.
+        prob_migrate (float): Probability of moving to a new position in a step.
+        prob_death (float): Probability of dying in a step.
+        alive (bool): Indicates whether the agent is alive.
+"""
 class M1(Agent):
+    """
+        Initializes an M1 macrophage agent.
+
+        Args:
+            agent_id (int): Unique identifier for the agent.
+            position (tuple): Initial position of the agent in the grid.
+            model (Model): The model the agent belongs to.
+    """
     def __init__(self, agent_id, position, model):
         super().__init__(agent_id, model)
         self.position = position
         self.killing_capacity = 11       # Killing capacity 
         self.prob_kill = 0.03            # Probability of killing
         self.prob_migrate = 0.4          # Probability of migration
-        self.prob_death = 0.005          # Probability of death
+        self.prob_death = 0.001          # Probability of death
         self.alive = True
-
+        """
+        Executes one step of the agent's behavior:
+        - Checks if the agent dies based on `prob_death`.
+        - Migrates to a neighboring cell with `prob_migrate`.
+        - Attempts to kill a tumor cell in its neighborhood with `prob_kill`.
+        """
     def step(self):
         if not self.alive:
             return
@@ -27,13 +51,18 @@ class M1(Agent):
             self.migrate()
         if self.random.random() < self.prob_kill:
             self.kill_tumor_cell()
-
+    """
+    Moves the agent to a random neighboring cell if the new cell is empty.
+    """
     def migrate(self):
         possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
         new_position = self.random.choice(possible_steps)
         if self.model.grid.is_cell_empty(new_position):
             self.model.grid.move_agent(self, new_position)
-
+    """
+    Kills a neighboring tumor cell if one exists.
+    Reduces the killing capacity of the agent by 1.
+    """
     def kill_tumor_cell(self):
         neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False)
         tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cells)]
@@ -42,47 +71,3 @@ class M1(Agent):
             self.model.grid.remove_agent(target)
             self.model.schedule.remove(target)
             self.killing_capacity -= 1
-'''
-# Main Model
-class MacrophageModel(Model):
-    def __init__(self, width, height, initial_m1, params):
-        super().__init__()
-        self.grid = MultiGrid(width, height, torus=False)
-        self.schedule = RandomActivation(self)
-        self.params = params
-
-        # Add M1 Macrophages
-        for i in range(initial_m1):
-            x, y = self.random.randrange(width), self.random.randrange(height)
-            m1 = M1Macrophage(self.next_id(), self)
-            self.grid.place_agent(m1, (x, y))
-            self.schedule.add(m1)
-
-    def step(self):
-        self.schedule.step()
-
-
-# Visualization Function
-def portray_agent(agent):
-    if isinstance(agent, M1Macrophage):
-        return {"Shape": "circle", "Color": "red", "Filled": True, "Layer": 0, "r": 0.5} if agent.alive else None
-
-
-# Model Parameters
-params = {
-    "M1kmax": 11,       # Killing capacity (not relevant here)
-    "M1pmig": 0.4,      # Probability of migration
-    "M1pdeath": 0.005,   # Probability of death
-    "M1pkill": 0.03     # Probability of killing
-}
-
-# Visualization
-grid = CanvasGrid(portray_agent, 20, 20, 500, 500)
-server = ModularServer(MacrophageModel, [grid], "Macrophage Model", {
-    "width": 20,
-    "height": 20,
-    "initial_m1": 10,
-    "params": params
-})
-server.port = 8527
-server.launch() '''
