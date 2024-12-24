@@ -56,9 +56,9 @@ class Tumor_cells(Agent):
     def tumor_endo_interaction(self):
         nearest_endo, nearest_dist = self.set_nearest_endo();
         if nearest_dist < self.hypoxia_threshold:
-            self.set_proliferation_prob(0.0864) #default
+            self.set_proliferation_prob(0.0864)   #default
         else:
-            self.set_proliferation_prob(0.00864)
+            self.set_proliferation_prob(0.00864)  #0.10 of default
             #Induce proliferation in endothelial cell
 
             
