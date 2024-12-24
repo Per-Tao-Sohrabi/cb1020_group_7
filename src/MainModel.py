@@ -109,9 +109,8 @@ class MainModel(Model):
 
             elif brush_stroke == "directed proliferation":
                 print("IN CONSTRUCTION")
-                mother = args;
-                mother_position = mother.position
-                mother_target_coord = mother.target_coord
+                mother_position = args[0]
+                mother_target_coord = args[1]
                 #GENERATE NEXT POSITION
                 #1. Check Surroundings: get list of empty surrounding
                 # Get all adjacent positions (Moore neighborhood, excluding center)
@@ -133,6 +132,8 @@ class MainModel(Model):
                     #self.grid.place_agent(agent, next_position)
                     agent_cache[unique_id] = agent
                     #if mother.target
+                else:
+                    break
             self.add_agent(agent_type, agent)
         pass # allows the agents that exist in the cache to be saved in the model's agent storage 
 
