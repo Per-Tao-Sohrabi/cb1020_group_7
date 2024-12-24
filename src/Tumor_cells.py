@@ -24,9 +24,11 @@ class Tumor_cells(Agent):
         self.initial_resist_M1_prob = 0
         self.resistance_M1_prob = 0.004
         self.nearest_endo = None;
+        self.hypoxia_threshold = 50.0;
     
     #SETTERS
     def set_nearest_endo(self):
+
         endothelial_agents = self.model.endothelial_list; #endothelial_list is a list containing class type objects as elements.
         counter = 1
         nearest_endo = None
@@ -36,7 +38,7 @@ class Tumor_cells(Agent):
             x_self, y_self, = self.position
             distance = ((y_other-y_self)**2 + (x_other-x_self)**2)**(1/2)
             #print("SET!")
-            print(counter)
+            #print(counter)
             #print(f'The distance between tumor_cell {self.unique_id} and endo cell {agent.unique_id} is {distance}')
             if nearest_endo == None:
                 nearest_endo = agent
@@ -46,7 +48,20 @@ class Tumor_cells(Agent):
                 nearest_endo = agent;
             counter += 1
         print(f'Nearest distance between TC {self.unique_id} and endo {nearest_endo.unique_id} = {nearest_dist}')
-        pass
+        return nearest_endo, nearest_dist
+    
+    def set_proliferation_prob(self, val):
+        self.proliferation_prob = val
+
+    def tumor_endo_interaction(self):
+        nearest_endo, nearest_dist = self.set_nearest_endo();
+        if nearest_dist < self.hypoxia_threshold:
+            self.set_proliferation_prob(0.0864) #default
+        else:
+            self.set_proliferation_prob(0.00864)
+            #Induce proliferation in endothelial cell
+
+            
 
     #APOPTOSIS METHOD:
     def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
@@ -64,7 +79,7 @@ class Tumor_cells(Agent):
               pass
 
     def step(self):
-        self.set_nearest_endo()
+        self.tumor_endo_interaction();
         if random.randint(0,100) < 100*self.proliferation_prob:
             self.proliferate();
         if random.randint(0,100) < 100*self.death_prob:
