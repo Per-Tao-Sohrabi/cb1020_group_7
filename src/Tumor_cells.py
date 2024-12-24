@@ -24,7 +24,7 @@ class Tumor_cells(Agent):
         self.initial_resist_M1_prob = 0
         self.resistance_M1_prob = 0.004
         self.nearest_endo = None;
-        self.hypoxia_threshold = 50.0;
+        self.hypoxia_threshold = 20.0;
     
     #SETTERS
     def set_nearest_endo(self):
@@ -60,6 +60,7 @@ class Tumor_cells(Agent):
         else:
             self.set_proliferation_prob(0.00864)  #0.10 of default
             #Induce proliferation in endothelial cell
+            nearest_endo.targeted_proliferation(self.position)
 
             
 

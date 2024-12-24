@@ -52,19 +52,19 @@ class MainModel(Model):
             if brush_stroke == "proliferate":
                 agent_type = agent_type;
                 # Handle tumor cell proliferation here without removing the original
-                position = args[0];
+                mother_position = args[0];
                 # Get all adjacent positions (Moore neighborhood, excluding center)
                 adjacent_positions = self.grid.get_neighborhood(
-                    pos=position, moore=True, include_center=False, radius=1
+                    pos=mother_position, moore=True, include_center=False, radius=1
                 )
                 # Filter positions to only include empty cells
                 empty_positions = [pos for pos in adjacent_positions if self.grid.is_cell_empty(pos)] 
                 if empty_positions:
                     # Randomly select one of the valid empty positions
-                    next_position = random.choice(empty_positions)
+                    daughter_position = random.choice(empty_positions)
                     
                     # Generate new Tumor_cell instance and place it
-                    agent = agent_type(unique_id, next_position, self)
+                    agent = agent_type(unique_id, daughter_position, self)
                     #self.add_agent(agent_type, agent)
                     #self.schedule.add(agent)
                     #self.grid.place_agent(agent, next_position)
@@ -107,6 +107,32 @@ class MainModel(Model):
                         #self.add_agent(agent_type, agent)
                         #self.grid.place_agent(agent, (new_x, new_y))
 
+            elif brush_stroke == "directed proliferation":
+                print("IN CONSTRUCTION")
+                mother = args;
+                mother_position = mother.position
+                mother_target_coord = mother.target_coord
+                #GENERATE NEXT POSITION
+                #1. Check Surroundings: get list of empty surrounding
+                # Get all adjacent positions (Moore neighborhood, excluding center)
+                adjacent_positions = self.grid.get_neighborhood(
+                    pos=mother_position, moore=True, include_center=False, radius=1
+                )
+                # Filter positions to only include empty cells
+                empty_positions = [pos for pos in adjacent_positions if self.grid.is_cell_empty(pos)] 
+                
+                #2. Pick box in direction of target coord
+                if empty_positions:
+                    # Randomly select one of the valid empty positions
+                    daughter_position = random.choice(empty_positions)
+                    
+                    # Generate new Tumor_cell instance and place it
+                    agent = agent_type(unique_id, daughter_position, self)
+                    #self.add_agent(agent_type, agent)
+                    #self.schedule.add(agent)
+                    #self.grid.place_agent(agent, next_position)
+                    agent_cache[unique_id] = agent
+                    #if mother.target
             self.add_agent(agent_type, agent)
         pass # allows the agents that exist in the cache to be saved in the model's agent storage 
 

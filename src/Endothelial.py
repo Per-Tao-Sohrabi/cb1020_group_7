@@ -15,7 +15,14 @@ class Endothelial(Agent):
         self.unique_id
         self.model = model
         self.position = position;
-    
+        self.targeted_prolif = None
+
+    def targeted_proliferation(self, target_coord):
+        self.targeted_prolif = target_coord
+        x_target, y_target = target_coord
+        self.model.generate_agents(Endothelial, "directed proliferation", 1, self.position)
+
     def step(self):
+            
         #define behaviour for diff situations here
         pass
