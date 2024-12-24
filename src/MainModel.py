@@ -8,8 +8,8 @@ import random as random;
 from Endothelial import Endothelial;
 from Tumor_cells import Tumor_cells; 
 from M1 import M1;
-from M2 import M2
-# from Fibroblast import Fibroblast;
+#from M2 import M2
+from Fibroblast import Fibroblast;
 
 
 """
@@ -128,7 +128,8 @@ class MainModel(Model):
         self.agent_storage["Endothelial vertical"] = self.generate_agents(Endothelial,"vertical blood vessle", 1000);
         self.agent_storage["Tumor cells"] = self.generate_agents(Tumor_cells, "default", 1);
         self.agent_storage["M1 cells"] = self.generate_agents(M1, "default", 10);
-        self.agent_storage["M2 cells"] = self.generate_agents(M2, "default", 10);
+        #self.agent_storage["M2 cells"] = self.generate_agents(M2, "default", 10);
+        self.agent_storage["Fibroblast"] = self.generate_agents(Fibroblast,"default", 5);
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
@@ -196,11 +197,18 @@ def agent_portrayal(agent):
         portrayal["Color"] = "green"
         portrayal["Layer"] = 0
 
-    elif isinstance(agent, M2):
+    #elif isinstance(agent, M2):
         portrayal["Shape"] = "circle"
         portrayal["r"] = 1
         portrayal["Color"] = "purple"
         portrayal["Layer"] = 0
+    
+    elif isinstance(agent, Fibroblast):
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = 1
+        portrayal["Color"] = "blue"
+        portrayal["Layer"] = 0
+
 
     return portrayal
 
