@@ -8,7 +8,7 @@ import random as random;
 from Endothelial import Endothelial;
 from Tumor_cells import Tumor_cells; 
 from M1 import M1;
-# from M2 import M2
+from M2 import M2
 # from Fibroblast import Fibroblast;
 
 
@@ -176,6 +176,7 @@ class MainModel(Model):
             Endothelial: {},
             Tumor_cells: {},
             M1: {},
+            M2: {}
             # Add other agent types here if needed
         }
          #saves agent_chaces from self.generate_agents(*args);
@@ -184,7 +185,8 @@ class MainModel(Model):
         self.generate_agents(Endothelial,"horizontal blood vessle", 1000);
         self.generate_agents(Endothelial,"vertical blood vessle", 1000);
         self.generate_agents(Tumor_cells, "default", 1);
-        self.generate_agents(M1, "default", 10);
+        self.generate_agents(M1, "default", 100);
+        self.generate_agents(M2, "default", 10);
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
@@ -273,6 +275,12 @@ def agent_portrayal(agent):
         portrayal["Shape"] = "circle"
         portrayal["r"] = 1
         portrayal["Color"] = "green"
+        portrayal["Layer"] = 0
+
+    elif isinstance(agent, M2):
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = 1
+        portrayal["Color"] = "purple"
         portrayal["Layer"] = 0
 
     return portrayal
