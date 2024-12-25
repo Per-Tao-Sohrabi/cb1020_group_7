@@ -24,7 +24,7 @@ class Tumor_cells(Agent):
         self.death_prob = 0.00284
         self.initial_resist_M1_prob = 0
         self.resistance_M1_prob = 0.004
-        self.hypoxia_thresholds = [5.0, 25.0, 50.0];
+        self.hypoxia_thresholds = [5.0, 15.0, 30.0];
         self.nearest_endo = None;
         self.nearest_dist = None;
         self.prev_dist = None;
@@ -72,12 +72,27 @@ class Tumor_cells(Agent):
             else:
                 pass
 
-    def set_death_prob(self, percentage):
+    def set_death_prob(self, *args):
+        if args[0] == "default":
+            self.death_prob = 0.00284
+        else:
+            val = args[0]
+            type = args[1]
+            
+            if type == "proportion":
+                self.death_prob = self.death_prob * val
+            if type == "value":
+                self.death_prob = val
+            else:
+                pass
         pass
 
     def tumor_endo_interaction(self):
         self.set_nearest_endo(); #updates prev distance and new distance.
+        
+        #INTERACTION ATTIBUTES
         diff = self.prev_dist - self.nearest_dist #This only works if set_nearest_endo is initialized.
+        death_factor = 1.2 * (self.nearest_dist/self.hypoxia_thresholds[2]) #1.2 is the standard death factor above the maximum hypoxia threshold. Chance of dying increases by 20% each step.
         
         #DISCRETE ZONE
         if self.nearest_dist <= self.hypoxia_thresholds[0]: #withing Lower bound
@@ -89,11 +104,14 @@ class Tumor_cells(Agent):
         elif self.hypoxia_thresholds[1] < self.nearest_dist:
             if diff > 0:
                 self.set_proliferation_prob(0.98, "proportion") #decrease proliferation rate by few percent
+                self.set_death_prob(death_factor, "proportion")
             elif diff < 0:
                 self.set_proliferation_prob(1.01, "proportion") #increase slightly as endo gets closer
             #Induce proliferation in endothelial cell
             self.nearest_endo.targeted_proliferation(self.position)          
-
+            
+        #elif self.nearest_dist > self.hypoxia_thresholds[2]:
+        #    self.set_death_prob(2, "proportion")
     #APOPTOSIS METHOD:
     def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
             self.viable = False
