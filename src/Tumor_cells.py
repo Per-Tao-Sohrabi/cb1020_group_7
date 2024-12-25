@@ -18,21 +18,24 @@ class Tumor_cells(Agent):
         self.position = position;
         self.viable = True   
         # All the relevant properties (instance variables) for the tumor cell are initiated 
+        #DEFAULTS
         self.proliferation_prob = 0.0846
         self.migration_prob = 0.1167
         self.death_prob = 0.00284
         self.initial_resist_M1_prob = 0
         self.resistance_M1_prob = 0.004
+        self.hypoxia_thresholds = [5.0, 25.0, 50.0];
         self.nearest_endo = None;
-        self.hypoxia_threshold = 20.0;
+        self.nearest_dist = None;
+        self.prev_dist = None;
+        self.set_nearest_endo() #identify nearest endo during initialization
     
     #SETTERS
     def set_nearest_endo(self):
-
         endothelial_agents = self.model.endothelial_list; #endothelial_list is a list containing class type objects as elements.
         counter = 1
         nearest_endo = None
-        nearest_dist = None
+        nearest_dist = None#
         for agent in endothelial_agents:
             x_other, y_other = agent.position
             x_self, y_self, = self.position
@@ -48,21 +51,48 @@ class Tumor_cells(Agent):
                 nearest_endo = agent;
             counter += 1
         print(f'Nearest distance between TC {self.unique_id} and endo {nearest_endo.unique_id} = {nearest_dist}')
+        #save old dist
+        self.prev_dist = self.nearest_dist
+        #update new endo and dist
+        self.nearest_endo = nearest_endo
+        self.nearest_dist = nearest_dist
         return nearest_endo, nearest_dist
     
-    def set_proliferation_prob(self, val):
-        self.proliferation_prob = val
+    def set_proliferation_prob(self, *args):
+        if args[0] == "default":
+            self.proliferation_prob = 0.0846
+        else:
+            val = args[0]
+            type = args[1]
+            
+            if type == "proportion":
+                self.proliferation_prob = self.proliferation_prob * val
+            if type == "value":
+                self.proliferation_prob = val
+            else:
+                pass
+
+    def set_death_prob(self, percentage):
+        pass
 
     def tumor_endo_interaction(self):
-        nearest_endo, nearest_dist = self.set_nearest_endo();
-        if nearest_dist < self.hypoxia_threshold:
-            self.set_proliferation_prob(0.0864)   #default
-        else:
-            self.set_proliferation_prob(0.00864)  #0.10 of default
+        self.set_nearest_endo(); #updates prev distance and new distance.
+        diff = self.prev_dist - self.nearest_dist #This only works if set_nearest_endo is initialized.
+        
+        #DISCRETE ZONE
+        if self.nearest_dist <= self.hypoxia_thresholds[0]: #withing Lower bound
+            self.set_proliferation_prob(0.1, "val")   #+20%
+        elif self.hypoxia_thresholds[0] < self.nearest_dist <= self.hypoxia_thresholds[1]:
+            self.set_proliferation_prob("default")     #default
+        
+        #EXPONENTIAL ZONE
+        elif self.hypoxia_thresholds[1] < self.nearest_dist:
+            if diff > 0:
+                self.set_proliferation_prob(0.98, "proportion") #decrease proliferation rate by few percent
+            elif diff < 0:
+                self.set_proliferation_prob(1.01, "proportion") #increase slightly as endo gets closer
             #Induce proliferation in endothelial cell
-            nearest_endo.targeted_proliferation(self.position)
-
-            
+            self.nearest_endo.targeted_proliferation(self.position)          
 
     #APOPTOSIS METHOD:
     def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
