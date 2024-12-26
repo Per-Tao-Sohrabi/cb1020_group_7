@@ -112,9 +112,30 @@ class Tumor_cells(Agent):
             
         #elif self.nearest_dist > self.hypoxia_thresholds[2]:
         #    self.set_death_prob(2, "proportion")
+    
+    #MIGRATION
+    def migrate(self):
+        #IN SITU MIGRATION???
+        if random.randint(0,100) < 100*self.migration_prob:
+            possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
+            
+            # Filter only empty positions
+            empty_positions = [pos for pos in possible_steps if self.model.grid.is_cell_empty(pos)]
+
+            #Pick an empty position if there are any
+            if len(empty_positions) > 0:
+                new_position = self.random.choice(empty_positions)
+                self.model.grid.move_agent(self, new_position)
+
+        #MIGRATION ACROSS BLOOD VESSLE
+        possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
+        new_position = self.random.choice(possible_steps)
+        
     #APOPTOSIS METHOD:
     def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
-            if self.position != None:   
+            if self.position == None:
+                print(f"Does not have a position: {self.unique_id}")
+            else:
                 self.viable = False
                 self.model.grid.remove_agent(self);
                 self.model.schedule.remove(self);
@@ -129,6 +150,7 @@ class Tumor_cells(Agent):
               pass
 
     def step(self):
+        print(f'Attempting tumor-endo interaction for agent: {self.unique_id}')
         self.tumor_endo_interaction();
         if random.randint(0,100) < 100*self.proliferation_prob:
             self.proliferate();

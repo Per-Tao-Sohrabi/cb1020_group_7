@@ -80,8 +80,7 @@ class MainModel(Model):
                 #self.add_agent(agent_type, agent)   # Declare new instance of agent according to mesa Agent initation.
                 #self.schedule.add(agent);                    
                 #self.grid.place_agent(agent, (x, y))         # Add the agents to the grid
-                agent_cache[unique_id] = agent
-        
+                agent_cache[unique_id] = agent        
             elif brush_stroke == "horizontal blood vessle" or brush_stroke == "vertical blood vessle": # For other agents
                 if i == 0:
                     x = 0;
@@ -106,7 +105,6 @@ class MainModel(Model):
                      # Handles the edge case when cells get generated outside the grid
                         #self.add_agent(agent_type, agent)
                         #self.grid.place_agent(agent, (new_x, new_y))
-
             elif brush_stroke == "directed proliferation":
                 print("IN CONSTRUCTION")
                 mother_position = args[0]
@@ -114,9 +112,8 @@ class MainModel(Model):
                 #GENERATE NEXT POSITION
                 #1. Check Surroundings: get list of empty surrounding
                 # Get all adjacent positions (Moore neighborhood, excluding center)
-                adjacent_positions = self.grid.get_neighborhood(
-                    pos=mother_position, moore=True, include_center=False, radius=1
-                )
+                print(mother_position)
+                adjacent_positions = self.grid.get_neighborhood(pos=mother_position, moore=True, include_center=False, radius=1)
                 # Filter positions to only include empty cells
                 empty_positions = [pos for pos in adjacent_positions if self.grid.is_cell_empty(pos)] 
                 

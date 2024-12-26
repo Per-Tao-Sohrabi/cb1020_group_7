@@ -46,9 +46,14 @@ class M2(Agent):
 
         # Attempt to migrate
     def migrate(self):
-        possible_steps = self.model.grid.get_neighborhood(self.position, moore=True, include_center=False)
-        new_position = self.random.choice(possible_steps)
-        if self.model.grid.is_cell_empty(new_position):
+        possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
+        
+        # Filter only empty positions
+        empty_positions = [pos for pos in possible_steps if self.model.grid.is_cell_empty(pos)]
+
+        #Pick an empty position if there are any
+        if len(empty_positions) > 0:
+            new_position = self.random.choice(empty_positions)
             self.model.grid.move_agent(self, new_position)
 
         
