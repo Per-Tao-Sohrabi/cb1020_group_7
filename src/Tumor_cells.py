@@ -93,7 +93,7 @@ class Tumor_cells(Agent):
         #INTERACTION ATTIBUTES
         diff = self.prev_dist - self.nearest_dist #This only works if set_nearest_endo is initialized.
         death_factor = 1.2 * (self.nearest_dist/self.hypoxia_thresholds[2]) #1.2 is the standard death factor above the maximum hypoxia threshold. Chance of dying increases by 20% each step.
-        
+        induction_factor = self.nearest_dist;
         #DISCRETE ZONE
         if self.nearest_dist <= self.hypoxia_thresholds[0]: #withing Lower bound
             self.set_proliferation_prob(0.1, "val")   #+20%
@@ -103,7 +103,7 @@ class Tumor_cells(Agent):
         #EXPONENTIAL ZONE
         elif self.hypoxia_thresholds[1] < self.nearest_dist:
             if diff > 0:
-                self.set_proliferation_prob(0.98, "proportion") #decrease proliferation rate by few percent
+                self.set_proliferation_prob(0.7, "proportion") #decrease proliferation rate by few percent
                 self.set_death_prob(death_factor, "proportion")
             elif diff < 0:
                 self.set_proliferation_prob(1.01, "proportion") #increase slightly as endo gets closer
@@ -114,9 +114,10 @@ class Tumor_cells(Agent):
         #    self.set_death_prob(2, "proportion")
     #APOPTOSIS METHOD:
     def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
-            self.viable = False
-            self.model.grid.remove_agent(self);
-            self.model.schedule.remove(self);
+            if self.position != None:   
+                self.viable = False
+                self.model.grid.remove_agent(self);
+                self.model.schedule.remove(self);
 
     #PROLIFERATION METHOD
     def proliferate(self):
