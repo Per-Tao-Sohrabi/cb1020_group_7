@@ -56,9 +56,15 @@ class M1(Agent):
     """
     def migrate(self):
         possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
-        new_position = self.random.choice(possible_steps)
-        if self.model.grid.is_cell_empty(new_position):
+        
+        # Filter only empty positions
+        empty_positions = [pos for pos in possible_steps if self.model.grid.is_cell_empty(pos)]
+
+        #Pick an empty position if there are any
+        if len(empty_positions) > 0:
+            new_position = self.random.choice(empty_positions)
             self.model.grid.move_agent(self, new_position)
+
     """
     Kills a neighboring tumor cell if one exists.
     Reduces the killing capacity of the agent by 1.
