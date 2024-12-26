@@ -18,14 +18,21 @@ class Endothelial(Agent):
         self.targeted_prolif = None
 
     def targeted_proliferation(self, target_coord, induction_factor):
+        print(f'Endothelial position = {self.position}')
         self.targeted_prolif = target_coord
         x_target, y_target = target_coord
-        prol_prob = induction_factor
+        prol_prob = 100*induction_factor
         #Create the new agent:
-        if self.random.random() < prol_prob:
-            self.model.generate_agents(Endothelial, "directed proliferation", 1, self.position, self.targeted_prolif)
+        if self.random.randint(0,100) < prol_prob:
+            self.model.generate_agents(Endothelial, "directed proliferation", 1, self.position)
 
     def step(self):
             
         #define behaviour for diff situations here
         pass
+
+
+    '''
+    Only Grow if there is space in the three adjacent cells in the corners directed towards your target cell. 
+    This means that only the first one that manages to grow into a cell is allowed to continue. 
+    '''

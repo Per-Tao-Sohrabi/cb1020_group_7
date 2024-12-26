@@ -108,7 +108,7 @@ class MainModel(Model):
             elif brush_stroke == "directed proliferation":
                 print("IN CONSTRUCTION")
                 mother_position = args[0]
-                mother_target_coord = args[1]
+                #mother_target_coord = args[1]
                 #GENERATE NEXT POSITION
                 #1. Check Surroundings: get list of empty surrounding
                 # Get all adjacent positions (Moore neighborhood, excluding center)

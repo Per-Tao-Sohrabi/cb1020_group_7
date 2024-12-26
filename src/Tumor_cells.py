@@ -114,28 +114,33 @@ class Tumor_cells(Agent):
         if diff != 0:
             diff_sign = abs(diff)/diff
 
-        #INTERACTION ATTIBUTES    
-        delta_death_factor = 0.8*(threshold3-curr_dist/threshold3)
+        #INTERACTION ATTIBUTE PARAMETERS *FOR LOGISTIC ZONE*
+        #  Death Intensity
+        death_intensity = 0.7
+        delta_death_factor = death_intensity *(threshold3-curr_dist/threshold3)
         death_factor = 1-delta_death_factor
-
-        prolif_deactivation_level =  0
+        
+        #  Tumor Proliferation Inhibition
+        inhib_intensity = 0.2
+        prolif_inhibition_level =  0
         if curr_dist != 0:
-            prolif_deactivation_level = diff_sign*(curr_dist - threshold2)/curr_dist #relevant in the logistic zone
-        proliferation_factor = 1-prolif_deactivation_level
-
-        induction_factor = 0 #Set seperatley 
-        #Set induction factor
+            prolif_inhibition_level = inhib_intensity*diff_sign*(curr_dist - threshold2)/curr_dist #relevant in the logistic zone
+        proliferation_factor = 1-prolif_inhibition_level
+        
+        #   Induction Level
+        induct_intensity = 1
         if best_dist == curr_dist:
             induction_factor = 1
         else:
-            induction_factor = 1 / (1 + abs(best_dist-curr_dist))
+            induction_factor = induct_intensity * 1 / (1 + abs(best_dist-curr_dist))
 
+        #========ZONES========
         #DISCRETE ZONE
         if self.nearest_dist <= self.hypoxia_thresholds[0]: #withing Lower bound
-            self.set_proliferation_prob(0.15, "val")   #+20%
+            self.set_proliferation_prob(0.15+0.4, "val")   #+20%
         elif self.hypoxia_thresholds[0] < self.nearest_dist <= self.hypoxia_thresholds[1]:
             self.set_proliferation_prob("default")     #default
-        
+
         #LOGISTIC ZONE
         elif self.nearest_dist > self.hypoxia_thresholds[1]:
             if diff != 0:
@@ -188,7 +193,8 @@ class Tumor_cells(Agent):
          except Exception as e:
               #print(f"Error while generating Tumor cell from agent  {self.unique_id} {e}")
               pass
-
+    
+    #STEP 
     def step(self):
         self.migrate();
         print(f'Attempting tumor-endo interaction for agent: {self.unique_id}')
