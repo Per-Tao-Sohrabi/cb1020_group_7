@@ -118,7 +118,9 @@ class Tumor_cells(Agent):
         delta_death_factor = 0.8*(threshold3-curr_dist/threshold3)
         death_factor = 1-delta_death_factor
 
-        prolif_deactivation_level =  diff_sign*(curr_dist - threshold2)/curr_dist #relevant in the logistic zone
+        prolif_deactivation_level =  0
+        if curr_dist != 0:
+            prolif_deactivation_level = diff_sign*(curr_dist - threshold2)/curr_dist #relevant in the logistic zone
         proliferation_factor = 1-prolif_deactivation_level
 
         induction_factor = 0 #Set seperatley 
@@ -156,6 +158,7 @@ class Tumor_cells(Agent):
     def migrate(self):
         #IN SITU MIGRATION???
         if random.randint(0,100) < 100*self.migration_prob:
+            print("TUMOR CELL MIGRATED")
             possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
             
             # Filter only empty positions
@@ -187,6 +190,7 @@ class Tumor_cells(Agent):
               pass
 
     def step(self):
+        self.migrate();
         print(f'Attempting tumor-endo interaction for agent: {self.unique_id}')
         self.tumor_endo_interaction();
         if random.randint(0,100) < 100*self.proliferation_prob:
