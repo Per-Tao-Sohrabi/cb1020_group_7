@@ -110,12 +110,12 @@ class Tumor_cells(Agent):
         threshold3 = self.hypoxia_thresholds[2]
         diff = self.prev_dist - self.nearest_dist #This only works if set_nearest_endo is initialized.
         diff_sign = 0
-        
+
         if diff != 0:
             diff_sign = abs(diff)/diff
 
         #INTERACTION ATTIBUTES    
-        delta_death_factor = (threshold3-curr_dist/threshold3)
+        delta_death_factor = 0.8*(threshold3-curr_dist/threshold3)
         death_factor = 1-delta_death_factor
 
         prolif_deactivation_level =  diff_sign*(curr_dist - threshold2)/curr_dist #relevant in the logistic zone

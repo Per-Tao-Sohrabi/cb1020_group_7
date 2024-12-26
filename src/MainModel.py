@@ -55,7 +55,7 @@ class MainModel(Model):
                 mother_position = args[0];
                 # Get all adjacent positions (Moore neighborhood, excluding center)
                 adjacent_positions = self.grid.get_neighborhood(
-                    pos=mother_position, moore=True, include_center=False, radius=1
+                    pos=mother_position, moore=False, include_center=False, radius=1
                 )
                 # Filter positions to only include empty cells
                 empty_positions = [pos for pos in adjacent_positions if self.grid.is_cell_empty(pos)] 
