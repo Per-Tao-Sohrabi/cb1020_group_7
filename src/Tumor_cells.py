@@ -26,11 +26,18 @@ class Tumor_cells(Agent):
         self.death_prob = 0.00284
         self.initial_resist_M1_prob = 0
         self.resistance_M1_prob = 0.004
+        self.lifespan = 50 #steps
 
         #Hypoxia parameters
         self.max_signal_dist = 20
         self.optimal_signal_dist = 12
         self.hypoxia_thresholds = [3.0, 10.0, 22.0];
+
+        #Distance Dependent Interaction Parameters
+        self.apoptosis_intensity = 0.8
+        self.prolif_inhib_intensity = 0.86
+        self.endo_prol_induction_intensity = 0.9
+        self.optimal_signal_dist_significane = 0.5
 
         #endo tracking
         self.nearest_endo = None;
@@ -116,20 +123,22 @@ class Tumor_cells(Agent):
 
         #INTERACTION ATTIBUTE PARAMETERS *FOR LOGISTIC ZONE*
         #  Death Intensity
-        death_intensity = 0.02
+        death_intensity = self.apoptosis_intensity
         delta_death_factor = death_intensity *(threshold3-curr_dist/threshold3)
         death_factor = 1-delta_death_factor
         
         #  Tumor Proliferation Inhibition
-        inhib_intensity = 0.4
-        prolif_inhibition_level =  0
+        inhib_intensity = self.prolif_inhib_intensity 
         if curr_dist != 0:
             prolif_inhibition_level = inhib_intensity*diff_sign*(curr_dist - threshold2)/curr_dist #relevant in the logistic zone
-        proliferation_factor = 1-prolif_inhibition_level
+        else:
+            prolif_inhibition_level =  0
+
+        proliferation_factor = 1-prolif_inhibition_level #factor to change proliferation rate by. 
         
         #   Induction Level
-        induct_intensity = 1
-        speed_dampening = 0.01 #Lowers the significance of the optimal signal distance.
+        induct_intensity = self.endo_prol_induction_intensity 
+        speed_dampening = self.optimal_signal_dist_significane #Lowers the significance of the optimal signal distance.
         if best_dist == curr_dist:
             induction_factor = 1
         else:
@@ -195,8 +204,17 @@ class Tumor_cells(Agent):
               #print(f"Error while generating Tumor cell from agent  {self.unique_id} {e}")
               pass
     
+    #AGE
+    def age(self):
+        if self.lifespan > 0:
+            self.lifespan -= 1
+        elif self.lifespan == 0:
+            self.set_death_prob(1, "value")
+            
+        
     #STEP 
     def step(self):
+        self.age()
         self.migrate();
         print(f'Attempting tumor-endo interaction for agent: {self.unique_id}')
         self.tumor_endo_interaction();
