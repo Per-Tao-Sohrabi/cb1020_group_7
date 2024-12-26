@@ -19,15 +19,24 @@ class Tumor_cells(Agent):
         self.viable = True   
         # All the relevant properties (instance variables) for the tumor cell are initiated 
         #DEFAULTS
+        
+        #basics
         self.proliferation_prob = 0.0846
         self.migration_prob = 0.1167
         self.death_prob = 0.00284
         self.initial_resist_M1_prob = 0
         self.resistance_M1_prob = 0.004
-        self.hypoxia_thresholds = [5.0, 15.0, 30.0];
+
+        #Hypoxia parameters
+        self.max_signal_dist = 20
+        self.optimal_signal_dist = 10
+        self.hypoxia_thresholds = [3.0, 10.0, 22.0];
+
+        #endo tracking
         self.nearest_endo = None;
         self.nearest_dist = None;
         self.prev_dist = None;
+
         self.set_nearest_endo() #identify nearest endo during initialization
     
     #SETTERS
@@ -86,30 +95,60 @@ class Tumor_cells(Agent):
             else:
                 pass
         pass
+    
+    def set_optimal_signal_dist(self, *args):
+        self.optimal_signal_dist = args[0]
 
     def tumor_endo_interaction(self):
         self.set_nearest_endo(); #updates prev distance and new distance.
         
-        #INTERACTION ATTIBUTES
+        #NOTATIONS
+        best_dist = self.optimal_signal_dist
+        curr_dist = self.nearest_dist
+        threshold1 = self.hypoxia_thresholds[0] #Lower hypoxia limit
+        threshold2 = self.hypoxia_thresholds[1] #Upper hypoxia limit
+        threshold3 = self.hypoxia_thresholds[2]
         diff = self.prev_dist - self.nearest_dist #This only works if set_nearest_endo is initialized.
-        death_factor = 1.2 * (self.nearest_dist/self.hypoxia_thresholds[2]) #1.2 is the standard death factor above the maximum hypoxia threshold. Chance of dying increases by 20% each step.
-        induction_factor = self.nearest_dist;
+        diff_sign = 0
+        
+        if diff != 0:
+            diff_sign = abs(diff)/diff
+
+        #INTERACTION ATTIBUTES    
+        delta_death_factor = (threshold3-curr_dist/threshold3)
+        death_factor = 1-delta_death_factor
+
+        prolif_deactivation_level =  diff_sign*(curr_dist - threshold2)/curr_dist #relevant in the logistic zone
+        proliferation_factor = 1-prolif_deactivation_level
+
+        induction_factor = 0 #Set seperatley 
+        #Set induction factor
+        if best_dist == curr_dist:
+            induction_factor = 1
+        else:
+            induction_factor = 1 / (1 + abs(best_dist-curr_dist))
+
         #DISCRETE ZONE
         if self.nearest_dist <= self.hypoxia_thresholds[0]: #withing Lower bound
-            self.set_proliferation_prob(0.1, "val")   #+20%
+            self.set_proliferation_prob(0.15, "val")   #+20%
         elif self.hypoxia_thresholds[0] < self.nearest_dist <= self.hypoxia_thresholds[1]:
             self.set_proliferation_prob("default")     #default
         
-        #EXPONENTIAL ZONE
-        elif self.hypoxia_thresholds[1] < self.nearest_dist:
-            if diff > 0:
-                self.set_proliferation_prob(0.7, "proportion") #decrease proliferation rate by few percent
+        #LOGISTIC ZONE
+        elif self.nearest_dist > self.hypoxia_thresholds[1]:
+            if diff != 0:
+                self.set_proliferation_prob(proliferation_factor, "proportion")
                 self.set_death_prob(death_factor, "proportion")
-            elif diff < 0:
-                self.set_proliferation_prob(1.01, "proportion") #increase slightly as endo gets closer
+            self.nearest_endo.targeted_proliferation(self.position, induction_factor)          
+            #if diff > 0:
+            #   self.set_proliferation_prob(delta_proliferation_prob, "proportion") #decrease proliferation rate by few percent
+            #    self.set_death_prob(death_factor, "proportion")
+            #elif diff < 0:
+            #    self.set_proliferation_prob(1.01, "proportion") #increase slightly as endo gets closer
             #Induce proliferation in endothelial cell
-            self.nearest_endo.targeted_proliferation(self.position)          
             
+
+
         #elif self.nearest_dist > self.hypoxia_thresholds[2]:
         #    self.set_death_prob(2, "proportion")
     
@@ -128,14 +167,12 @@ class Tumor_cells(Agent):
                 self.model.grid.move_agent(self, new_position)
 
         #MIGRATION ACROSS BLOOD VESSLE
-        possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
-        new_position = self.random.choice(possible_steps)
         
     #APOPTOSIS METHOD:
     def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
             if self.position == None:
                 print(f"Does not have a position: {self.unique_id}")
-            else:
+            elif self.position != None:
                 self.viable = False
                 self.model.grid.remove_agent(self);
                 self.model.schedule.remove(self);

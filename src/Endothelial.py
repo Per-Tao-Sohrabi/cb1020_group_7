@@ -17,12 +17,13 @@ class Endothelial(Agent):
         self.position = position;
         self.targeted_prolif = None
 
-    def targeted_proliferation(self, target_coord):
+    def targeted_proliferation(self, target_coord, induction_factor):
         self.targeted_prolif = target_coord
         x_target, y_target = target_coord
-
+        prol_prob = induction_factor
         #Create the new agent:
-        self.model.generate_agents(Endothelial, "directed proliferation", 1, self.position, self.targeted_prolif)
+        if self.random.random() < prol_prob:
+            self.model.generate_agents(Endothelial, "directed proliferation", 1, self.position, self.targeted_prolif)
 
     def step(self):
             
