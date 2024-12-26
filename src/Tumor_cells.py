@@ -29,7 +29,7 @@ class Tumor_cells(Agent):
 
         #Hypoxia parameters
         self.max_signal_dist = 20
-        self.optimal_signal_dist = 10
+        self.optimal_signal_dist = 12
         self.hypoxia_thresholds = [3.0, 10.0, 22.0];
 
         #endo tracking
@@ -116,12 +116,12 @@ class Tumor_cells(Agent):
 
         #INTERACTION ATTIBUTE PARAMETERS *FOR LOGISTIC ZONE*
         #  Death Intensity
-        death_intensity = 0.7
+        death_intensity = 0.02
         delta_death_factor = death_intensity *(threshold3-curr_dist/threshold3)
         death_factor = 1-delta_death_factor
         
         #  Tumor Proliferation Inhibition
-        inhib_intensity = 0.2
+        inhib_intensity = 0.4
         prolif_inhibition_level =  0
         if curr_dist != 0:
             prolif_inhibition_level = inhib_intensity*diff_sign*(curr_dist - threshold2)/curr_dist #relevant in the logistic zone
@@ -129,10 +129,11 @@ class Tumor_cells(Agent):
         
         #   Induction Level
         induct_intensity = 1
+        speed_dampening = 0.01 #Lowers the significance of the optimal signal distance.
         if best_dist == curr_dist:
             induction_factor = 1
         else:
-            induction_factor = induct_intensity * 1 / (1 + abs(best_dist-curr_dist))
+            induction_factor = induct_intensity * 1 / (1 + abs(best_dist-speed_dampening*curr_dist)) #0.9 because the milden the drop in induction intensity when removed from best distance. 
 
         #========ZONES========
         #DISCRETE ZONE
