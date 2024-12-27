@@ -33,17 +33,17 @@ class Tumor_cells(Agent):
         self.optimal_signal_dist = 12
         self.hypoxia_thresholds = [2.0, 13.0, 20.0];
 
-        #ENDO TRACKING
+        #ENDO TRACKINGs
         self.nearest_endo = None;
         self.nearest_dist = None;
         self.prev_dist = None;
         self.set_nearest_endo() #identify nearest endo during initialization
         
-        #INTERACTION PARAMETERS (Distance Dependent) -> self.tumor_endo_interaction()
-        self.apoptosis_intensity = 1.4   #0.025
-        self.prolif_inhib_intensity = 0.5 #0.04
-        self.endo_prol_induction_intensity = 1.5 #0.8
-        self.optimal_signal_dist_significane = 0.001 #0.01
+        #INTERACTION PARAMETERS (Distance Depen dent) -> self.tumor_endo_interaction()
+        self.death_intensity = 1.7  #0.025
+        self.prolif_inhib_intensity = 0.4 #0.04
+        self.endo_prol_induction_intensity = 0.95 #0.8
+        self.optimal_signal_dist_significane = 0.1 #0.01
 
         #AGE PARAMETERS
         self.recParam1 = 0
@@ -107,14 +107,13 @@ class Tumor_cells(Agent):
     
     #TUMOR-ENDOTHELIAL CELL INTERACTIONS
     def tumor_endo_interaction(self):
+        print(f'Attempting tumor-endo interaction for agent: {self.unique_id}')
         self.set_nearest_endo(); #updates prev distance and new distance.
         
         #NOTATIONS
         best_dist = self.optimal_signal_dist
         curr_dist = self.nearest_dist
-        threshold1 = self.hypoxia_thresholds[0] #Lower hypoxia limit
-        threshold2 = self.hypoxia_thresholds[1] #Upper hypoxia limit
-        threshold3 = self.hypoxia_thresholds[2]
+        threshold1 = self.hypoxia_thresholds[0]; threshold2 = self.hypoxia_thresholds[1]; threshold3 = self.hypoxia_thresholds[2]
         diff = self.prev_dist - self.nearest_dist #This only works if set_nearest_endo is initialized.
         if diff != 0:
             diff_sign = diff/abs(diff)
@@ -123,8 +122,8 @@ class Tumor_cells(Agent):
 
         #INTERACTION ATTIBUTE PARAMETERS *FOR LOGISTIC ZONE*
         #  Death Intensity
-        death_intensity = self.apoptosis_intensity
-        delta_death_factor = death_intensity * -1 * abs(threshold3-curr_dist/threshold3) #större
+        death_intensity = self.death_intensity
+        delta_death_factor = death_intensity  * (threshold3-curr_dist)/threshold3 #större
         death_factor = 1-delta_death_factor
         
         #  Tumor Proliferation Inhibition
@@ -156,14 +155,15 @@ class Tumor_cells(Agent):
         elif self.nearest_dist > self.hypoxia_thresholds[1]:
             if diff != 0:
                 self.set_proliferation_prob(proliferation_factor, "proportion")
-                self.set_death_prob(death_factor, "proportion")
+                self.set_death_prob(death_factor, "value")
             self.nearest_endo.targeted_proliferation(self.position, induction_factor)          
-            print(f'TUMOR DATA id = {self.unique_id}')
-            print(f'* Tumor Age = {150-self.lifespan}')
-            print(f'Direction sign {diff_sign}')
-            print(f'* Proliferation Prob in Exponential zone = {self.proliferation_prob}')
-            print(f'* Distance to nearest Endothelial cell = {self.nearest_dist}')
-            
+        print(f'TUMOR DATA id = {self.unique_id}')
+        print(f'* Tumor Age = {150-self.lifespan}')
+        print(f'* Proliferation Prob = {self.proliferation_prob}')
+        print(f'* Death Prob = {self.death_prob}')
+        print(f'* Direction sign {diff_sign}')
+        print(f'* Distance to nearest Endothelial cell = {self.nearest_dist}')
+        
 
 
         #elif self.nearest_dist > self.hypoxia_thresholds[2]:
@@ -224,7 +224,6 @@ class Tumor_cells(Agent):
     def step(self):
         #self.age()
         self.migrate();
-        print(f'Attempting tumor-endo interaction for agent: {self.unique_id}')
         self.tumor_endo_interaction();
         if random.randint(0,100) < 100*self.proliferation_prob:
             self.proliferate();

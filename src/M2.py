@@ -65,12 +65,12 @@ class M2(Agent):
             # Support tumor growth with probability
                 if self.random.random() < self.prob_support_growth:
                 # Create a new tumor cell in a random neighboring position
-                    empty_neighbors = self.model.grid.get_neighborhood(neighbor.position, moore=True, include_center=False)
-                    empty_neighbors = [pos for pos in empty_neighbors if self.model.grid.is_cell_empty(pos)]
-                    if empty_neighbors:
-                        new_tumor_cell = self.random.choice(empty_neighbors)
-                        new_tumor_cell.set_proliferation_prob(2, "proportion")
-                        new_tumor_cell.set_death_prob(0,"value")
+                    neighbors = self.model.grid.get_neighborhood(neighbor.position, moore=True, include_center=False)
+                    tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cells)]
+                    if tumor_cells:
+                        tumor_cell = self.random.choice(tumor_cells)
+                        tumor_cell.set_proliferation_prob(2, "proportion")
+                        tumor_cell.set_death_prob(0,"value")
                         print("M2 Supperoted TUMOR PROLIFERATIOn")
     """
         Moves the macrophage to a random neighboring position.

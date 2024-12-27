@@ -184,10 +184,10 @@ class MainModel(Model):
         self.endothelial_list = self.get_agent_type_list(Endothelial)
         self.generate_agents(Tumor_cells, "default", 1);
         self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
-        self.generate_agents(M1, "default", 100);
+        self.generate_agents(M1, "default", 300);
         self.m1_list = self.get_agent_type_list(M1)
-        #self.generate_agents(M2, "default", 100);
-        #self.m2_list = self.get_agent_type_list(M2)
+        self.generate_agents(M2, "default", 10);
+        self.m2_list = self.get_agent_type_list(M2)
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);

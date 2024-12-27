@@ -28,7 +28,7 @@ class M1(Agent):
     def __init__(self, agent_id, position, model):
         super().__init__(agent_id, model)
         self.position = position
-        self.killing_capacity = 11       # Killing capacity 
+        self.killing_capacity = 20 #11       # Killing capacity 
         self.prob_kill = 0.03            # Probability of killing
         self.prob_migrate = 0.4          # Probability of migration
         self.prob_death = 0.001          # Probability of death
@@ -50,7 +50,6 @@ class M1(Agent):
         if self.random.random() < self.prob_migrate:
             self.migrate()
         if self.random.random() < self.prob_kill:
-            print("Attempting to kill TUMOR")
             self.kill_tumor_cell()
     """
     Moves the agent to a random neighboring cell if the new cell is empty.
@@ -74,6 +73,7 @@ class M1(Agent):
         neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False)
         tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cells)]
         if tumor_cells:
+            print("Attempting to kill TUMOR")
             target = self.random.choice(tumor_cells)
             target.set_death_prob(1, "val") #Before TC.apoptosis() was called raising NoneType Error
             self.killing_capacity -= 1
