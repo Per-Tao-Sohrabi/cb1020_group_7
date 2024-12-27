@@ -40,8 +40,8 @@ class Tumor_cells(Agent):
         self.set_nearest_endo() #identify nearest endo during initialization
         
         #INTERACTION PARAMETERS (Distance Dependent) -> self.tumor_endo_interaction()
-        self.apoptosis_intensity = 1.5   #0.025
-        self.prolif_inhib_intensity = 2.5 #0.04
+        self.apoptosis_intensity = 1.4   #0.025
+        self.prolif_inhib_intensity = 0.5 #0.04
         self.endo_prol_induction_intensity = 1.5 #0.8
         self.optimal_signal_dist_significane = 0.001 #0.01
 

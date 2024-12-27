@@ -186,7 +186,7 @@ class MainModel(Model):
         self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
         self.generate_agents(M1, "default", 100);
         self.m1_list = self.get_agent_type_list(M1)
-        #self.generate_agents(M2, "default", 10);
+        #self.generate_agents(M2, "default", 100);
         #self.m2_list = self.get_agent_type_list(M2)
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
@@ -221,12 +221,13 @@ class MainModel(Model):
         self.endothelial_list = self.get_agent_type_list(Endothelial)
         self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
         self.m1_list = self.get_agent_type_list(M1)
-        #self.m2_list = self.get_agent_type_list(M2)
+        self.m2_list = self.get_agent_type_list(M2)
 
         #PRINT STEP DATA:
         print(f'Number of Endothelial cells: {len(self.endothelial_list)}')
         print(f'Number of Tumor cells: {len(self.tumor_cell_list)}')
         print(f'Number of M1 cells: {len(self.m1_list)}')
+        print(f'Number of M2 cells: {len(self.m2_list)}')
         #print(f'Test sample : {self.m1_list}')
 
         #UPDATE self.agent_storage{} TO REMOVE AGENTS THAT DO NOT APPEAR IN self.scheduler

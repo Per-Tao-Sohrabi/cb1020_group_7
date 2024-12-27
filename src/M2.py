@@ -69,8 +69,9 @@ class M2(Agent):
                     empty_neighbors = [pos for pos in empty_neighbors if self.model.grid.is_cell_empty(pos)]
                     if empty_neighbors:
                         new_tumor_cell = self.random.choice(empty_neighbors)
-                        new_tumor_cell.set_proliferation_prob(1)
-                        
+                        new_tumor_cell.set_proliferation_prob(2, "proportion")
+                        new_tumor_cell.set_death_prob(0,"value")
+                        print("M2 Supperoted TUMOR PROLIFERATIOn")
     """
         Moves the macrophage to a random neighboring position.
     """
