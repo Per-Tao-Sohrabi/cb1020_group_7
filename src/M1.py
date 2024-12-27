@@ -28,7 +28,7 @@ class M1(Agent):
     def __init__(self, agent_id, position, model):
         super().__init__(agent_id, model)
         self.position = position
-        self.killing_capacity = 11       # Killing capacity 
+        self.killing_capacity = 20 #11       # Killing capacity 
         self.prob_kill = 0.03            # Probability of killing
         self.prob_migrate = 0.4          # Probability of migration
         self.prob_death = 0.001          # Probability of death
@@ -56,9 +56,15 @@ class M1(Agent):
     """
     def migrate(self):
         possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
-        new_position = self.random.choice(possible_steps)
-        if self.model.grid.is_cell_empty(new_position):
+        
+        # Filter only empty positions
+        empty_positions = [pos for pos in possible_steps if self.model.grid.is_cell_empty(pos)]
+
+        #Pick an empty position if there are any
+        if len(empty_positions) > 0:
+            new_position = self.random.choice(empty_positions)
             self.model.grid.move_agent(self, new_position)
+
     """
     Kills a neighboring tumor cell if one exists.
     Reduces the killing capacity of the agent by 1.
@@ -67,7 +73,7 @@ class M1(Agent):
         neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False)
         tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cells)]
         if tumor_cells:
+            print("Attempting to kill TUMOR")
             target = self.random.choice(tumor_cells)
-            target.set_death_prob(1)
-            self.killing_capacity -= 0
-
+            target.set_death_prob(1, "val") #Before TC.apoptosis() was called raising NoneType Error
+            self.killing_capacity -= 1
