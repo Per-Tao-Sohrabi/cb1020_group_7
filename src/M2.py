@@ -3,6 +3,7 @@ from mesa.time import RandomActivation
 from mesa.space import MultiGrid
 from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
+from Tumor_cells import Tumor_cells
 import random
 
 class M2(Agent):
@@ -45,9 +46,14 @@ class M2(Agent):
 
         # Attempt to migrate
     def migrate(self):
-        possible_steps = self.model.grid.get_neighborhood(self.position, moore=True, include_center=False)
-        new_position = self.random.choice(possible_steps)
-        if self.model.grid.is_cell_empty(new_position):
+        possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
+        
+        # Filter only empty positions
+        empty_positions = [pos for pos in possible_steps if self.model.grid.is_cell_empty(pos)]
+
+        #Pick an empty position if there are any
+        if len(empty_positions) > 0:
+            new_position = self.random.choice(empty_positions)
             self.model.grid.move_agent(self, new_position)
 
         
@@ -59,12 +65,13 @@ class M2(Agent):
             # Support tumor growth with probability
                 if self.random.random() < self.prob_support_growth:
                 # Create a new tumor cell in a random neighboring position
-                    empty_neighbors = self.model.grid.get_neighborhood(neighbor.position, moore=True, include_center=False)
-                    empty_neighbors = [pos for pos in empty_neighbors if self.model.grid.is_cell_empty(pos)]
-                    if empty_neighbors:
-                        new_tumor_cell = self.random.choice(empty_neighbors)
-                        new_tumor_cell.set_proliferation_prob(1)
-                        
+                    neighbors = self.model.grid.get_neighborhood(neighbor.position, moore=True, include_center=False)
+                    tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cells)]
+                    if tumor_cells:
+                        tumor_cell = self.random.choice(tumor_cells)
+                        tumor_cell.set_proliferation_prob(2, "proportion")
+                        tumor_cell.set_death_prob(0,"value")
+                        print("M2 Supperoted TUMOR PROLIFERATIOn")
     """
         Moves the macrophage to a random neighboring position.
     """
