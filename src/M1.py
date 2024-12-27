@@ -76,4 +76,4 @@ class M1(Agent):
         if tumor_cells:
             target = self.random.choice(tumor_cells)
             target.set_death_prob(1, "val") #Before TC.apoptosis() was called raising NoneType Error
-            self.killing_capacity -= 0
+            self.killing_capacity -= 1
