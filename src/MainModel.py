@@ -8,7 +8,7 @@ import random as random;
 from Endothelial import Endothelial;
 from Tumor_cells import Tumor_cells; 
 from M1 import M1;
-from M2 import M2
+from M2 import M2;
 from Fibroblast import Fibroblast;
 
 
@@ -173,7 +173,8 @@ class MainModel(Model):
             Endothelial: {},
             Tumor_cells: {},
             M1: {},
-            M2: {}
+            M2: {},
+            Fibroblast: {}
             # Add other agent types here if needed
         }
          #saves agent_chaces from self.generate_agents(*args);
@@ -188,6 +189,7 @@ class MainModel(Model):
         self.m1_list = self.get_agent_type_list(M1)
         self.generate_agents(M2, "default", 10);
         self.m2_list = self.get_agent_type_list(M2)
+        self.generate_agents(Fibroblast, "default", 5);
         self.agent_storage["Fibroblast"] = self.generate_agents(Fibroblast,"default", 5);
         self.fibroblast_list = self.get_agent_type_list(Fibroblast)
         #self.generate_agents(M1, 10);
@@ -224,12 +226,14 @@ class MainModel(Model):
         self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
         self.m1_list = self.get_agent_type_list(M1)
         self.m2_list = self.get_agent_type_list(M2)
+        self.fibroblast_list_list = self.get_agent_type_list(Fibroblast)
 
         #PRINT STEP DATA:
         print(f'Number of Endothelial cells: {len(self.endothelial_list)}')
         print(f'Number of Tumor cells: {len(self.tumor_cell_list)}')
         print(f'Number of M1 cells: {len(self.m1_list)}')
         print(f'Number of M2 cells: {len(self.m2_list)}')
+        print(f'Number of M2 cells: {len(self.fibroblast_list)}')
         #print(f'Test sample : {self.m1_list}')
 
         #UPDATE self.agent_storage{} TO REMOVE AGENTS THAT DO NOT APPEAR IN self.scheduler
