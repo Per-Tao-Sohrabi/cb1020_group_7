@@ -9,7 +9,7 @@ from Endothelial import Endothelial;
 from Tumor_cells import Tumor_cells; 
 from M1 import M1;
 from M2 import M2
-# from Fibroblast import Fibroblast;
+from Fibroblast import Fibroblast;
 
 
 
@@ -188,6 +188,8 @@ class MainModel(Model):
         self.m1_list = self.get_agent_type_list(M1)
         self.generate_agents(M2, "default", 10);
         self.m2_list = self.get_agent_type_list(M2)
+        self.agent_storage["Fibroblast"] = self.generate_agents(Fibroblast,"default", 5);
+        self.fibroblast_list = self.get_agent_type_list(Fibroblast)
         #self.generate_agents(M1, 10);
         #self.generate_agents(M2, 10);
         #self.generate_agents(Fibroblast, 5);
@@ -280,6 +282,13 @@ def agent_portrayal(agent):
         portrayal["r"] = 1
         portrayal["Color"] = "purple"
         portrayal["Layer"] = 0
+    
+    elif isinstance(agent, Fibroblast):
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = 1
+        portrayal["Color"] = "blue"
+        portrayal["Layer"] = 0
+
 
     return portrayal
 
