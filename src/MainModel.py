@@ -158,7 +158,7 @@ class MainModel(Model):
         return agent_type_list
     
     # INITIALIZE MODEL - initialize the agents put on the grid by the previous method
-    def __init__(self, num_steps=50, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """
         Initialize the MainModel.
 
@@ -170,7 +170,7 @@ class MainModel(Model):
         random.seed(4)
         
         #MODEL RUNNING:
-        self.num_steps = num_steps
+        self.num_steps = 50
         #Model fields
         super().__init__(*args, **kwargs)
         self.grid = MultiGrid(150, 150, torus=False);
@@ -335,6 +335,7 @@ class MainModel(Model):
         #APPROACH END OF SIMULATION
         if self.step_count >= self.num_steps:
             print("Simulation reached the maximum number of steps")
+            
             return
         
         #DATA COLLECTION
