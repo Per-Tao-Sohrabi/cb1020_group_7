@@ -64,22 +64,30 @@ class Fibroblast(Agent):
     """
     def migrate(self):
         possible_steps = self.model.grid.get_neighborhood(self.position, moore=True, include_center=False)
-        new_position = self.random.choice(possible_steps)
-        self.model.grid.move_agent(self, new_position)
+        
+        # Filter only empty positions
+        empty_positions = [pos for pos in possible_steps if self.model.grid.is_cell_empty(pos)]
+
+        #Pick an empty position if there are any
+        if len(empty_positions) > 0:
+            new_position = self.random.choice(empty_positions)
+            if new_position != None:
+                self.model.grid.move_agent(self, new_position)
 
     """
         Creates a new fibroblast agent in an empty neighboring cell if one exists.
         Reduces the proliferation capacity of the current agent by 1.
     """
     def proliferate(self):
+        self.model.generate_agents(Fibroblast, "proliferate", 1, self.position)
         empty_cells = [cell for cell in self.model.grid.get_neighborhood(self.position, moore=True, include_center=False)
                        if self.model.grid.is_cell_empty(cell)]
-        if empty_cells:
-            new_position = self.random.choice(empty_cells)
-            new_agent = Fibroblast(self.model.next_id(), new_position, self.model)
-            self.model.grid.place_agent(new_agent, new_position)
-            self.model.schedule.add(new_agent)
-            self.proliferation_capacity -= 1
+        #if empty_cells:
+            #new_position = self.random.choice(empty_cells)
+            #new_agent = Fibroblast(self.model.next_id(), new_position, self.model)
+            #self.model.grid.place_agent(new_agent, new_position)
+            #self.model.schedule.add(new_agent)
+            #self.proliferation_capacity -= 1
 
 
 # Fibroblast Model

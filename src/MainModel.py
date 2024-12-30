@@ -47,6 +47,7 @@ class MainModel(Model):
             dict: A cache of generated agents indexed by their unique IDs.
         """
         agent_cache = {};
+        agent = None
         for i in range(amount):
             unique_id = self.get_next_unique_id()
             if brush_stroke == "proliferate":
@@ -131,7 +132,8 @@ class MainModel(Model):
                     #if mother.target
                 else:
                     break
-            self.add_agent(agent_type, agent)
+            if agent != None:
+                self.add_agent(agent_type, agent)
         pass # allows the agents that exist in the cache to be saved in the model's agent storage 
 
     #ADD AGENT TO MODEL (This is a helper method for the above method)
@@ -289,7 +291,7 @@ def agent_portrayal(agent):
     elif isinstance(agent, Fibroblast):
         portrayal["Shape"] = "circle"
         portrayal["r"] = 1
-        portrayal["Color"] = "blue"
+        portrayal["Color"] = "orange"
         portrayal["Layer"] = 0
 
 
