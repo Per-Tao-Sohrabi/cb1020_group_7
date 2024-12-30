@@ -234,24 +234,27 @@ class Tumor_cells(Agent):
 
     #EAT
     def eat(self):
-        self.model.eat_nutrition(1)
+        self.model.eat_nutrition(100)
 
     #HUNGER
     def hunger(self):
         #COUNT CELLS
-        total_cells = self.model.data_collection("count", "total")
-        tot_ex_endo = total_cells - self.model.agent_count_record[0]["ENDOTHELIAL"]
+        total_cells = self.model.grid.width*self.model.grid.height + self.model.data_collection("count", "total") 
         #COUNT NUTRITION
         nutrition_cap = self.model.nutrition_cap
         #COUNT RATIO # Smaller ratio >>> decreased pro parameters, increased de parameters.
-        depletion_ratio = nutrition_cap/tot_ex_endo
+        depletion_ratio = nutrition_cap/total_cells
 
-        if depletion_ratio < 1:
-            self.set_proliferation_prob(depletion_ratio, "proportion")
+        if depletion_ratio < 1:             #When nutrition is being depleted
+            self.set_proliferation_prob(depletion_ratio**2, "proportion")
+            self.set_death_prob(1+depletion_ratio**2, "proportion")
             pass
+        if nutrition_cap <= 0:
+            self.set_proliferation_prob(0, "value")
       
     #STEP 
     def step(self):
+        self.eat()
         self.hunger()
         self.age()
         self.migrate();

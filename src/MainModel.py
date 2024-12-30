@@ -107,6 +107,7 @@ class MainModel(Model):
                         #self.add_agent(agent_type, agent)
                         #self.grid.place_agent(agent, (new_x, new_y))
             elif brush_stroke == "directed proliferation":
+
                 #print("IN CONSTRUCTION")
                 mother_position = args[0]
                 #mother_target_coord = args[1]
@@ -114,6 +115,10 @@ class MainModel(Model):
                 #1. Check Surroundings: get list of empty surrounding
                 # Get all adjacent positions (Moore neighborhood, excluding center)
                 #print(mother_position)
+                x, y = mother_position                              #Edge case handeling where position is out of bounds
+                if x < 0 or x >= self.grid.width or y < 0 or y >= self.grid.height:
+                    return 
+
                 adjacent_positions = self.grid.get_neighborhood(pos=mother_position, moore=True, include_center=False, radius=1)
                 # Filter positions to only include empty cells
                 empty_positions = [pos for pos in adjacent_positions if self.grid.is_cell_empty(pos)] 
@@ -171,7 +176,8 @@ class MainModel(Model):
         random.seed(4)
         
         #MODEL RUNNING:
-        self.num_steps = 300
+        self.num_steps = 250
+
         #Model fields
         super().__init__(*args, **kwargs)
         self.grid = MultiGrid(150, 150, torus=False);
@@ -192,7 +198,7 @@ class MainModel(Model):
         self.generate_agents(Endothelial,"horizontal blood vessle", 1000);
         self.generate_agents(Endothelial,"vertical blood vessle", 1000);
         self.endothelial_list = self.get_agent_type_list(Endothelial)
-        self.nutrition_cap = len(self.endothelial_list)
+        self.nutrition_cap = self.grid.width*self.grid.height #len(self.endothelial_list)*1000                #GODTYCKLIKGT STARTVÄRDE 
 
         self.generate_agents(Tumor_cells, "default", 1);
         self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
@@ -207,6 +213,7 @@ class MainModel(Model):
         self.step_count = 0
         self.agent_count_record = {}
         self.agent_rate_record = {}
+        self.nutrition_record = {}
         #self.avg_agent_specific_rates = {}
 
         # Initialize DataCollector
@@ -254,6 +261,8 @@ class MainModel(Model):
             dm1dt = 0
             dm2dt = 0
             dfibroblastdt = 0
+
+
         
         #CURRENT RATES
         agent_rate = {
@@ -269,6 +278,7 @@ class MainModel(Model):
         if args[0] == "record":
             self.agent_count_record[self.step_count] = agent_count
             self.agent_rate_record[self.step_count] = agent_rate
+            self.nutrition_record[self.step_count] = self.nutrition_cap
         
         if args[0] == "count":
             if args[1] == "total":
@@ -300,6 +310,7 @@ class MainModel(Model):
 
     #PRINT DATA
     def plot_data(self):
+            #agent data
             total_agents_count_over_time = []
             endothelial_agents_count_over_time = []
             tumor_agents_count_over_time = []
@@ -317,12 +328,19 @@ class MainModel(Model):
                     count = self.agent_count_record[step][type]
                     print(count)
                     plot.append(count)
+            
+            #nutrient data
+            nutrient_cap_over_time = []
+            for step in self.nutrition_record:
+                nutrient_cap_over_time.append(self.nutrition_record[step])
+
                 #self.plot_graph(steps, plot, f'{type} over time"', "time", "agents")
             plt.plot(steps, time_plots[1], label = "endothelial")
             plt.plot(steps, time_plots[2], label = "tumor cells")
             plt.plot(steps, time_plots[3], label = "m1")
             plt.plot(steps, time_plots[3], label = "m2")
             plt.plot(steps, time_plots[3], label = "fibroblast cells")
+            #plt.plot(steps, nutrient_cap_over_time, label = "nutrient cap")
             plt.legend()
             plt.show()
         
@@ -358,7 +376,7 @@ class MainModel(Model):
     
     #CREATE NUTRITION CAP
     def update_nutrition_cap(self):
-        self.nutrition_cap += len(self.endothelial_list)
+        self.nutrition_cap += 100*len(self.endothelial_list) 
     
     #EAT NEW NUTRITION CAP
     def eat_nutrition(self, val):
@@ -403,6 +421,7 @@ class MainModel(Model):
         self.fibroblast_list = self.get_agent_type_list(Fibroblast)
         
         #UPDATE NUTRITION CAP
+        self.eat_nutrition(self.grid.width*self.grid.height*0.01)            #simulate tissue maintainance consumption
         self.update_nutrition_cap()
 
         #PRINT STEP DATA:

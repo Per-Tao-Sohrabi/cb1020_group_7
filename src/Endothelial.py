@@ -15,19 +15,32 @@ class Endothelial(Agent):
         self.unique_id
         self.model = model
         self.position = position;
+        self.proliferation_prob = 100
         self.targeted_prolif = None
 
     def targeted_proliferation(self, target_coord, induction_factor):
         #print(f'Endothelial position = {self.position}')
         self.targeted_prolif = target_coord
         x_target, y_target = target_coord
-        prol_prob = 100*induction_factor
+        self.proliferation_prob = 100*induction_factor
         #Create the new agent:
-        if self.random.randint(0,100) < prol_prob:
+        if self.random.randint(0,100) < self.proliferation_prob:
             self.model.generate_agents(Endothelial, "directed proliferation", 1, self.position)
+    def eat(self):
+        self.model.eat_nutrition(1)
+
+    def hunger(self):
+
+        total_cells = self.model.grid.width*self.model.grid.height + self.model.data_collection("count", "total") 
+
+        nutrition_count = self.model.nutrition_cap
+
+        depletion_ratio = nutrition_count/total_cells
+
+        self.proliferation_prob *= depletion_ratio
 
     def step(self):
-            
+        self.hunger()
         #define behaviour for diff situations here
         pass
 
