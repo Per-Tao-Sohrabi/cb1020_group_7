@@ -3,6 +3,7 @@ from mesa.space import MultiGrid
 from mesa.time import SimultaneousActivation
 from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
+from mesa.datacollection import DataCollector
 
 import random as random;
 from Endothelial import Endothelial;
@@ -107,13 +108,13 @@ class MainModel(Model):
                         #self.add_agent(agent_type, agent)
                         #self.grid.place_agent(agent, (new_x, new_y))
             elif brush_stroke == "directed proliferation":
-                print("IN CONSTRUCTION")
+                #print("IN CONSTRUCTION")
                 mother_position = args[0]
                 #mother_target_coord = args[1]
                 #GENERATE NEXT POSITION
                 #1. Check Surroundings: get list of empty surrounding
                 # Get all adjacent positions (Moore neighborhood, excluding center)
-                print(mother_position)
+                #print(mother_position)
                 adjacent_positions = self.grid.get_neighborhood(pos=mother_position, moore=True, include_center=False, radius=1)
                 # Filter positions to only include empty cells
                 empty_positions = [pos for pos in adjacent_positions if self.grid.is_cell_empty(pos)] 
@@ -187,16 +188,108 @@ class MainModel(Model):
         self.endothelial_list = self.get_agent_type_list(Endothelial)
         self.generate_agents(Tumor_cells, "default", 1);
         self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
-        self.generate_agents(M1, "default", 200);
+        self.generate_agents(M1, "default", 50);
         self.m1_list = self.get_agent_type_list(M1)
-        self.generate_agents(M2, "default", 10);
+        self.generate_agents(M2, "default", 200);
         self.m2_list = self.get_agent_type_list(M2)
         self.generate_agents(Fibroblast, "default", 5);
         self.fibroblast_list = self.get_agent_type_list(Fibroblast);
-        #self.generate_agents(M1, 10);
-        #self.generate_agents(M2, 10);
-        #self.generate_agents(Fibroblast, 5);
+        self.nutrition_cap = self.get_nutrition_cap()
+        
+        #DATACOLLECTION
+        self.step_count = 0
+        self.agent_count_record = {}
+        self.agent_rate_record = {}
+        #self.avg_agent_specific_rates = {}
 
+        # Initialize DataCollector
+        '''
+        self.datacollector = DataCollector(
+            model_reporters={
+                "Total Agents": lambda m: len(m.schedule.agents)
+                "Endothelial cells": lambda m: len(m.endothelial_list)
+                "Tumor_cells": lambda m: len(m.tumor_cells_list)
+                "M1": lambda m: len(m.m1_list)
+                "M2": lambda m: len(m.m2_list)
+                "Fibroblast": lambda m: len(m.fibroblast_list)
+                },
+            agent_reporters={
+                "Position": lambda a: a.pos,
+            }
+        )  
+        '''
+
+    #DATACOLLCETION
+    def data_collection(self, *args):
+        #CURRENT COUNTS
+        agent_count = {
+            "TOTAL":len(self.agent_storage), 
+            "ENDOTHELIAL":len(self.endothelial_list),
+            "TUMOR":len(self.tumor_cell_list),
+            "M1":len(self.m1_list),
+            "M2":len(self.m2_list),
+            "FIBROBLAST":len(self.fibroblast_list),
+            }
+
+        #DATA ANALYSIS
+        if self.step_count > 0:
+            dtotdt = agent_count["TOTAL"] - self.agent_count_record[self.step_count-1]["TOTAL"]
+            dendothelialdt = agent_count["ENDOTHELIAL"] - self.agent_count_record[self.step_count-1]["ENDOTHELIAL"]
+            dtumordt = agent_count["TUMOR"] - self.agent_count_record[self.step_count-1]["TUMOR"]
+            dm1dt = agent_count["M1"] - self.agent_count_record[self.step_count-1]["M1"]
+            dm2dt = agent_count["M2"] - self.agent_count_record[self.step_count-1]["M2"]
+            dfibroblastdt = agent_count["FIBROBLAST"] - self.agent_count_record[self.step_count-1]["FIBROBLAST"]
+        else:
+            dtotdt = 0
+            dendothelialdt = 0
+            dtumordt = 0
+            dm1dt = 0
+            dm2dt = 0
+            dfibroblastdt = 0
+        
+        #CURRENT RATES
+        agent_rate = {
+            "TOTAl":dtotdt,
+            "ENDOTHELIAL":dendothelialdt,
+            "TUMOR":dtumordt,
+            "M1":dm1dt,
+            "M2":dm2dt,
+            "FIBRObLAST":dfibroblastdt
+        }
+
+        #RECORD STEP DATA
+        if args[0] == "record":
+            self.agent_count_record[self.step_count] = agent_count
+            self.agent_rate_record[self.step_count] = agent_rate
+        
+        if args[0] == "count":
+            if args[1] == "total":
+                return agent_count["TOTAL"]
+            if args[1] == "endothelial":
+                return agent_count["ENDOTHELIAL"]
+            if args[1] == "tumor cells":
+                return agent_count["TUMOR"]
+            if args[1] == "m1":
+                return agent_count["M1"]
+            if args[1] == "m2":
+                return agent_count["M2"]
+            if args[1] == "fibroblast":
+                return agent_count["FIBROBLAST"]
+        
+        if args[0] == "rate":
+            if args[1] == "total":
+                return agent_rate["TOTAl"]
+            if args[1] == "endothelial":
+                return agent_rate["ENDOTHELIAL"]
+            if args[1] == "tumor cells":
+                return agent_rate["TUMOR"]
+            if args[1] == "m1":
+                return agent_rate["M1"]
+            if args[1] == "m2":
+                return agent_rate["M2"]
+            if args[1] == "fibroblast":
+                return agent_rate["FIBROBLAST"]
+        
     #UPDATE AGENT_STORAGE{}
     def update_agent_storage(self):
         schedule_agents_set = set(self.schedule.agents)
@@ -214,11 +307,23 @@ class MainModel(Model):
             for unique_id in agents_to_remove:
                 del agents_dict[unique_id]
 
+    #CREATE NUTRITION CAP
+    def get_nutrition_cap(self):
+        self.nutrition_cap =+ len(self.endothelial_list)
+    
+    #EAT NEW NUTRITION CAP
+    def eat_nutrition_cap(self, val):
+        self.nutrition_cap =- val
+
     # STEP METHOD 
     def step(self):  # OBS: preliminary code, have not tested it yet!
         """
         Advance the simulation by one step, updating the model and agents.
         """
+
+        #DATA COLLECTION
+        self.data_collection("record")
+
         #NEXT STEP
         self.schedule.step() 
 
@@ -230,15 +335,22 @@ class MainModel(Model):
         self.fibroblast_list = self.get_agent_type_list(Fibroblast)
 
         #PRINT STEP DATA:
-        print(f'Number of Endothelial cells: {len(self.endothelial_list)}')
-        print(f'Number of Tumor cells: {len(self.tumor_cell_list)}')
-        print(f'Number of M1 cells: {len(self.m1_list)}')
-        print(f'Number of M2 cells: {len(self.m2_list)}')
-        print(f'Number of Fibroblast cells: {len(self.fibroblast_list)}')
+        print(f'Current nutrition_cap levels: {self.nutrition_cap}')
+        #print(f'Number of Endothelial cells: {len(self.endothelial_list)}')
+        #print(f'Number of Tumor cells: {len(self.tumor_cell_list)}')
+        #print(f'Number of M1 cells: {len(self.m1_list)}')
+        #print(f'Number of M2 cells: {len(self.m2_list)}')
+        #print(f'Number of Fibroblast cells: {len(self.fibroblast_list)}')
+        print(f'MODEL LEVEL DATA:')
+        print(f'Counts:{self.agent_count_record[self.step_count]}')
+        print(f'Rates:{self.agent_rate_record[self.step_count]}')
         #print(f'Test sample : {self.m1_list}')
 
         #UPDATE self.agent_storage{} TO REMOVE AGENTS THAT DO NOT APPEAR IN self.scheduler
         self.update_agent_storage()
+        self.get_nutrition_cap()
+
+        self.step_count += 1
 
 
         #Update self.agent_storage()

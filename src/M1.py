@@ -73,7 +73,7 @@ class M1(Agent):
         neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False)
         tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cells)]
         if tumor_cells:
-            print("Attempting to kill TUMOR")
+            #print("Attempting to kill TUMOR")
             target = self.random.choice(tumor_cells)
             target.set_death_prob(1, "val") #Before TC.apoptosis() was called raising NoneType Error
             self.killing_capacity -= 1

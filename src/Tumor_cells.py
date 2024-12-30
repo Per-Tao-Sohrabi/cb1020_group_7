@@ -16,7 +16,7 @@ class Tumor_cells(Agent):
         self.model = model;
         self.unique_id = unique_id;
         self.position = position;
-        self.viable = True   
+        self.viable = True
         # All the relevant properties (instance variables) for the tumor cell are initiated 
         #DEFAULTS
         
@@ -31,7 +31,7 @@ class Tumor_cells(Agent):
         #HYPOXIA PARAMETERS
         self.max_signal_dist = 20
         self.optimal_signal_dist = 12
-        self.hypoxia_thresholds = [2.0, 13.0, 20.0];
+        self.hypoxia_thresholds = [2.0, 13.0, 14.0];
 
         #ENDO TRACKINGs
         self.nearest_endo = None;
@@ -39,10 +39,10 @@ class Tumor_cells(Agent):
         self.prev_dist = None;
         self.set_nearest_endo() #identify nearest endo during initialization
         
-        #INTERACTION PARAMETERS (Distance Depen dent) -> self.tumor_endo_interaction()
-        self.death_intensity = 1.9  #0.025
-        self.prolif_inhib_intensity = 0.4 #0.04
-        self.endo_prol_induction_intensity = 0.95 #0.8
+        #INTERACTION PARAMETERS (Distance Depen dent) -> self.tumor_endo_interaction() (NOT STANDARDIZED RANGES)
+        self.death_intensity = 1.9  #1.7
+        self.prolif_inhib_intensity = 0.04 #0.04
+        self.endo_prol_induction_intensity = 1.9 #0.8
         self.optimal_signal_dist_significane = 0.1 #0.01
 
         #AGE PARAMETERS
@@ -68,7 +68,7 @@ class Tumor_cells(Agent):
                 nearest_dist = distance
                 nearest_endo = agent;
             counter += 1
-        print(f'Nearest distance between TC {self.unique_id} and endo {nearest_endo.unique_id} = {nearest_dist}')
+        #print(f'Nearest distance between TC {self.unique_id} and endo {nearest_endo.unique_id} = {nearest_dist}')
         #save old dist
         self.prev_dist = self.nearest_dist
         #update new endo and dist
@@ -107,7 +107,7 @@ class Tumor_cells(Agent):
     
     #TUMOR-ENDOTHELIAL CELL INTERACTIONS
     def tumor_endo_interaction(self):
-        print(f'Attempting tumor-endo interaction for agent: {self.unique_id}')
+        #print(f'Attempting tumor-endo interaction for agent: {self.unique_id}')
         self.set_nearest_endo(); #updates prev distance and new distance.
         
         #NOTATIONS
@@ -157,12 +157,12 @@ class Tumor_cells(Agent):
                 self.set_proliferation_prob(proliferation_factor, "proportion")
                 self.set_death_prob(death_factor, "value")
             self.nearest_endo.targeted_proliferation(self.position, induction_factor)          
-        print(f'TUMOR DATA id = {self.unique_id}')
-        print(f'* Tumor Age = {150-self.lifespan}')
-        print(f'* Proliferation Prob = {self.proliferation_prob}')
-        print(f'* Death Prob = {self.death_prob}')
-        print(f'* Direction sign {diff_sign}')
-        print(f'* Distance to nearest Endothelial cell = {self.nearest_dist}')
+        #print(f'TUMOR DATA id = {self.unique_id}')
+        #print(f'* Tumor Age = {150-self.lifespan}')
+        #print(f'* Proliferation Prob = {self.proliferation_prob}')
+        #print(f'* Death Prob = {self.death_prob}')
+        #print(f'* Direction sign {diff_sign}')
+        #print(f'* Distance to nearest Endothelial cell = {self.nearest_dist}')
         
 
 
@@ -173,7 +173,7 @@ class Tumor_cells(Agent):
     def migrate(self):
         #IN SITU MIGRATION???
         if random.randint(0,100) < 100*self.migration_prob:
-            print("TUMOR CELL MIGRATED")
+            #print("TUMOR CELL MIGRATED")
             possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
             
             # Filter only empty positions
@@ -189,7 +189,7 @@ class Tumor_cells(Agent):
     #APOPTOSIS METHOD:
     def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
             if self.position == None:
-                print(f"Does not have a position: {self.unique_id}")
+                pass #print(f"Does not have a position: {self.unique_id}")
             elif self.position != None:
                 self.viable = False
                 self.model.grid.remove_agent(self);
@@ -219,7 +219,7 @@ class Tumor_cells(Agent):
         
         elif self.lifespan == 0:
             self.set_death_prob(1, "value")
-              
+            
     #STEP 
     def step(self):
         #self.age()
@@ -229,6 +229,7 @@ class Tumor_cells(Agent):
             self.proliferate();
         if random.randint(0,100) < 100*self.death_prob:
             self.apoptosis()
+
         #if adjacent or diagonal cell contain(fibroblast) do Increase  * death_prob?
         #if cell_M.._dist < critDistToM:do Proliferation in empty cell * prolifiration_prob;
         #if cell_endo_dist > critDistHypoxia:Induce Endothelial Proliferation;

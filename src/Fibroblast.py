@@ -17,9 +17,9 @@ from Tumor_cells import Tumor_cells
 
 # Define parameters for the Fibroblast agent
 params = {
-    "Fpdeath": 0.0018+0.01,  # Probability of death
+    "Fpdeath": 0.0018*10,  # Probability of death 
     "Fpmig": 1.4,       # Probability of migration
-    "Fpprol": 0.0838,    # Probability of proliferation
+    "Fpprol": 0.0838/4,    # Probability of proliferation
     "Fpmax": 4           # Initial proliferation capacity
 }
 
@@ -57,8 +57,8 @@ class Fibroblast(Agent):
             self.support_tumor_cells()
 
         # Proliferation
-        elif self.proliferation_capacity > 0 and self.random.random() < params["Fpprol"]:
-            self.proliferate()
+        #elif self.proliferation_capacity > 0 and self.random.random() < params["Fpprol"]:
+        #    self.proliferate()
 
         # Death
         if self.random.random() < params["Fpdeath"]:
@@ -97,20 +97,25 @@ class Fibroblast(Agent):
             #self.model.grid.place_agent(new_agent, new_position)
             #self.model.schedule.add(new_agent)
             #self.proliferation_capacity -= 1
+    
     def support_tumor_cells(self):
         neighbors = self.model.grid.get_neighbors(self.position, moore=True, include_center=False)
         for neighbor in neighbors:
             if isinstance(neighbor, Tumor_cells):
+            
             # Support tumor growth with probability
                 if self.random.random() < self.prob_support_growth:
+            
                 # Create a new tumor cell in a random neighboring position
                     neighbors = self.model.grid.get_neighborhood(neighbor.position, moore=True, include_center=False)
                     tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cells)]
+            
                     if tumor_cells:
                         tumor_cell = self.random.choice(tumor_cells)
-                        tumor_cell.set_proliferation_prob(2, "proportion")
-                        tumor_cell.set_death_prob(0,"value")
-                        print("Fibroblast Supperoted TUMOR PROLIFERATIOn")
+                        if tumor_cell.nearest_dist > tumor_cell.hypoxia_thresholds[1]:
+                            tumor_cell.prolif_inhib_intensity = 0.3
+                            tumor_cell.death_intensity = 0.5
+                            print("Fibroblast Supperoted TUMOR PROLIFERATIOn")
 
 # Fibroblast Model
 class FibroblastModel(Model):
