@@ -17,6 +17,7 @@ from mesa.visualization.ModularVisualization import ModularServer
         alive (bool): Indicates whether the agent is alive.
 """
 class M1(Agent):
+    
     """
         Initializes an M1 macrophage agent.
 
@@ -29,10 +30,11 @@ class M1(Agent):
         super().__init__(agent_id, model)
         self.position = position
         self.killing_capacity = 11       # Killing capacity 
-        self.prob_kill = 0.03            # Probability of killing
-        self.prob_migrate = 0.4          # Probability of migration
-        self.prob_death = 0.001          # Probability of death
+        self.prob_kill = 0.0306          # Probability of killing
+        self.prob_migrate = 0.2667       # Probability of migration
+        self.prob_death = 0.0049         # Probability of death
         self.alive = True
+    
         """
         Executes one step of the agent's behavior:
         - Checks if the agent dies based on `prob_death`.
@@ -42,7 +44,7 @@ class M1(Agent):
     def step(self):
         if not self.alive:
             return
-        if self.random.random() < self.prob_death:
+        if self.random.random() < self.prob_death: 
             self.alive = False
             self.model.grid.remove_agent(self)
             self.model.schedule.remove(self)
@@ -51,14 +53,21 @@ class M1(Agent):
             self.migrate()
         if self.random.random() < self.prob_kill:
             self.kill_tumor_cell()
+    
     """
     Moves the agent to a random neighboring cell if the new cell is empty.
     """
     def migrate(self):
         possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
-        new_position = self.random.choice(possible_steps)
-        if self.model.grid.is_cell_empty(new_position):
+        
+        # Filter only empty positions
+        empty_positions = [pos for pos in possible_steps if self.model.grid.is_cell_empty(pos)]
+
+        #Pick an empty position if there are any
+        if len(empty_positions) > 0:
+            new_position = self.random.choice(empty_positions)
             self.model.grid.move_agent(self, new_position)
+
     """
     Kills a neighboring tumor cell if one exists.
     Reduces the killing capacity of the agent by 1.
@@ -67,7 +76,7 @@ class M1(Agent):
         neighbors = self.model.grid.get_neighbors(self.pos, moore=True, include_center=False)
         tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cells)]
         if tumor_cells:
+            print("Attempting to kill TUMOR")
             target = self.random.choice(tumor_cells)
-            self.model.grid.remove_agent(target)
-            self.model.schedule.remove(target)
+            target.set_death_prob(1, "val") # Before TC.apoptosis() was called raising NoneType Error
             self.killing_capacity -= 1
