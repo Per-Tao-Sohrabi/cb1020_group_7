@@ -184,10 +184,14 @@ class MainModel(Model):
         }
          #saves agent_chaces from self.generate_agents(*args);
         self.used_ids = set();
+
+        #Initiate nutrition_cap
         #self.generate_agents(Tumor_cells,1);
         self.generate_agents(Endothelial,"horizontal blood vessle", 1000);
         self.generate_agents(Endothelial,"vertical blood vessle", 1000);
         self.endothelial_list = self.get_agent_type_list(Endothelial)
+        self.nutrition_cap = len(self.endothelial_list)
+
         self.generate_agents(Tumor_cells, "default", 1);
         self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
         self.generate_agents(M1, "default", 50);
@@ -196,7 +200,8 @@ class MainModel(Model):
         self.m2_list = self.get_agent_type_list(M2)
         self.generate_agents(Fibroblast, "default", 5);
         self.fibroblast_list = self.get_agent_type_list(Fibroblast);
-        self.nutrition_cap = self.get_nutrition_cap()
+
+    
         
         #DATACOLLECTION
         self.step_count = 0
@@ -308,14 +313,18 @@ class MainModel(Model):
             # Remove agents that are not in the schedule
             for unique_id in agents_to_remove:
                 del agents_dict[unique_id]
-
-    #CREATE NUTRITION CAP
+    
+    #GET NUTRITION CAP
     def get_nutrition_cap(self):
-        self.nutrition_cap =+ len(self.endothelial_list)
+        return self.nutrition_cap
+    
+    #CREATE NUTRITION CAP
+    def update_nutrition_cap(self):
+        self.nutrition_cap += len(self.endothelial_list)
     
     #EAT NEW NUTRITION CAP
     def eat_nutrition(self, val):
-        self.nutrition_cap =- val
+        self.nutrition_cap -= val
 
     # STEP METHOD 
     def step(self):  # OBS: preliminary code, have not tested it yet!
@@ -328,13 +337,16 @@ class MainModel(Model):
 
         #NEXT STEP
         self.schedule.step() 
-
+    
         #GENERATE LIST OF ENDOTHELIAL CELLS
         self.endothelial_list = self.get_agent_type_list(Endothelial)
         self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
         self.m1_list = self.get_agent_type_list(M1)
         self.m2_list = self.get_agent_type_list(M2)
         self.fibroblast_list = self.get_agent_type_list(Fibroblast)
+        
+        #UPDATE NUTRITION CAP
+        self.update_nutrition_cap()
 
         #PRINT STEP DATA:
         print(f'Current nutrition_cap levels: {self.nutrition_cap}')
@@ -350,7 +362,7 @@ class MainModel(Model):
 
         #UPDATE self.agent_storage{} TO REMOVE AGENTS THAT DO NOT APPEAR IN self.scheduler
         self.update_agent_storage()
-        self.get_nutrition_cap()
+        
 
         self.step_count += 1
 

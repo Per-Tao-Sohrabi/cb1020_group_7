@@ -45,8 +45,8 @@ class Tumor_cells(Agent):
         #INTERACTION PARAMETERS (Distance Depen dent) -> self.tumor_endo_interaction() (NOT STANDARDIZED RANGES)
         self.death_intensity = 1.9  #1.7
         self.prolif_inhib_intensity = 0.04 #0.04
-        self.endo_prol_induction_intensity = 1.9 #0.8
-        self.optimal_signal_dist_significane = 0.1 #0.01
+        self.angiogenesis_intensity = 1 #0.8
+        self.optimal_signal_dist_significane = 0 #0.01
 
         #AGE PARAMETERS
         self.recParam1 = 0
@@ -113,6 +113,10 @@ class Tumor_cells(Agent):
     def set_optimal_signal_dist(self, *args):
         self.optimal_signal_dist = args[0]
    
+    def set_angiogenesis_intensity(self, *args):
+        if len(args) == 1:
+            self.angiogenesis_intensity = args[0]
+    
     #TUMOR-ENDOTHELIAL CELL INTERACTIONS
     def tumor_endo_interaction(self):
         #print(f'Attempting tumor-endo interaction for agent: {self.unique_id}')
@@ -145,7 +149,7 @@ class Tumor_cells(Agent):
         proliferation_factor = 1-prolif_inhibition_level    # Higher inhibition level > smaller factor > smaller proliferation.
         
         #   Induction Level
-        induct_intensity = self.endo_prol_induction_intensity 
+        induct_intensity = self.angiogenesis_intensity 
         speed_dampening = self.optimal_signal_dist_significane #Lowers the significance of the optimal signal distance.
         if best_dist == curr_dist:
             induction_factor = 1
@@ -217,7 +221,7 @@ class Tumor_cells(Agent):
         if self.lifespan > 0:
             
             self.lifespan -= 1
-            self.recParam1 =+ 0.001
+            self.recParam1 += 0.001
 
             chance_of_death = self.recParam1
             decreased_prolif = self.recParam1*1.3
@@ -238,17 +242,17 @@ class Tumor_cells(Agent):
         total_cells = self.model.data_collection("count", "total")
         tot_ex_endo = total_cells - self.model.data_collection("count", "endothelial")
         #COUNT NUTRITION
-        nutrition_cap = self.model.get_nutrition_cap()
+        nutrition_cap = self.model.nutrition_cap
         #COUNT RATIO # Smaller ratio >>> decreased pro parameters, increased de parameters.
         depletion_ratio = nutrition_cap/tot_ex_endo
 
         if depletion_ratio < 1:
-            
+            self.set_proliferation_prob(depletion_ratio, "proportion")
             pass
-
-            
+      
     #STEP 
     def step(self):
+        #self.hunger()
         self.age()
         self.migrate();
         self.tumor_endo_interaction();

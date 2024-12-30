@@ -68,10 +68,14 @@ class M2(Agent):
                     neighbors = self.model.grid.get_neighborhood(neighbor.position, moore=True, include_center=False)
                     tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cells)]
                     if tumor_cells:
-                        tumor_cell = self.random.choice(tumor_cells)
+                        tumor_cell = self.random.choice(tumor_cells) 
                         tumor_cell.set_proliferation_prob(2, "proportion")
                         tumor_cell.set_death_prob(0,"value")
-                        print("M2 Supperoted TUMOR PROLIFERATIOn")
+                    
+                    for agent in tumor_cells:
+                        agent.set_angiogenesis_intensity(1.5)
+                        #print("M2 Supperoted TUMOR PROLIFERATIOn")
+    
     """
         Moves the macrophage to a random neighboring position.
     """
