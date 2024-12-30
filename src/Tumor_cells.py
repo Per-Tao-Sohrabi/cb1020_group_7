@@ -246,8 +246,8 @@ class Tumor_cells(Agent):
         depletion_ratio = nutrition_cap/total_cells
 
         if depletion_ratio < 1:             #When nutrition is being depleted
-            self.set_proliferation_prob(depletion_ratio**2, "proportion")
-            self.set_death_prob(1+depletion_ratio**2, "proportion")
+            self.set_proliferation_prob(depletion_ratio, "proportion")
+            #self.set_death_prob(1+depletion_ratio**1, "proportion")
             pass
         if nutrition_cap <= 0:
             self.set_proliferation_prob(0, "value")
