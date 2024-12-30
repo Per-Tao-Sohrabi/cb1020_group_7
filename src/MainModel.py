@@ -4,7 +4,8 @@ from mesa.time import SimultaneousActivation
 from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.datacollection import DataCollector
-
+import matplotlib.pyplot as plt
+import numpy as np
 import random;
 from Endothelial import Endothelial;
 from Tumor_cells import Tumor_cells; 
@@ -170,7 +171,7 @@ class MainModel(Model):
         random.seed(4)
         
         #MODEL RUNNING:
-        self.num_steps = 50
+        self.num_steps = 300
         #Model fields
         super().__init__(*args, **kwargs)
         self.grid = MultiGrid(150, 150, torus=False);
@@ -201,9 +202,7 @@ class MainModel(Model):
         self.m2_list = self.get_agent_type_list(M2)
         self.generate_agents(Fibroblast, "default", 5);
         self.fibroblast_list = self.get_agent_type_list(Fibroblast);
-
-    
-        
+   
         #DATACOLLECTION
         self.step_count = 0
         self.agent_count_record = {}
@@ -230,8 +229,9 @@ class MainModel(Model):
     #DATACOLLCETION
     def data_collection(self, *args):
         #CURRENT COUNTS
+
         agent_count = {
-            "TOTAL":len(self.agent_storage), 
+            "TOTAL":(len(self.endothelial_list) + len(self.tumor_cell_list) + len(self.m1_list) + len(self.m2_list) + len(self.fibroblast_list)),
             "ENDOTHELIAL":len(self.endothelial_list),
             "TUMOR":len(self.tumor_cell_list),
             "M1":len(self.m1_list),
@@ -297,7 +297,44 @@ class MainModel(Model):
                 return agent_rate["M2"]
             if args[1] == "fibroblast":
                 return agent_rate["FIBROBLAST"]
+
+    #PRINT DATA
+    def plot_data(self):
+            total_agents_count_over_time = []
+            endothelial_agents_count_over_time = []
+            tumor_agents_count_over_time = []
+            m1_agents_count_over_time = []
+            m2_agents_count_over_time = []
+            fibroblast_ageents_count_over_time = []
+            steps = np.linspace(0, self.step_count, self.step_count)
+            
+            keys = ["TOTAL", "ENDOTHELIAL", "TUMOR", "M1", "M2", "FIBROBLAST"]
+            time_plots = [total_agents_count_over_time, endothelial_agents_count_over_time, tumor_agents_count_over_time, m1_agents_count_over_time, m2_agents_count_over_time, fibroblast_ageents_count_over_time]
+            
+            for type, plot in zip(keys, time_plots):
+                for step in self.agent_count_record:
+                    print(step)
+                    count = self.agent_count_record[step][type]
+                    print(count)
+                    plot.append(count)
+                #self.plot_graph(steps, plot, f'{type} over time"', "time", "agents")
+            plt.plot(steps, time_plots[1], label = "endothelial")
+            plt.plot(steps, time_plots[2], label = "tumor cells")
+            plt.plot(steps, time_plots[3], label = "m1")
+            plt.plot(steps, time_plots[3], label = "m2")
+            plt.plot(steps, time_plots[3], label = "fibroblast cells")
+            plt.legend()
+            plt.show()
         
+        #Lables
+        #if title != None:
+        #    plt.title(title)
+        #if xLabel != None:
+        #    plt.xlabel(xLabel)
+        #if yLabel != None:
+        #    plt.ylabel(yLabel)
+        #plt.show()
+
     #UPDATE AGENT_STORAGE{}
     def update_agent_storage(self):
         schedule_agents_set = set(self.schedule.agents)
@@ -332,11 +369,25 @@ class MainModel(Model):
         """
         Advance the simulation by one step, updating the model and agents.
         """
-        #APPROACH END OF SIMULATION
-        if self.step_count >= self.num_steps:
+        # END OF SIMULATION AND PRINT PLOTS
+        if self.step_count > self.num_steps:
+            self.running = False
             print("Simulation reached the maximum number of steps")
             
-            return
+            #PLOT DATA
+            self.plot_data()
+
+            #total_agents_count_over_time = []
+            #steps = np.linspace(0, self.step_count, self.step_count)
+            #for step in self.agent_count_record:
+            #    print(step)
+            #    total_agents_count = self.agent_count_record[step]["TOTAL"]
+            #    print(total_agents_count)
+            #    total_agents_count_over_time.append(total_agents_count)
+            
+            #for plot in time_plots:
+            #    self.plot_graph(steps, plot, f'{type} over time"', "time", "agents")
+            #    return
         
         #DATA COLLECTION
         self.data_collection("record")
