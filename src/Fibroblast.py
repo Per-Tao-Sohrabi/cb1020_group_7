@@ -1,6 +1,7 @@
 from mesa import Agent, Model
 from mesa.time import RandomActivation
 from mesa.space import MultiGrid
+from Tumor_cells import Tumor_cells
 # from mesa.visualization.modules import CanvasGrid
 # from mesa.visualization.ModularVisualization import ModularServer
 
@@ -16,8 +17,8 @@ from mesa.space import MultiGrid
 
 # Define parameters for the Fibroblast agent
 params = {
-    "Fpdeath": 0.0018,  # Probability of death
-    "Fpmig": 0.4,       # Probability of migration
+    "Fpdeath": 0.0018+0.01,  # Probability of death
+    "Fpmig": 1.4,       # Probability of migration
     "Fpprol": 0.0838,    # Probability of proliferation
     "Fpmax": 4           # Initial proliferation capacity
 }
@@ -36,6 +37,7 @@ class Fibroblast(Agent):
         self.position = position
         self.alive = True
         self.proliferation_capacity = params["Fpmax"]
+        self.prob_support_growth = 0.05
 
     """
         Executes one step for the fibroblast agent, including:
@@ -46,21 +48,25 @@ class Fibroblast(Agent):
     """
     def step(self):
 
-
         # Migration
         if self.random.random() < params["Fpmig"]:
             self.migrate()
 
+        #support tumor growth
+        if self.random.random() < self.prob_support_growth:
+            self.support_tumor_cells()
+
         # Proliferation
-        if self.proliferation_capacity > 0 and self.random.random() < params["Fpprol"]:
+        elif self.proliferation_capacity > 0 and self.random.random() < params["Fpprol"]:
             self.proliferate()
 
-              # Death
+        # Death
         if self.random.random() < params["Fpdeath"]:
             self.alive = False
             self.model.grid.remove_agent(self)
             self.model.schedule.remove(self)
             return
+
 
     """
         Moves the agent to a random neighboring cell if possible.
@@ -91,7 +97,20 @@ class Fibroblast(Agent):
             #self.model.grid.place_agent(new_agent, new_position)
             #self.model.schedule.add(new_agent)
             #self.proliferation_capacity -= 1
-
+    def support_tumor_cells(self):
+        neighbors = self.model.grid.get_neighbors(self.position, moore=True, include_center=False)
+        for neighbor in neighbors:
+            if isinstance(neighbor, Tumor_cells):
+            # Support tumor growth with probability
+                if self.random.random() < self.prob_support_growth:
+                # Create a new tumor cell in a random neighboring position
+                    neighbors = self.model.grid.get_neighborhood(neighbor.position, moore=True, include_center=False)
+                    tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cells)]
+                    if tumor_cells:
+                        tumor_cell = self.random.choice(tumor_cells)
+                        tumor_cell.set_proliferation_prob(2, "proportion")
+                        tumor_cell.set_death_prob(0,"value")
+                        print("Fibroblast Supperoted TUMOR PROLIFERATIOn")
 
 # Fibroblast Model
 class FibroblastModel(Model):
