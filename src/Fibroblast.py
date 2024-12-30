@@ -45,11 +45,7 @@ class Fibroblast(Agent):
         proliferation capacity and the `Fpprol` probability is met.
     """
     def step(self):
-        # Death
-        if self.random.random() < params["Fpdeath"]:
-            self.alive = False
-            self.model.grid.remove_agent(self)
-            return
+
 
         # Migration
         if self.random.random() < params["Fpmig"]:
@@ -58,6 +54,13 @@ class Fibroblast(Agent):
         # Proliferation
         if self.proliferation_capacity > 0 and self.random.random() < params["Fpprol"]:
             self.proliferate()
+
+              # Death
+        if self.random.random() < params["Fpdeath"]:
+            self.alive = False
+            self.model.grid.remove_agent(self)
+            self.model.schedule.remove(self)
+            return
 
     """
         Moves the agent to a random neighboring cell if possible.
