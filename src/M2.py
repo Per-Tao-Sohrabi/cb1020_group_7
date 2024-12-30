@@ -73,7 +73,7 @@ class M2(Agent):
                         tumor_cell.set_death_prob(0,"value")
                     
                     for agent in tumor_cells:
-                        agent.set_angiogenesis_intensity(1.5)
+                        agent.set_angiogenesis_intensity(1)
                         #print("M2 Supperoted TUMOR PROLIFERATIOn")
     
     """

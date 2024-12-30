@@ -45,7 +45,7 @@ class Tumor_cells(Agent):
         #INTERACTION PARAMETERS (Distance Depen dent) -> self.tumor_endo_interaction() (NOT STANDARDIZED RANGES)
         self.death_intensity = 1.9  #1.7
         self.prolif_inhib_intensity = 0.04 #0.04
-        self.angiogenesis_intensity = 1 #0.8
+        self.angiogenesis_intensity = 0.5 #0.8
         self.optimal_signal_dist_significane = 0 #0.01
 
         #AGE PARAMETERS
@@ -240,7 +240,7 @@ class Tumor_cells(Agent):
     def hunger(self):
         #COUNT CELLS
         total_cells = self.model.data_collection("count", "total")
-        tot_ex_endo = total_cells - self.model.data_collection("count", "endothelial")
+        tot_ex_endo = total_cells - self.model.agent_count_record[0]["ENDOTHELIAL"]
         #COUNT NUTRITION
         nutrition_cap = self.model.nutrition_cap
         #COUNT RATIO # Smaller ratio >>> decreased pro parameters, increased de parameters.
@@ -252,7 +252,7 @@ class Tumor_cells(Agent):
       
     #STEP 
     def step(self):
-        #self.hunger()
+        self.hunger()
         self.age()
         self.migrate();
         self.tumor_endo_interaction();

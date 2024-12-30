@@ -52,7 +52,6 @@ class MainModel(Model):
         for i in range(amount):
             unique_id = self.get_next_unique_id()
             if brush_stroke == "proliferate":
-                agent_type = agent_type;
                 # Handle tumor cell proliferation here without removing the original
                 mother_position = args[0];
                 # Get all adjacent positions (Moore neighborhood, excluding center)
@@ -75,7 +74,6 @@ class MainModel(Model):
                     #print(f"No empty cells available for tumor cell {unique_id} at position {position}.")
                     pass
             elif brush_stroke == "default":                  # Default settings for generating agents
-                agent_type = agent_type
                 x = self.random.randrange(self.grid.width)   # Declare Agent Coordinates
                 y = self.random.randrange(self.grid.height)
                 agent = agent_type(unique_id, (x,y), self)
@@ -246,7 +244,7 @@ class MainModel(Model):
             dm1dt = agent_count["M1"] - self.agent_count_record[self.step_count-1]["M1"]
             dm2dt = agent_count["M2"] - self.agent_count_record[self.step_count-1]["M2"]
             dfibroblastdt = agent_count["FIBROBLAST"] - self.agent_count_record[self.step_count-1]["FIBROBLAST"]
-        else:
+        elif self.step_count == 0:
             dtotdt = 0
             dendothelialdt = 0
             dtumordt = 0
