@@ -5,7 +5,7 @@ from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.datacollection import DataCollector
 
-import random as random;
+import random;
 from Endothelial import Endothelial;
 from Tumor_cells import Tumor_cells; 
 from M1 import M1;
@@ -168,6 +168,8 @@ class MainModel(Model):
             *args: Additional arguments.
             **kwargs: Additional keyword arguments.
         """
+        #SET RANDOM SEED
+        random.seed(4)
         #Model fields
         super().__init__(*args, **kwargs)
         self.grid = MultiGrid(150, 150, torus=False);
@@ -312,7 +314,7 @@ class MainModel(Model):
         self.nutrition_cap =+ len(self.endothelial_list)
     
     #EAT NEW NUTRITION CAP
-    def eat_nutrition_cap(self, val):
+    def eat_nutrition(self, val):
         self.nutrition_cap =- val
 
     # STEP METHOD 
@@ -351,7 +353,6 @@ class MainModel(Model):
         self.get_nutrition_cap()
 
         self.step_count += 1
-
 
         #Update self.agent_storage()
         #self.update_agent_storage()

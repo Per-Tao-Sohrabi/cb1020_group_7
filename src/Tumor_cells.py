@@ -17,6 +17,9 @@ class Tumor_cells(Agent):
         self.unique_id = unique_id;
         self.position = position;
         self.viable = True
+
+        #SET RANDOM SEED
+        random.seed(5)
         # All the relevant properties (instance variables) for the tumor cell are initiated 
         #DEFAULTS
         
@@ -47,6 +50,11 @@ class Tumor_cells(Agent):
 
         #AGE PARAMETERS
         self.recParam1 = 0
+
+        #HUNGER PARAMETERS:
+        self.prolif_inhibition = 0
+        self.intensify_death = 0
+        self.migration_inhibition = 0
     
     #SETTERS
     def set_nearest_endo(self):
@@ -104,7 +112,7 @@ class Tumor_cells(Agent):
         pass  
     def set_optimal_signal_dist(self, *args):
         self.optimal_signal_dist = args[0]
-    
+   
     #TUMOR-ENDOTHELIAL CELL INTERACTIONS
     def tumor_endo_interaction(self):
         #print(f'Attempting tumor-endo interaction for agent: {self.unique_id}')
@@ -219,14 +227,34 @@ class Tumor_cells(Agent):
         
         elif self.lifespan == 0:
             self.set_death_prob(1, "value")
+
+    #EAT
+    def eat(self):
+        self.model.eat_nutrition(1)
+
+    #HUNGER
+    def hunger(self):
+        #COUNT CELLS
+        total_cells = self.model.data_collection("count", "total")
+        tot_ex_endo = total_cells - self.model.data_collection("count", "endothelial")
+        #COUNT NUTRITION
+        nutrition_cap = self.model.get_nutrition_cap()
+        #COUNT RATIO # Smaller ratio >>> decreased pro parameters, increased de parameters.
+        depletion_ratio = nutrition_cap/tot_ex_endo
+
+        if depletion_ratio < 1:
+            
+            pass
+
             
     #STEP 
     def step(self):
-        #self.age()
+        self.age()
         self.migrate();
         self.tumor_endo_interaction();
         if random.randint(0,100) < 100*self.proliferation_prob:
             self.proliferate();
+            self.eat();
         if random.randint(0,100) < 100*self.death_prob:
             self.apoptosis()
 
