@@ -18,7 +18,7 @@ class Endothelial(Agent):
         self.targeted_prolif = None
 
     def targeted_proliferation(self, target_coord, induction_factor):
-        print(f'Endothelial position = {self.position}')
+        #print(f'Endothelial position = {self.position}')
         self.targeted_prolif = target_coord
         x_target, y_target = target_coord
         prol_prob = 100*induction_factor
