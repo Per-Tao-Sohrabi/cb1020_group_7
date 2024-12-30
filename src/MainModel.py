@@ -158,7 +158,7 @@ class MainModel(Model):
         return agent_type_list
     
     # INITIALIZE MODEL - initialize the agents put on the grid by the previous method
-    def __init__(self, *args, **kwargs):
+    def __init__(self, num_steps=50, *args, **kwargs):
         """
         Initialize the MainModel.
 
@@ -168,6 +168,9 @@ class MainModel(Model):
         """
         #SET RANDOM SEED
         random.seed(4)
+        
+        #MODEL RUNNING:
+        self.num_steps = num_steps
         #Model fields
         super().__init__(*args, **kwargs)
         self.grid = MultiGrid(150, 150, torus=False);
@@ -329,7 +332,11 @@ class MainModel(Model):
         """
         Advance the simulation by one step, updating the model and agents.
         """
-
+        #APPROACH END OF SIMULATION
+        if self.step_count >= self.num_steps:
+            print("Simulation reached the maximum number of steps")
+            return
+        
         #DATA COLLECTION
         self.data_collection("record")
 
@@ -361,7 +368,6 @@ class MainModel(Model):
         #UPDATE self.agent_storage{} TO REMOVE AGENTS THAT DO NOT APPEAR IN self.scheduler
         self.update_agent_storage()
         
-
         self.step_count += 1
 
         #Update self.agent_storage()
@@ -424,7 +430,13 @@ def agent_portrayal(agent):
 canvas_element = CanvasGrid(agent_portrayal, 150, 150, 1200, 1200) 
 
 # Create the ModularServer to run the visualization
-server = ModularServer(MainModel, [canvas_element], "Prostate Environment Simulation")
+server = ModularServer(
+    MainModel, 
+    [canvas_element], 
+    "Prostate Environment Simulation",
+    model_params={"num_steps": 500}
+)
+
 server.port = 8521  # You can set a custom port
 # Run the visualization server
 server.launch()
