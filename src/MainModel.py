@@ -181,8 +181,7 @@ class MainModel(Model):
         random.seed(4)
         
         #MODEL RUNNING:
-        self.num_steps = 170
-
+        self.num_steps = 200
         #Model fields
         super().__init__(*args, **kwargs)
         self.grid = MultiGrid(150, 150, torus=False);
@@ -309,9 +308,9 @@ class MainModel(Model):
                 return agent_rate["M2"]
             if args[1] == "fibroblast":
                 return agent_rate["FIBROBLAST"]
-
+    
     #PRINT DATA
-    def plot_data(self):
+    def plot_data_basic(self):
             #agent data
             total_agents_count_over_time = []
             endothelial_agents_count_over_time = []
@@ -336,7 +335,7 @@ class MainModel(Model):
             for step in self.nutrition_conc_record:
                 nutrient_conc_over_time.append(self.nutrition_conc_record[step])
 
-                #self.plot_graph(steps, plot, f'{type} over time"', "time", "agents")
+            #self.plot_graph(steps, plot, f'{type} over time"', "time", "agents")
             #plt.plot(steps, time_plots[1], label = "endothelial")
             plt.plot(steps, time_plots[2], label = "tumor cells")
             plt.plot(steps, time_plots[3], label = "m1")
@@ -345,6 +344,69 @@ class MainModel(Model):
             plt.plot(steps, nutrient_conc_over_time, label = "nutrient cap")
             plt.legend()
             plt.show()
+            
+    '''
+    def plot_data(self):
+        # agent data
+        total_agents_count_over_time = []
+        endothelial_agents_count_over_time = []
+        tumor_agents_count_over_time = []
+        m1_agents_count_over_time = []
+        m2_agents_count_over_time = []
+        fibroblast_ageents_count_over_time = []
+        steps = np.linspace(0, self.step_count, self.step_count)
+        
+        keys = ["TOTAL", "ENDOTHELIAL", "TUMOR", "M1", "M2", "FIBROBLAST"]
+        time_plots = [total_agents_count_over_time, endothelial_agents_count_over_time, tumor_agents_count_over_time, m1_agents_count_over_time, m2_agents_count_over_time, fibroblast_ageents_count_over_time]
+        
+        for type, plot in zip(keys, time_plots):
+            for step in self.agent_count_record:
+                count = self.agent_count_record[step][type]
+                plot.append(count)
+        
+        # nutrient data
+        nutrient_conc_over_time = []
+        for step in self.nutrition_conc_record:
+            nutrient_conc_over_time.append(self.nutrition_conc_record[step])
+
+        # Create subplots with independent y-axes
+        fig, axs = plt.subplots(len(time_plots) + 1, sharex=True, figsize=(10, 8))
+
+        # Plot agent data
+        axs[0].plot(steps, time_plots[0], label="total agents")
+        axs[0].set_ylabel("agents")
+        axs[0].legend()
+
+        axs[1].plot(steps, time_plots[1], label="endothelial")
+        axs[1].set_ylabel("agents")
+        axs[1].legend()
+
+        axs[2].plot(steps, time_plots[2], label="tumor cells")
+        axs[2].set_ylabel("agents")
+        axs[2].legend()
+
+        axs[3].plot(steps, time_plots[3], label="m1")
+        axs[3].set_ylabel("agents")
+        axs[3].legend()
+
+        axs[4].plot(steps, time_plots[4], label="m2")
+        axs[4].set_ylabel("agents")
+        axs[4].legend()
+
+        axs[5].plot(steps, time_plots[5], label="fibroblast cells")
+        axs[5].set_ylabel("agents")
+        axs[5].legend()
+
+        # Plot nutrient concentration data on the last axis
+        axs[-1].plot(steps, nutrient_conc_over_time, label="nutrient cap")
+        axs[-1].set_xlabel("time")
+        axs[-1].set_ylabel("concentration")
+        axs[-1].legend()
+
+        # Show plot
+        plt.tight_layout()
+        plt.show()
+
         
         #Lables
         #if title != None:
@@ -353,7 +415,85 @@ class MainModel(Model):
         #    plt.xlabel(xLabel)
         #if yLabel != None:
         #    plt.ylabel(yLabel)
-        #plt.show()
+        #plt.show()'''
+
+    def plot_data_overlap(self):
+        # agent data
+        total_agents_count_over_time = []
+        endothelial_agents_count_over_time = []
+        tumor_agents_count_over_time = []
+        m1_agents_count_over_time = []
+        m2_agents_count_over_time = []
+        fibroblast_ageents_count_over_time = []
+        steps = np.linspace(0, self.step_count, self.step_count)
+        
+        keys = ["TOTAL", "ENDOTHELIAL", "TUMOR", "M1", "M2", "FIBROBLAST"]
+        time_plots = [total_agents_count_over_time, endothelial_agents_count_over_time, tumor_agents_count_over_time, m1_agents_count_over_time, m2_agents_count_over_time, fibroblast_ageents_count_over_time]
+        
+        for type, plot in zip(keys, time_plots):
+            for step in self.agent_count_record:
+                count = self.agent_count_record[step][type]
+                plot.append(count)
+        
+        # nutrient data
+        nutrient_conc_over_time = []
+        for step in self.nutrition_conc_record:
+            nutrient_conc_over_time.append(self.nutrition_conc_record[step])
+
+        # Create the main plot
+        fig, ax1 = plt.subplots(figsize=(10, 6))
+
+        # Plot the total agents count (primary y-axis)
+        ax1.plot(steps, time_plots[0], label="total agents", color="blue")
+        ax1.set_xlabel("time")
+        ax1.set_ylabel("Total agents", color="blue")
+        ax1.tick_params(axis='y', labelcolor="blue")
+
+        # Create secondary y-axes for each dataset
+        ax2 = ax1.twinx()
+        ax2.plot(steps, time_plots[1], label="endothelial", color="green")
+        ax2.set_ylabel("Endothelial cells", color="green")
+        ax2.tick_params(axis='y', labelcolor="green")
+
+        ax3 = ax1.twinx()
+        ax3.spines['right'].set_position(('outward', 60))  # Offset the axis to avoid overlap
+        ax3.plot(steps, time_plots[2], label="tumor cells", color="red")
+        ax3.set_ylabel("Tumor cells", color="red")
+        ax3.tick_params(axis='y', labelcolor="red")
+
+        ax4 = ax1.twinx()
+        ax4.spines['right'].set_position(('outward', 120))  # Further offset for clarity
+        ax4.plot(steps, time_plots[3], label="m1", color="orange")
+        ax4.set_ylabel("Macrophage 1", color="orange")
+        ax4.tick_params(axis='y', labelcolor="orange")
+
+        ax5 = ax1.twinx()
+        ax5.spines['right'].set_position(('outward', 180))  # Further offset for clarity
+        ax5.plot(steps, time_plots[4], label="m2", color="purple")
+        ax5.set_ylabel("Macrophage 2", color="purple")
+        ax5.tick_params(axis='y', labelcolor="purple")
+
+        ax6 = ax1.twinx()
+        ax6.spines['right'].set_position(('outward', 240))  # Further offset for clarity
+        ax6.plot(steps, time_plots[5], label="fibroblast cells", color="brown")
+        ax6.set_ylabel("Fibroblast cells", color="brown")
+        ax6.tick_params(axis='y', labelcolor="brown")
+
+        ax5 = ax1.twinx()
+        ax6.spines['right'].set_position(('outward', 300))  # Further offset for clarity
+        ax6.plot(steps, nutrient_conc_over_time, label="substrate", color="pink")
+        ax6.set_ylabel("Nutrient Concentration", color="pink")
+        ax6.tick_params(axis='y', labelcolor="pink")
+
+        # Plot nutrient concentration on the main plot
+        ax1.plot(steps, nutrient_conc_over_time, label="nutrient cap", color="black", linestyle="--")
+        
+        # Combine all legends from each axis
+        fig.legend(loc="upper right", bbox_to_anchor=(1.2, 1))
+        
+        # Show plot
+        plt.tight_layout()
+        plt.show()
 
     #UPDATE AGENT_STORAGE{}
     def update_agent_storage(self):
@@ -396,7 +536,8 @@ class MainModel(Model):
             print("Simulation reached the maximum number of steps")
             
             #PLOT DATA
-            self.plot_data()
+            self.plot_data_overlap()
+            self.plot_data_basic()
 
             #total_agents_count_over_time = []
             #steps = np.linspace(0, self.step_count, self.step_count)
