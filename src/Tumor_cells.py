@@ -32,15 +32,16 @@ class Tumor_cells(Agent):
         self.lifespan = 150 #steps
         
         #KINETIC PARAMETERS:
-        self.qs_max = 1.5 #µmol oxygen
-        self.Ks_substrate = 1000 #according to GPT oxygen
+        self.qs_max = 30 #µmol oxygen
+        self.qs = 0
+        self.Ks_substrate = 5 #according to GPT oxygen
         self.mu_max = 0.06 #
-        self.Ks_growth = 100/(self.model.grid.width*self.model.grid.width) #µmol/L
+        self.Ks_growth = 1000/(self.model.grid.width*self.model.grid.width) #µmol/L
         
         #HYPOXIA PARAMETERS
         self.max_signal_dist = 20
         self.optimal_signal_dist = 12
-        self.hypoxia_thresholds = [2.0, 13.0, 14.0];
+        self.hypoxia_thresholds = [2.0, 7.0, 25.0];
 
         #ENDO TRACKINGs
         self.nearest_endo = None;
@@ -56,8 +57,8 @@ class Tumor_cells(Agent):
         #INTERACTION PARAMETERS (Distance Depen dent) -> self.tumor_endo_interaction() (NOT STANDARDIZED RANGES)
         self.death_intensity = 1.7  #1.7
         self.prolif_inhib_intensity = 0.6 #0.04
-        self.angiogenesis_intensity = 0.8 #0.8
-        self.optimal_signal_dist_significane = 0 #0.01
+        self.angiogenesis_intensity = 0.2 #0.8
+        self.optimal_signal_dist_significane = 0.01 #0.01
 
         #AGE PARAMETERS
         self.recParam1 = 0
@@ -268,8 +269,13 @@ class Tumor_cells(Agent):
             self.set_death_prob(1, "value")
 
     #EAT
-    def eat(self, val):
-        self.model.eat_nutrition(val)
+    def eat(self, *args):
+        S = self.model.nutrition_cap/(self.model.grid.width*self.model.grid.height)       # nutrient_concentration
+        self.qs = (self.qs_max)*(S)/(self.Ks_substrate*S)
+        self.model.eat_nutrition(self.qs)
+        if len(args) > 0 :
+            val = args[0]
+            self.model.eat_nutrition(val)
 
     #HUNGER (BROKEN)
     def hunger(self):
@@ -278,35 +284,24 @@ class Tumor_cells(Agent):
         #COUNT NUTRITION
         nutrition_cap = self.model.nutrition_cap
         #COUNT RATIO # Smaller ratio >>> decreased pro parameters, increased de parameters.
-        avg_consumption = int((10+3+5+1)/4)
-
         S = nutrition_cap/(self.model.grid.width*self.model.grid.height)       # nutrient_concentration
-        
         nutrient_limit = 0.2
         
-        if nutrition_cap <= 0:
+        if nutrition_cap > nutrient_limit:
+            self.eat(self.qs)
+            if nutrition_cap >= nutrient_limit:
+                print(f'Tumor cell qs: {self.qs}')                                                           # consumption rate
+                self.eat()                                                                                # eat substrate
+                print(f'Nutrient concentration: {S}')
+                if S >= nutrient_limit and self.nearest_dist > self.hypoxia_thresholds[1] and self.qs < self.qs_max:                                      #
+                    new_prol_prob = (1 * S)/(S + self.Ks_growth)
+                    self.set_proliferation_prob(new_prol_prob, "proportion")
+        elif nutrition_cap < nutrient_limit:
             self.eat(0)
             self.set_angiogenesis_intensity(1.5)
             self.set_proliferation_prob(0, "value")
             print(nutrition_cap)
-
-        elif nutrition_cap > 0:
-
-            availability_ratio = total_cells/(nutrition_cap*avg_consumption)
-
-            self.qs = (self.qs_max*S)/(self.Ks_substrate*S)
-            print(f'Tumor cell qs: {self.qs}')                                                           # consumption rate
-
-            self.eat(self.qs)                                                                                # eat substrate
-            
-            print(f'Nutrient concentration: {S}')
-            if S >= nutrient_limit:                                          #
-                new_prol_prob = (1 * S)/(S + self.Ks_growth)
-                self.set_proliferation_prob(new_prol_prob, "value")
-
-            if self.nearest_dist >self.hypoxia_thresholds[1]:
-                print(f'ENDO-TUMOR Dist: {self.nearest_dist}')
-                print(f'Hunger Adjusted Prolif Prob: {self.proliferation_prob}')
+           
         #if depletion_ratio < 1:             #When nutrition is being depleted
         #    self.set_proliferation_prob(depletion_ratio, "proportion")
         #    #self.set_death_prob(1+depletion_ratio**1, "proportion")
@@ -317,13 +312,16 @@ class Tumor_cells(Agent):
      
     #STEP 
     def step(self):
+        print(f'Initial proliferation_prob: {self.proliferation_prob}')
         #self.eat(10)
-        #self.hunger()
+        self.hunger()
+        print(f'Hunger adjusted prolif prob: {self.proliferation_prob}')
         self.age()
         print(f'Life Span: {self.lifespan}')
         print(f'Age Adjusted Prolif Prob: {self.proliferation_prob}')
         self.migrate();
         self.tumor_endo_interaction();
+        print(f'Distance adjusted Prolif prob: {self.proliferation_prob}')
         print(f'Confirm Prolif Prob: {self.proliferation_prob}')
         if random.randint(0,100) < 100*self.proliferation_prob:
             self.proliferate();

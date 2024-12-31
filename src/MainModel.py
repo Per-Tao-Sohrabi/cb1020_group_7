@@ -181,7 +181,7 @@ class MainModel(Model):
         random.seed(4)
         
         #MODEL RUNNING:
-        self.num_steps = 50
+        self.num_steps = 150
 
         #Model fields
         super().__init__(*args, **kwargs)
@@ -326,9 +326,9 @@ class MainModel(Model):
             
             for type, plot in zip(keys, time_plots):
                 for step in self.agent_count_record:
-                    print(step)
+                    #print(step)
                     count = self.agent_count_record[step][type]
-                    print(count)
+                    #print(count)
                     plot.append(count)
             
             #nutrient data
@@ -337,7 +337,7 @@ class MainModel(Model):
                 nutrient_conc_over_time.append(self.nutrition_conc_record[step])
 
                 #self.plot_graph(steps, plot, f'{type} over time"', "time", "agents")
-            plt.plot(steps, time_plots[1], label = "endothelial")
+            #plt.plot(steps, time_plots[1], label = "endothelial")
             plt.plot(steps, time_plots[2], label = "tumor cells")
             plt.plot(steps, time_plots[3], label = "m1")
             plt.plot(steps, time_plots[3], label = "m2")
