@@ -34,6 +34,8 @@ class M1(Agent):
         self.prob_migrate = 0.2667       # Probability of migration
         self.prob_death = 0.0049         # Probability of death
         self.alive = True
+    def eat(self, val):
+        self.model.eat_nutrition(val)
     
         """
         Executes one step of the agent's behavior:
@@ -44,6 +46,8 @@ class M1(Agent):
     def step(self):
         if not self.alive:
             return
+        
+        self.eat(5)
         if self.random.random() < self.prob_death: 
             self.alive = False
             self.model.grid.remove_agent(self)

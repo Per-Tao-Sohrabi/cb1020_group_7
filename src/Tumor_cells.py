@@ -286,21 +286,19 @@ class Tumor_cells(Agent):
         nutrition_cap = self.model.nutrition_cap
         #COUNT RATIO # Smaller ratio >>> decreased pro parameters, increased de parameters.
         S = nutrition_cap/(self.model.grid.width*self.model.grid.height)       # nutrient_concentration
-        nutrient_limit = 0.2
+        nutrient_limit = 2
         
         if nutrition_cap > nutrient_limit:
-            self.eat(self.qs)
-            if nutrition_cap >= nutrient_limit:
-                print(f'Tumor cell qs: {self.qs}')                                                           # consumption rate
-                self.eat()                                                                                # eat substrate
-                print(f'Nutrient concentration: {S}')
+            self.eat()
+            if nutrition_cap >= nutrient_limit:                                                          # consumption rate                                                                   # eat substrate
                 if S >= nutrient_limit and self.nearest_dist > self.hypoxia_thresholds[1] and self.qs < self.qs_max:                                      #
                     new_prol_prob = (1 * S)/(S + self.Ks_growth)
                     self.set_proliferation_prob(new_prol_prob, "proportion")
         elif nutrition_cap < nutrient_limit:
             self.eat(0)
             self.set_angiogenesis_intensity(1.5)
-            self.set_proliferation_prob(0, "value")
+            self.set_death_prob(1.2, 'proportion')
+            self.set_proliferation_prob(0, "proportion")
             print(nutrition_cap)
            
         #if depletion_ratio < 1:             #When nutrition is being depleted

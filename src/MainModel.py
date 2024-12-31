@@ -181,7 +181,7 @@ class MainModel(Model):
         random.seed(4)
         
         #MODEL RUNNING:
-        self.num_steps = 150
+        self.num_steps = 300
 
         #Model fields
         super().__init__(*args, **kwargs)
@@ -389,6 +389,7 @@ class MainModel(Model):
         """
         Advance the simulation by one step, updating the model and agents.
         """
+        
         # END OF SIMULATION AND PRINT PLOTS
         if self.step_count > self.num_steps:
             self.running = False
@@ -408,7 +409,8 @@ class MainModel(Model):
             #for plot in time_plots:
             #    self.plot_graph(steps, plot, f'{type} over time"', "time", "agents")
             #    return
-        
+        print(f'MODEL LEVEL DATA:')
+        print(f'Pre-step nutrition_cap levels: {self.nutrition_cap}')
         #DATA COLLECTION
         self.data_collection("record")
 
@@ -427,13 +429,14 @@ class MainModel(Model):
         #self.update_nutrition_cap()
 
         #PRINT STEP DATA:
-        print(f'Current nutrition_cap levels: {self.nutrition_cap}')
+        
         #print(f'Number of Endothelial cells: {len(self.endothelial_list)}')
         #print(f'Number of Tumor cells: {len(self.tumor_cell_list)}')
         #print(f'Number of M1 cells: {len(self.m1_list)}')
         #print(f'Number of M2 cells: {len(self.m2_list)}')
         #print(f'Number of Fibroblast cells: {len(self.fibroblast_list)}')
-        print(f'MODEL LEVEL DATA:')
+        
+        print(f'Current nutrition_cap levels: {self.nutrition_cap}')
         print(f'Counts:{self.agent_count_record[self.step_count]}')
         print(f'Rates:{self.agent_rate_record[self.step_count]}')
         print(f'Nutrition: {self.nutrition_cap}, Nutrition Concentration: {self.nutrition_cap/(self.grid.width*self.grid.height)}')
