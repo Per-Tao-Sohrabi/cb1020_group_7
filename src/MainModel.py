@@ -68,7 +68,7 @@ class MainModel(Model):
                     # Generate new Tumor_cell instance and place it
                     if agent_type == Tumor_cells:
                         mothers_nearest_dist = args[1]
-                        print("TRY")
+                        #print("TRY")
                         agent = agent_type(unique_id, daughter_position, self, mothers_nearest_dist)
                     else:
                         agent = agent_type(unique_id, daughter_position, self)
@@ -206,7 +206,7 @@ class MainModel(Model):
         #self.nutrition_cap = self.grid.width*self.grid.height #len(self.endothelial_list)*1000                #GODTYCKLIKGT STARTVÄRDE 
         self.generate_agents(Tumor_cells, "default", 1);
         self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
-        self.generate_agents(M1, "default", 50);
+        self.generate_agents(M1, "default", 500);
         self.m1_list = self.get_agent_type_list(M1)
         self.generate_agents(M2, "default", 200);
         self.m2_list = self.get_agent_type_list(M2)

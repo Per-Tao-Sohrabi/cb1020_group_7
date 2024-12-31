@@ -56,9 +56,9 @@ class Tumor_cells(Agent):
         
         #INTERACTION PARAMETERS (Distance Depen dent) -> self.tumor_endo_interaction() (NOT STANDARDIZED RANGES)
         self.death_intensity = 1.7  #1.7
-        self.prolif_inhib_intensity = 0.6 #0.04
-        self.angiogenesis_intensity = 0.2 #0.8
-        self.optimal_signal_dist_significane = 0.01 #0.01
+        self.prolif_inhib_intensity = 0.4#0.04
+        self.angiogenesis_intensity = 0.02 #0.8 #Keep it smaller for beutiful branching
+        self.optimal_signal_dist_significane = 0.0 #0.01
 
         #AGE PARAMETERS
         self.recParam1 = 0
@@ -219,15 +219,16 @@ class Tumor_cells(Agent):
         #IN SITU MIGRATION???
         if random.randint(0,100) < 100*self.migration_prob:
             #print("TUMOR CELL MIGRATED")
-            possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
-            
-            # Filter only empty positions
-            empty_positions = [pos for pos in possible_steps if self.model.grid.is_cell_empty(pos)]
+            if self.pos != None:
+                possible_steps = self.model.grid.get_neighborhood(self.pos, moore=True, include_center=False)
+                
+                # Filter only empty positions
+                empty_positions = [pos for pos in possible_steps if self.model.grid.is_cell_empty(pos)]
 
-            #Pick an empty position if there are any
-            if len(empty_positions) > 0:
-                new_position = self.random.choice(empty_positions)
-                self.model.grid.move_agent(self, new_position)
+                #Pick an empty position if there are any
+                if len(empty_positions) > 0:
+                    new_position = self.random.choice(empty_positions)
+                    self.model.grid.move_agent(self, new_position)
 
         #MIGRATION ACROSS BLOOD VESSLE
         
@@ -235,10 +236,12 @@ class Tumor_cells(Agent):
     def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
             if self.position == None:
                 pass #print(f"Does not have a position: {self.unique_id}")
-            elif self.position != None:
+            elif self.pos != None and self.position != None:
+                #print("DEAAD!")
                 self.viable = False
-                self.model.grid.remove_agent(self);
-                self.model.schedule.remove(self);
+                if self.position != None:
+                    self.model.grid.remove_agent(self);
+                    self.model.schedule.remove(self);
 
     #PROLIFERATION METHOD
     def proliferate(self):
@@ -310,20 +313,20 @@ class Tumor_cells(Agent):
 
     #STEP 
     def step(self):
-        print(f'TUMOR id: {self.unique_id}')
-        print(f'Initial proliferation_prob: {self.proliferation_prob}')
+        #print(f'TUMOR id: {self.unique_id}')
+        #print(f'Initial proliferation_prob: {self.proliferation_prob}')
         #self.eat(10)
         self.hunger()
-        print(f'Hunger adjusted prolif prob: {self.proliferation_prob}')
+        #print(f'Hunger adjusted prolif prob: {self.proliferation_prob}')
         self.age()
-        print(f'Life Span: {self.lifespan}')
-        print(f'Age Adjusted Prolif Prob: {self.proliferation_prob}')
+        #print(f'Life Span: {self.lifespan}')
+        #print(f'Age Adjusted Prolif Prob: {self.proliferation_prob}')
         self.migrate();
         self.tumor_endo_interaction();
-        print(f'Nearest distance: {self.nearest_dist}')
-        print(f'Distance adjusted Prolif prob: {self.proliferation_prob}')
-        print(f'Confirm Prolif Prob: {self.proliferation_prob}')
-        print(f'Death prob: {self.death_prob}')
+        #print(f'Nearest distance: {self.nearest_dist}')
+        #print(f'Distance adjusted Prolif prob: {self.proliferation_prob}')
+        #print(f'Confirm Prolif Prob: {self.proliferation_prob}')
+        #print(f'Death prob: {self.death_prob}')
         if random.randint(0,100) < 100*self.proliferation_prob:
             self.proliferate();
         if random.randint(0,100) < 100*self.death_prob:
