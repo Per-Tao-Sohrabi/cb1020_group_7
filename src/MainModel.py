@@ -210,7 +210,7 @@ class MainModel(Model):
         self.m1_list = self.get_agent_type_list(M1)
         self.generate_agents(M2, "default", 200);
         self.m2_list = self.get_agent_type_list(M2)
-        self.generate_agents(Fibroblast, "default", 5);
+        self.generate_agents(Fibroblast, "default", 10);
         self.fibroblast_list = self.get_agent_type_list(Fibroblast);
    
         #DATACOLLECTION
@@ -459,7 +459,9 @@ class MainModel(Model):
         dict: A portrayal dictionary specifying agent appearance.
 """
 def agent_portrayal(agent):
-    portrayal = {}
+    portrayal = {
+        "Filled": "true",   # Ensure the shape is filled
+    }
 
     if isinstance(agent, Tumor_cells):
         portrayal["Shape"] = "circle"
