@@ -271,8 +271,9 @@ class Tumor_cells(Agent):
     #EAT
     def eat(self, *args):
         S = self.model.nutrition_cap/(self.model.grid.width*self.model.grid.height)       # nutrient_concentration
-        self.qs = (self.qs_max)*(S)/(self.Ks_substrate*S)
-        self.model.eat_nutrition(self.qs)
+        if S > 0:
+            self.qs = (self.qs_max)*(S)/(self.Ks_substrate*S)
+            self.model.eat_nutrition(self.qs)
         if len(args) > 0 :
             val = args[0]
             self.model.eat_nutrition(val)
@@ -307,8 +308,7 @@ class Tumor_cells(Agent):
         #    #self.set_death_prob(1+depletion_ratio**1, "proportion")
         #    pass
         #if nutrition_cap <= 0:
-        #    self.set_proliferation_prob(0, "value")
-    
+        #    self.set_proliferation_prob(0, "value") 
      
     #STEP 
     def step(self):

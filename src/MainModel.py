@@ -1,6 +1,6 @@
 from mesa import Model
 from mesa.space import MultiGrid
-from mesa.time import SimultaneousActivation
+from mesa.time import RandomActivation
 from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.datacollection import DataCollector
@@ -186,7 +186,7 @@ class MainModel(Model):
         #Model fields
         super().__init__(*args, **kwargs)
         self.grid = MultiGrid(150, 150, torus=False);
-        self.schedule = SimultaneousActivation(self);
+        self.schedule = RandomActivation(self);
         self.agent_storage = {
             Endothelial: {},
             Tumor_cells: {},
