@@ -66,7 +66,12 @@ class MainModel(Model):
                     daughter_position = random.choice(empty_positions)
                     
                     # Generate new Tumor_cell instance and place it
-                    agent = agent_type(unique_id, daughter_position, self)
+                    if agent_type == Tumor_cells:
+                        mothers_nearest_dist = args[1]
+                        print("TRY")
+                        agent = agent_type(unique_id, daughter_position, self, mothers_nearest_dist)
+                    else:
+                        agent = agent_type(unique_id, daughter_position, self)
                     #self.add_agent(agent_type, agent)
                     #self.schedule.add(agent)
                     #self.grid.place_agent(agent, next_position)
@@ -176,7 +181,7 @@ class MainModel(Model):
         random.seed(4)
         
         #MODEL RUNNING:
-        self.num_steps = 250
+        self.num_steps = 50
 
         #Model fields
         super().__init__(*args, **kwargs)
@@ -192,14 +197,13 @@ class MainModel(Model):
         }
          #saves agent_chaces from self.generate_agents(*args);
         self.used_ids = set();
-
+        self.nutrition_cap = 0
         #Initiate nutrition_cap
         #self.generate_agents(Tumor_cells,1);
         self.generate_agents(Endothelial,"horizontal blood vessle", 1000);
         self.generate_agents(Endothelial,"vertical blood vessle", 1000);
         self.endothelial_list = self.get_agent_type_list(Endothelial)
-        self.nutrition_cap = self.grid.width*self.grid.height #len(self.endothelial_list)*1000                #GODTYCKLIKGT STARTVÄRDE 
-
+        #self.nutrition_cap = self.grid.width*self.grid.height #len(self.endothelial_list)*1000                #GODTYCKLIKGT STARTVÄRDE 
         self.generate_agents(Tumor_cells, "default", 1);
         self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
         self.generate_agents(M1, "default", 50);
@@ -213,7 +217,7 @@ class MainModel(Model):
         self.step_count = 0
         self.agent_count_record = {}
         self.agent_rate_record = {}
-        self.nutrition_record = {}
+        self.nutrition_conc_record = {}
         #self.avg_agent_specific_rates = {}
 
         # Initialize DataCollector
@@ -236,7 +240,6 @@ class MainModel(Model):
     #DATACOLLCETION
     def data_collection(self, *args):
         #CURRENT COUNTS
-
         agent_count = {
             "TOTAL":(len(self.endothelial_list) + len(self.tumor_cell_list) + len(self.m1_list) + len(self.m2_list) + len(self.fibroblast_list)),
             "ENDOTHELIAL":len(self.endothelial_list),
@@ -262,7 +265,6 @@ class MainModel(Model):
             dm2dt = 0
             dfibroblastdt = 0
 
-
         
         #CURRENT RATES
         agent_rate = {
@@ -278,7 +280,7 @@ class MainModel(Model):
         if args[0] == "record":
             self.agent_count_record[self.step_count] = agent_count
             self.agent_rate_record[self.step_count] = agent_rate
-            self.nutrition_record[self.step_count] = self.nutrition_cap
+            self.nutrition_conc_record[self.step_count] = self.nutrition_cap/(self.grid.width*self.grid.height)
         
         if args[0] == "count":
             if args[1] == "total":
@@ -330,9 +332,9 @@ class MainModel(Model):
                     plot.append(count)
             
             #nutrient data
-            nutrient_cap_over_time = []
-            for step in self.nutrition_record:
-                nutrient_cap_over_time.append(self.nutrition_record[step])
+            nutrient_conc_over_time = []
+            for step in self.nutrition_conc_record:
+                nutrient_conc_over_time.append(self.nutrition_conc_record[step])
 
                 #self.plot_graph(steps, plot, f'{type} over time"', "time", "agents")
             plt.plot(steps, time_plots[1], label = "endothelial")
@@ -340,7 +342,7 @@ class MainModel(Model):
             plt.plot(steps, time_plots[3], label = "m1")
             plt.plot(steps, time_plots[3], label = "m2")
             plt.plot(steps, time_plots[3], label = "fibroblast cells")
-            #plt.plot(steps, nutrient_cap_over_time, label = "nutrient cap")
+            plt.plot(steps, nutrient_conc_over_time, label = "nutrient cap")
             plt.legend()
             plt.show()
         
@@ -375,8 +377,8 @@ class MainModel(Model):
         return self.nutrition_cap
     
     #CREATE NUTRITION CAP
-    def update_nutrition_cap(self):
-        self.nutrition_cap += 100*len(self.endothelial_list) 
+    def update_nutrition_cap(self, val):
+        self.nutrition_cap += val
     
     #EAT NEW NUTRITION CAP
     def eat_nutrition(self, val):
@@ -421,8 +423,8 @@ class MainModel(Model):
         self.fibroblast_list = self.get_agent_type_list(Fibroblast)
         
         #UPDATE NUTRITION CAP
-        self.eat_nutrition(self.grid.width*self.grid.height*0.01)            #simulate tissue maintainance consumption
-        self.update_nutrition_cap()
+        #self.eat_nutrition(self.grid.width*self.grid.height*0.01)            #simulate tissue maintainance consumption
+        #self.update_nutrition_cap()
 
         #PRINT STEP DATA:
         print(f'Current nutrition_cap levels: {self.nutrition_cap}')
@@ -434,6 +436,7 @@ class MainModel(Model):
         print(f'MODEL LEVEL DATA:')
         print(f'Counts:{self.agent_count_record[self.step_count]}')
         print(f'Rates:{self.agent_rate_record[self.step_count]}')
+        print(f'Nutrition: {self.nutrition_cap}, Nutrition Concentration: {self.nutrition_cap/(self.grid.width*self.grid.height)}')
         #print(f'Test sample : {self.m1_list}')
 
         #UPDATE self.agent_storage{} TO REMOVE AGENTS THAT DO NOT APPEAR IN self.scheduler

@@ -17,6 +17,7 @@ class Endothelial(Agent):
         self.position = position;
         self.proliferation_prob = 100
         self.targeted_prolif = None
+        self.nurish(5)
 
     def targeted_proliferation(self, target_coord, induction_factor):
         #print(f'Endothelial position = {self.position}')
@@ -26,8 +27,12 @@ class Endothelial(Agent):
         #Create the new agent:
         if self.random.randint(0,100) < self.proliferation_prob:
             self.model.generate_agents(Endothelial, "directed proliferation", 1, self.position)
-    def eat(self):
-        self.model.eat_nutrition(1)
+    def eat(self, val):
+        self.model.eat_nutrition(val)
+    
+    def nurish(self, val):
+        self.model.update_nutrition_cap(val)
+        #print("nurished")
 
     def hunger(self):
 
@@ -40,6 +45,8 @@ class Endothelial(Agent):
         self.proliferation_prob *= depletion_ratio
 
     def step(self):
+        self.nurish(6)
+        self.eat(1)
         self.hunger()
         #define behaviour for diff situations here
         pass

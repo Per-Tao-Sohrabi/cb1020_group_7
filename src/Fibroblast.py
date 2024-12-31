@@ -38,7 +38,9 @@ class Fibroblast(Agent):
         self.alive = True
         self.proliferation_capacity = params["Fpmax"]
         self.prob_support_growth = 0.05
-
+    
+    def eat(self, val):
+        self.model.eat_nutrition(val)
     """
         Executes one step for the fibroblast agent, including:
         - Death: Agent may die based on the `Fpdeath` probability.
@@ -47,7 +49,7 @@ class Fibroblast(Agent):
         proliferation capacity and the `Fpprol` probability is met.
     """
     def step(self):
-
+        self.eat(3)
         # Migration
         if self.random.random() < params["Fpmig"]:
             self.migrate()
