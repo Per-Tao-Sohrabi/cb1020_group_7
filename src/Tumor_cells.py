@@ -152,7 +152,7 @@ class Tumor_cells(Agent):
         curr_dist = self.nearest_dist
         threshold1 = self.hypoxia_thresholds[0]; threshold2 = self.hypoxia_thresholds[1]; threshold3 = self.hypoxia_thresholds[2]
         diff = self.prev_dist - self.nearest_dist #This only works if set_nearest_endo is initialized.
-        print(f'Prev dist: {self.prev_dist}, Curr dist: {curr_dist}')
+        #print(f'Prev dist: {self.prev_dist}, Curr dist: {curr_dist}')
         if diff != 0:
             diff_sign = diff/abs(diff)
         else:
@@ -183,10 +183,10 @@ class Tumor_cells(Agent):
         
         self.set_nearest_endo('default'); #updates prev distance and new distance.
         
-        print(f'Diff Sign: {diff_sign}')
-        print(f'Proliferation Inhibition Level: {prolif_inhibition_level}')
-        print(f'Proliferation Factor : {proliferation_factor}')
-        print(f'diff: {diff}')
+        #print(f'Diff Sign: {diff_sign}')
+        #print(f'Proliferation Inhibition Level: {prolif_inhibition_level}')
+        #print(f'Proliferation Factor : {proliferation_factor}')
+        #print(f'diff: {diff}')
 
         #========ZONES========
         #DISCRETE ZONE
@@ -299,7 +299,7 @@ class Tumor_cells(Agent):
             self.set_angiogenesis_intensity(1.5)
             self.set_death_prob(1.2, 'proportion')
             self.set_proliferation_prob(0, "proportion")
-            print(nutrition_cap)
+            #print(nutrition_cap)
            
         #if depletion_ratio < 1:             #When nutrition is being depleted
         #    self.set_proliferation_prob(depletion_ratio, "proportion")
@@ -307,9 +307,10 @@ class Tumor_cells(Agent):
         #    pass
         #if nutrition_cap <= 0:
         #    self.set_proliferation_prob(0, "value") 
-     
+
     #STEP 
     def step(self):
+        print(f'TUMOR id: {self.unique_id}')
         print(f'Initial proliferation_prob: {self.proliferation_prob}')
         #self.eat(10)
         self.hunger()
@@ -319,8 +320,10 @@ class Tumor_cells(Agent):
         print(f'Age Adjusted Prolif Prob: {self.proliferation_prob}')
         self.migrate();
         self.tumor_endo_interaction();
+        print(f'Nearest distance: {self.nearest_dist}')
         print(f'Distance adjusted Prolif prob: {self.proliferation_prob}')
         print(f'Confirm Prolif Prob: {self.proliferation_prob}')
+        print(f'Death prob: {self.death_prob}')
         if random.randint(0,100) < 100*self.proliferation_prob:
             self.proliferate();
         if random.randint(0,100) < 100*self.death_prob:
