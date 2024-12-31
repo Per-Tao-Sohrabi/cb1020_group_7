@@ -47,7 +47,7 @@ class Endothelial(Agent):
     def step(self):
         self.nurish(6)
         self.eat(1)
-        self.hunger()
+        #self.hunger()
         #define behaviour for diff situations here
         pass
 

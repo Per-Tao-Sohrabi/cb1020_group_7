@@ -181,7 +181,7 @@ class MainModel(Model):
         random.seed(4)
         
         #MODEL RUNNING:
-        self.num_steps = 300
+        self.num_steps = 170
 
         #Model fields
         super().__init__(*args, **kwargs)
@@ -206,7 +206,7 @@ class MainModel(Model):
         #self.nutrition_cap = self.grid.width*self.grid.height #len(self.endothelial_list)*1000                #GODTYCKLIKGT STARTVÄRDE 
         self.generate_agents(Tumor_cells, "default", 1);
         self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
-        self.generate_agents(M1, "default", 500);
+        self.generate_agents(M1, "default", 50);
         self.m1_list = self.get_agent_type_list(M1)
         self.generate_agents(M2, "default", 200);
         self.m2_list = self.get_agent_type_list(M2)

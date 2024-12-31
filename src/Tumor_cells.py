@@ -57,7 +57,7 @@ class Tumor_cells(Agent):
         #INTERACTION PARAMETERS (Distance Depen dent) -> self.tumor_endo_interaction() (NOT STANDARDIZED RANGES)
         self.death_intensity = 1.7  #1.7
         self.prolif_inhib_intensity = 0.4#0.04
-        self.angiogenesis_intensity = 0.02 #0.8 #Keep it smaller for beutiful branching
+        self.angiogenesis_intensity = 0.08 #0.8 #Keep it smaller for beutiful branching
         self.optimal_signal_dist_significane = 0.0 #0.01
 
         #AGE PARAMETERS
@@ -255,6 +255,7 @@ class Tumor_cells(Agent):
               print(f"Error while generating Tumor cell from agent  {self.unique_id} {e}")
               pass
               '''
+    
     #AGE
     def age(self):
         if self.lifespan > 0:
