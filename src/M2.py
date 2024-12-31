@@ -24,6 +24,8 @@ class M2(Agent):
         self.prob_support_growth = 0.05
         self.alive = True
     
+    def eat(self, val):
+        self.model.eat_nutrition(val)
     """
         Executes one step of the macrophage's behavior:
         - Checks if the macrophage dies.
@@ -34,6 +36,7 @@ class M2(Agent):
         # Check if macrophage should die
         if not self.alive:
             return
+        self.eat(5)
         if self.random.random() < self.prob_death:
             self.alive = False
             self.model.grid.remove_agent(self)
