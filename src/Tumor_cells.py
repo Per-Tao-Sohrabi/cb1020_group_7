@@ -10,8 +10,41 @@ Cancerous cells have the possibility of inducing endothelial growth from the nea
 These cells might also only be cancerous. To be decided.
 '''
 class Tumor_cells(Agent): 
+    """
+    Class representing tumor cells in the model.
+    Tumor cells can be cancerous or non-cancerous. Cancerous cells can induce endothelial growth, 
+    migrate, proliferate, and interact with endothelial cells.
+
+    Attributes:
+        unique_id: The unique identifier for the agent.
+        position: The position of the agent in the model grid.
+        model: The model in which the agent resides.
+        viable: Indicates if the tumor cell is viable.
+        proliferation_prob: Probability of tumor cell proliferation.
+        migration_prob: Probability of tumor cell migration.
+        death_prob: Probability of tumor cell death.
+        lifespan: Lifespan of the tumor cell (in steps).
+        qs_max: Maximum oxygen concentration.
+        qs: Current oxygen concentration.
+        Ks_substrate: Substrate concentration for growth.
+        mu_max: Maximum growth rate.
+        Ks_growth: Growth rate constant.
+        hypoxia_thresholds: Thresholds for different levels of hypoxia.
+        nearest_endo: The nearest endothelial cell.
+        nearest_dist: The distance to the nearest endothelial cell.
+        prev_dist: The previous distance to the nearest endothelial cell.
+    """
     #Constructor
     def __init__(self, unique_id, position, model, *args): #Position inputed as (x,y)
+        """
+        Initialize a tumor cell with the given parameters.
+
+        Args:
+            unique_id: Unique identifier for the agent.
+            position: The position of the agent on the grid as a tuple (x, y).
+            model: The model to which the agent belongs.
+            *args: Optional arguments, including the previous distance to the nearest endothelial cell.
+        """
         super().__init__(unique_id, model);
         self.model = model;
         self.unique_id = unique_id;
@@ -77,6 +110,16 @@ class Tumor_cells(Agent):
     
     #SETTERS
     def set_nearest_endo(self, *args):
+        """
+        Set the nearest endothelial cell to the tumor cell.
+
+        Args:
+            *args: Optional argument for default behavior.
+        
+        Returns:
+            nearest_endo: The nearest endothelial agent.
+            nearest_dist: The distance to the nearest endothelial agent.
+        """
         endothelial_agents = self.model.endothelial_list; #endothelial_list is a list containing class type objects as elements.
         #print(f'Endothelial List: {self.model.endothelial_list}')
         counter = 1
@@ -107,6 +150,12 @@ class Tumor_cells(Agent):
         return nearest_endo, nearest_dist
     
     def set_proliferation_prob(self, *args):
+        """
+        Set the proliferation probability for the tumor cell.
+
+        Args:
+            *args: Can specify a value and type (proportion or value).
+        """
         if args[0] == 'default':
             self.proliferation_prob = 0.0846
         elif args[0] != 'default':
@@ -121,6 +170,12 @@ class Tumor_cells(Agent):
                 pass
     
     def set_death_prob(self, *args):
+        """
+        Set the death probability for the tumor cell.
+
+        Args:
+            *args: Can specify a value and type (proportion or value).
+        """
         if args[0] == "default":
             self.death_prob = 0.00284
         else:
@@ -136,13 +191,31 @@ class Tumor_cells(Agent):
         pass  
     
     def set_optimal_signal_dist(self, *args):
+        """
+        Set the optimal signaling distance for angiogenesis.
+
+        Args:
+            *args: A single argument specifying the optimal distance.
+        """
         self.optimal_signal_dist = args[0]
    
     def set_angiogenesis_intensity(self, *args):
+        """
+        Set the intensity of angiogenesis (blood vessel growth).
+
+        Args:
+            *args: A single argument specifying the intensity.
+        """
         if len(args) == 1:
             self.angiogenesis_intensity = args[0]
     
     def print_agent_data(self):
+        """
+        Print relevant data for the tumor cell.
+
+        Includes information about the tumor's age, proliferation probability,
+        death probability, direction sign, and distance to the nearest endothelial cell.
+        """
         print(f'TUMOR DATA id = {self.unique_id}')
         print(f'* Tumor Age = {150-self.lifespan}')
         print(f'* Proliferation Prob = {self.proliferation_prob}')
@@ -152,6 +225,12 @@ class Tumor_cells(Agent):
 
     #TUMOR-ENDOTHELIAL CELL INTERACTIONS
     def tumor_endo_interaction(self):
+        """
+        Perform interaction between the tumor cell and the nearest endothelial cell.
+
+        This includes modifying the proliferation probability, death probability,
+        and angiogenesis intensity based on the distance to the endothelial cell.
+        """
         #print(f'Attempting tumor-endo interaction for agent: {self.unique_id}')
         #NOTATIONS
         best_dist = self.optimal_signal_dist
@@ -163,7 +242,7 @@ class Tumor_cells(Agent):
         #INTERACTION ATTIBUTE PARAMETERS *FOR LOGISTIC ZONE*
         #  Death Intensity
         death_intensity = self.death_intensity
-        delta_death_factor = death_intensity  * abs(curr_dist-threshold3)/threshold3 #större
+        delta_death_factor = death_intensity  * abs(curr_dist-threshold3)/threshold3 
         death_factor = delta_death_factor
         
         #  Tumor Proliferation Inhibition
@@ -173,7 +252,7 @@ class Tumor_cells(Agent):
         elif curr_dist == 0:
             prolif_inhibition_level =  0
 
-        proliferation_factor = 1-prolif_inhibition_level    # Higher inhibition level > smaller factor > smaller proliferation.
+        proliferation_factor = 1-prolif_inhibition_level  # Higher inhibition level -> smaller factor -> smaller proliferation.
         
         #  Induction Level
         induct_intensity = self.angiogenesis_intensity 
@@ -181,15 +260,10 @@ class Tumor_cells(Agent):
         if best_dist == curr_dist:
             induction_factor = 1
         else:
-            induction_factor = induct_intensity * 1 / (1 + abs(best_dist-speed_dampening*curr_dist)) #0.9 because the milden the drop in induction intensity when removed from best distance. 
+            induction_factor = induct_intensity * 1 / (1 + abs(best_dist-speed_dampening*curr_dist)) 
         
         self.set_nearest_endo('default'); #updates prev distance and new distance.
         
-        #print(f'Diff Sign: {diff_sign}')
-        #print(f'Proliferation Inhibition Level: {prolif_inhibition_level}')
-        #print(f'Proliferation Factor : {proliferation_factor}')
-        #print(f'diff: {diff}')
-
         #========ZONES========
         #DISCRETE ZONE
         if self.nearest_dist <= threshold1: #withing Lower bound
@@ -210,6 +284,10 @@ class Tumor_cells(Agent):
     
     #MIGRATION
     def migrate(self):
+        """
+        Move the tumor cell to a neighboring empty cell with a probability 
+        defined by the migration probability.
+        """
         #IN SITU MIGRATION???
         if random.randint(0,100) < 100*self.migration_prob:
             #print("TUMOR CELL MIGRATED")
@@ -228,29 +306,40 @@ class Tumor_cells(Agent):
         #To be Continued        
     
     #APOPTOSIS METHOD:
-    def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
-            if self.position == None:
-                pass #print(f"Does not have a position: {self.unique_id}")
-            elif self.pos != None and self.position != None:
-                #print("DEAAD!")
-                self.viable = False
-                if self.position != None:
-                    self.model.grid.remove_agent(self);
-                    self.model.schedule.remove(self);
+    def apoptosis(self): 
+        """
+        Induce apoptosis (programmed cell death) for the tumor cell if it is 
+        sufficiently close to an anti-cancer macrophage or if certain conditions are met.
+        """
+        if self.position == None:
+            pass 
+        elif self.pos != None and self.position != None:
+            #print("DEAAD!")
+            self.viable = False
+            if self.position != None:
+                self.model.grid.remove_agent(self);
+                self.model.schedule.remove(self);
 
     #PROLIFERATION METHOD
     def proliferate(self):
-         #self.model.generate_agents(Tumor_cells, "proliferate", 1, self.position, self.nearest_dist); #will be changed to proliferate
-         try:
-            self.model.generate_agents(Tumor_cells, "proliferate", 1, self.position, self.nearest_dist); #will be changed to proliferate
-            #print("Tumor cell generated, id = ", self.unique_id);
-         except Exception as e:
-              print(f'Position: {self.position}')
-              print(f"Error while generating Tumor cell from agent  {self.unique_id} {e}")
-              pass
-              
+        """
+        Generate new tumor cells by proliferation.
+
+        A new tumor cell is created at the same position as the current cell.
+        """
+        try:
+            self.model.generate_agents(Tumor_cells, "proliferate", 1, self.position, self.nearest_dist); 
+        except Exception as e:
+            print(f'Position: {self.position}')
+            print(f"Error while generating Tumor cell from agent  {self.unique_id} {e}")
+            pass
+            
     #AGE
     def age(self):
+        """
+        Age the tumor cell, reducing its lifespan and modifying the proliferation 
+        and death probabilities based on age.
+        """
         if self.lifespan > 0:
 
             self.lifespan -= 1
@@ -267,7 +356,14 @@ class Tumor_cells(Agent):
 
     #EAT
     def eat(self, *args):
-        S = self.model.nutrition_cap/(self.model.grid.width*self.model.grid.height)       # nutrient_concentration
+        """
+        Simulate the tumor cell eating nutrition based on the available concentration.
+
+        Args:
+            *args: Can specify a custom nutrient value.
+        """
+
+        S = self.model.nutrition_cap/(self.model.grid.width*self.model.grid.height) # nutrient_concentration
         if S > 0:
             self.qs = (self.qs_max)*(S)/(self.Ks_substrate*S)
             self.model.eat_nutrition(self.qs)
@@ -277,17 +373,24 @@ class Tumor_cells(Agent):
 
     #HUNGER (BROKEN)
     def hunger(self):
+        """
+        Simulates the tumor cell's response to available nutrition.
+
+        The method adjusts various parameters based on the nutrient concentration (S) 
+        and the available nutrition cap in the model. It determines how hunger (low nutrition)
+        influences proliferation, death probability, and other characteristics of the tumor cell.
+        """
         #COUNT CELLS
         total_cells = self.model.grid.width*self.model.grid.height + self.model.data_collection("count", "total") 
         #COUNT NUTRITION
         nutrition_cap = self.model.nutrition_cap
         #COUNT RATIO # Smaller ratio >>> decreased pro parameters, increased de parameters.
-        S = nutrition_cap/(self.model.grid.width*self.model.grid.height)       # nutrient_concentration
+        S = nutrition_cap/(self.model.grid.width*self.model.grid.height) # nutrient_concentration
         nutrient_limit = 2
         
         if nutrition_cap > nutrient_limit:
             self.eat()
-            if nutrition_cap >= nutrient_limit:                                                          # consumption rate                                                                   # eat substrate
+            if nutrition_cap >= nutrient_limit: # consumption rate, eat substrate
                 if S >= nutrient_limit and self.nearest_dist > self.hypoxia_thresholds[1] and self.qs < self.qs_max:
                     new_prol_prob = (1 * S)/(S + self.Ks_growth)
                     self.set_proliferation_prob(new_prol_prob, "proportion")
@@ -297,16 +400,13 @@ class Tumor_cells(Agent):
             self.set_death_prob(1.2, 'proportion')
             self.set_proliferation_prob(0, "proportion")
             #print(nutrition_cap)
-           
-        #if depletion_ratio < 1:             #When nutrition is being depleted
-        #    self.set_proliferation_prob(depletion_ratio, "proportion")
-        #    #self.set_death_prob(1+depletion_ratio**1, "proportion")
-        #    pass
-        #if nutrition_cap <= 0:
-        #    self.set_proliferation_prob(0, "value") 
 
     #STEP 
     def step(self):
+        """
+        Perform one step in the agent-based model.
+        This involves moving, aging, proliferating, interacting with endothelial cells, and dying.
+        """
         #print(f'TUMOR id: {self.unique_id}')
         #print(f'Initial proliferation_prob: {self.proliferation_prob}')
         #self.eat(10)
