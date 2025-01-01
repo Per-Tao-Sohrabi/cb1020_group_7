@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -181,6 +181,7 @@
 <li class="toctree-l1"><a class="reference internal" href="m1_cells.html">M1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="m2_cells.html">M2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibroblast_cells.html">FIBROBLAST</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_the_model.html">RUN THE MODEL</a></li>
 </ul>
 
     </div>
@@ -353,7 +354,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -369,6 +372,19 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequesites">Prerequesites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-neccessary-packages">Import Neccessary Packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#class-declaration-and-method-groups">Class Declaration and Method Groups</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-agents">Generate Agents</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -380,6 +396,709 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="main-model">
 <h1>MAIN MODEL<a class="headerlink" href="#main-model" title="Link to this heading">#</a></h1>
+<section id="prerequesites">
+<h2>Prerequesites<a class="headerlink" href="#prerequesites" title="Link to this heading">#</a></h2>
+<p><strong>Environment</strong>
+Before importing necessary pacakges in the next cell, ensure that your cb1020 environment is activated.
+It can be downloaded through the following link: <a class="reference external" href="https://canvas.kth.se/courses/49002/files/8235393/download?download_frd=1">https://canvas.kth.se/courses/49002/files/8235393/download?download_frd=1</a></p>
+<p><strong>Agent class files</strong>
+The agent class files used throughout the simulation needs be placed in the same directory as <a class="reference external" href="http://MainModel.py">MainModel.py</a>.</p>
+</section>
+<section id="import-neccessary-packages">
+<h2>Import Neccessary Packages<a class="headerlink" href="#import-neccessary-packages" title="Link to this heading">#</a></h2>
+<p>The following packages included in cb1020.yml are necessary for the model to run.
+These include classes of the mesa package, as well as the agent classes improted from the various agent class files.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mesa</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">mesa.space</span> <span class="kn">import</span> <span class="n">MultiGrid</span>
+<span class="kn">from</span> <span class="nn">mesa.time</span> <span class="kn">import</span> <span class="n">RandomActivation</span>
+<span class="kn">from</span> <span class="nn">mesa.datacollection</span> <span class="kn">import</span> <span class="n">DataCollector</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">random</span><span class="p">;</span>
+<span class="kn">from</span> <span class="nn">Endothelial</span> <span class="kn">import</span> <span class="n">Endothelial</span><span class="p">;</span>
+<span class="kn">from</span> <span class="nn">Tumor_cells</span> <span class="kn">import</span> <span class="n">Tumor_cells</span><span class="p">;</span> 
+<span class="kn">from</span> <span class="nn">M1</span> <span class="kn">import</span> <span class="n">M1</span><span class="p">;</span>
+<span class="kn">from</span> <span class="nn">M2</span> <span class="kn">import</span> <span class="n">M2</span><span class="p">;</span>
+<span class="kn">from</span> <span class="nn">Fibroblast</span> <span class="kn">import</span> <span class="n">Fibroblast</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">8</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="kn">import</span> <span class="nn">random</span><span class="p">;</span>
+<span class="ne">----&gt; </span><span class="mi">8</span> <span class="kn">from</span> <span class="nn">Endothelial</span> <span class="kn">import</span> <span class="n">Endothelial</span><span class="p">;</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="kn">from</span> <span class="nn">Tumor_cells</span> <span class="kn">import</span> <span class="n">Tumor_cells</span><span class="p">;</span> 
+<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="kn">from</span> <span class="nn">M1</span> <span class="kn">import</span> <span class="n">M1</span><span class="p">;</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;Endothelial&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="class-declaration-and-method-groups">
+<h2>Class Declaration and Method Groups<a class="headerlink" href="#class-declaration-and-method-groups" title="Link to this heading">#</a></h2>
+<p><strong>Main Model Class Declaration</strong>
+‘’’
+class MainModel(Model):
+‘’’</p>
+<section id="generate-agents">
+<h3>Generate Agents<a class="headerlink" href="#generate-agents" title="Link to this heading">#</a></h3>
+<p>Agent generation in MainModel.MainModel is done through three instance methods: (1) self.generate_agents(), (2) self.get_next_unique_id(), and (3) self.add_agents().</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MainModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    # MainModel</span>
+
+<span class="sd">    ABM Model simulating prostate tumor micro environment. </span>
+<span class="sd">    Contains methods for model initiation, agent-agent-interactivity, data collection, data plotting, and simulation progression(step()). </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># GENERATE A UNIQUE ID (not random)</span>
+    <span class="k">def</span> <span class="nf">get_next_unique_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the next unique ID.</span>
+
+<span class="sd">        This helper method for `MainModel.generate_agents()` generates and adds a new sequential </span>
+<span class="sd">        number to `MainModel.used_ids[]`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: The next unique ID.</span>
+<span class="sd">        &quot;&quot;&quot;</span>            
+        <span class="n">unique_id</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">used_ids</span><span class="p">)</span>          <span class="c1"># Start with a base unique_id</span>
+        <span class="k">while</span> <span class="n">unique_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">used_ids</span><span class="p">:</span>       <span class="c1"># Ensure the unique_id hasn&#39;t been used already</span>
+            <span class="n">unique_id</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># Add the new ID to the used_ids set</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">used_ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">unique_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">unique_id</span>
+    
+    <span class="c1">#GENERATE AGENTS </span>
+    <span class="k">def</span> <span class="nf">generate_agents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">brush_stroke</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate and place agents on the grid based on specified patterns.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            agent_type (class): The type of agent to generate.</span>
+<span class="sd">            brush_stroke (str): The pattern in which to place agents.</span>
+<span class="sd">            amount (int): The number of agents to generate.</span>
+<span class="sd">            *args: Additional arguments for specific patterns.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A cache of generated agents indexed by their unique IDs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">agent_cache</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="n">agent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">amount</span><span class="p">):</span>
+            <span class="n">unique_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_next_unique_id</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">brush_stroke</span> <span class="o">==</span> <span class="s2">&quot;proliferate&quot;</span><span class="p">:</span>
+                <span class="c1"># Handle tumor cell proliferation here without removing the original</span>
+                <span class="n">mother_position</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+                <span class="c1"># Get all adjacent positions (Moore neighborhood, excluding center)</span>
+                <span class="n">adjacent_positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_neighborhood</span><span class="p">(</span>
+                    <span class="n">pos</span><span class="o">=</span><span class="n">mother_position</span><span class="p">,</span> <span class="n">moore</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">include_center</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1</span>
+                <span class="p">)</span>
+                <span class="c1"># Filter positions to only include empty cells</span>
+                <span class="n">empty_positions</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">adjacent_positions</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">is_cell_empty</span><span class="p">(</span><span class="n">pos</span><span class="p">)]</span> 
+                <span class="k">if</span> <span class="n">empty_positions</span><span class="p">:</span>
+                    <span class="c1"># Randomly select one of the valid empty positions</span>
+                    <span class="n">daughter_position</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">empty_positions</span><span class="p">)</span>
+                    
+                    <span class="c1"># Generate new Tumor_cell instance and place it</span>
+                    <span class="k">if</span> <span class="n">agent_type</span> <span class="o">==</span> <span class="n">Tumor_cells</span><span class="p">:</span>
+                        <span class="n">mothers_nearest_dist</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="c1">#print(&quot;TRY&quot;)</span>
+                        <span class="n">agent</span> <span class="o">=</span> <span class="n">agent_type</span><span class="p">(</span><span class="n">unique_id</span><span class="p">,</span> <span class="n">daughter_position</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">mothers_nearest_dist</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">agent</span> <span class="o">=</span> <span class="n">agent_type</span><span class="p">(</span><span class="n">unique_id</span><span class="p">,</span> <span class="n">daughter_position</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+                    <span class="c1">#self.add_agent(agent_type, agent)</span>
+                    <span class="c1">#self.schedule.add(agent)</span>
+                    <span class="c1">#self.grid.place_agent(agent, next_position)</span>
+                    <span class="n">agent_cache</span><span class="p">[</span><span class="n">unique_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1">#print(f&quot;No empty cells available for tumor cell {unique_id} at position {position}.&quot;)</span>
+                    <span class="k">pass</span>
+            <span class="k">elif</span> <span class="n">brush_stroke</span> <span class="o">==</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span>                  <span class="c1"># Default settings for generating agents</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>   <span class="c1"># Declare Agent Coordinates</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+                <span class="n">agent</span> <span class="o">=</span> <span class="n">agent_type</span><span class="p">(</span><span class="n">unique_id</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
+                <span class="c1">#self.add_agent(agent_type, agent)   # Declare new instance of agent according to mesa Agent initation.</span>
+                <span class="c1">#self.schedule.add(agent);                    </span>
+                <span class="c1">#self.grid.place_agent(agent, (x, y))         # Add the agents to the grid</span>
+                <span class="n">agent_cache</span><span class="p">[</span><span class="n">unique_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent</span>        
+            <span class="k">elif</span> <span class="n">brush_stroke</span> <span class="o">==</span> <span class="s2">&quot;horizontal blood vessle&quot;</span> <span class="ow">or</span> <span class="n">brush_stroke</span> <span class="o">==</span> <span class="s2">&quot;vertical blood vessle&quot;</span><span class="p">:</span> <span class="c1"># For other agents</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                    <span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">height</span><span class="p">);</span>
+                    <span class="n">agent</span> <span class="o">=</span> <span class="n">Endothelial</span><span class="p">(</span><span class="n">unique_id</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="bp">self</span><span class="p">);</span> <span class="c1">#uses i as id</span>
+                    <span class="n">agent_cache</span><span class="p">[</span><span class="n">unique_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent</span><span class="p">;</span>
+                    <span class="c1">#self.schedule.add(agent);  </span>
+                    <span class="c1">#self.grid.place_agent(agent, (x, y));</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">prev_agent</span> <span class="o">=</span> <span class="n">agent_cache</span><span class="p">[</span><span class="n">unique_id</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span> <span class="c1">#should not cause an indexing inconsistency if the blood vessle is generated in one instance. </span>
+                    <span class="n">prev_x</span><span class="p">,</span> <span class="n">prev_y</span> <span class="o">=</span> <span class="n">prev_agent</span><span class="o">.</span><span class="n">position</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="n">brush_stroke</span> <span class="o">==</span> <span class="s2">&quot;horizontal blood vessle&quot;</span><span class="p">:</span>
+                        <span class="n">x_inc</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="n">y_inc</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">x_inc</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="n">y_inc</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span> <span class="o">=</span> <span class="n">prev_x</span><span class="o">+</span><span class="n">x_inc</span><span class="p">,</span> <span class="n">prev_y</span><span class="o">+</span><span class="n">y_inc</span>
+                    <span class="n">agent</span> <span class="o">=</span> <span class="n">Endothelial</span><span class="p">(</span><span class="n">unique_id</span><span class="p">,</span> <span class="p">(</span><span class="n">new_x</span><span class="p">,</span> <span class="n">new_y</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
+                    <span class="n">agent_cache</span><span class="p">[</span><span class="n">unique_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent</span>
+                    <span class="c1">#self.schedule.add(agent)</span>
+                     <span class="c1"># Handles the edge case when cells get generated outside the grid</span>
+                        <span class="c1">#self.add_agent(agent_type, agent)</span>
+                        <span class="c1">#self.grid.place_agent(agent, (new_x, new_y))</span>
+            <span class="k">elif</span> <span class="n">brush_stroke</span> <span class="o">==</span> <span class="s2">&quot;directed proliferation&quot;</span><span class="p">:</span>
+
+                <span class="c1">#print(&quot;IN CONSTRUCTION&quot;)</span>
+                <span class="n">mother_position</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1">#mother_target_coord = args[1]</span>
+                <span class="c1">#GENERATE NEXT POSITION</span>
+                <span class="c1">#1. Check Surroundings: get list of empty surrounding</span>
+                <span class="c1"># Get all adjacent positions (Moore neighborhood, excluding center)</span>
+                <span class="c1">#print(mother_position)</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">mother_position</span>                              <span class="c1">#Edge case handeling where position is out of bounds</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">width</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
+                    <span class="k">return</span> 
+
+                <span class="n">adjacent_positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_neighborhood</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="n">mother_position</span><span class="p">,</span> <span class="n">moore</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">include_center</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="c1"># Filter positions to only include empty cells</span>
+                <span class="n">empty_positions</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">adjacent_positions</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">is_cell_empty</span><span class="p">(</span><span class="n">pos</span><span class="p">)]</span> 
+                
+                <span class="c1">#2. Pick box in direction of target coord</span>
+                <span class="k">if</span> <span class="n">empty_positions</span><span class="p">:</span>
+                    <span class="c1"># Randomly select one of the valid empty positions</span>
+                    <span class="n">daughter_position</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">empty_positions</span><span class="p">)</span>
+                    
+                    <span class="c1"># Generate new Tumor_cell instance and place it</span>
+                    <span class="n">agent</span> <span class="o">=</span> <span class="n">agent_type</span><span class="p">(</span><span class="n">unique_id</span><span class="p">,</span> <span class="n">daughter_position</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+                    <span class="c1">#self.add_agent(agent_type, agent)</span>
+                    <span class="c1">#self.schedule.add(agent)</span>
+                    <span class="c1">#self.grid.place_agent(agent, next_position)</span>
+                    <span class="n">agent_cache</span><span class="p">[</span><span class="n">unique_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent</span>
+                    <span class="c1">#if mother.target</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">agent</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_agent</span><span class="p">(</span><span class="n">agent_type</span><span class="p">,</span> <span class="n">agent</span><span class="p">)</span>
+        <span class="k">pass</span> <span class="c1"># allows the agents that exist in the cache to be saved in the model&#39;s agent storage </span>
+
+    <span class="c1">#ADD AGENT TO MODEL (This is a helper method for the above method)</span>
+    <span class="k">def</span> <span class="nf">add_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">agent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds an agent to the simulation.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        agent_type (type): The type or class of the agent being added.</span>
+<span class="sd">        agent (Agent): The agent instance to be added to the simulation.</span>
+
+<span class="sd">        The method performs the following actions:</span>
+<span class="sd">        - Checks if the agent&#39;s position is within the bounds of the grid.</span>
+<span class="sd">        - If valid, adds the agent to `agent_storage` under the specified `agent_type`.</span>
+<span class="sd">        - Adds the agent to the simulation schedule.</span>
+<span class="sd">        - Places the agent on the grid at its specified position.</span>
+
+<span class="sd">        If the agent&#39;s position is outside the grid bounds, the method takes no action.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">position</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">width</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">agent_storage</span><span class="p">[</span><span class="n">agent_type</span><span class="p">][</span><span class="n">agent</span><span class="o">.</span><span class="n">unique_id</span><span class="p">]</span><span class="o">=</span> <span class="n">agent</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>  
+            <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">place_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">agent</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="c1">#GENERATE POSITION SORTED LIST OF AGENTS OF SPECFIC TYPE </span>
+    <span class="k">def</span> <span class="nf">get_agent_type_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves a set of agents of a specific type.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        agent_type (type): The type or class of agents to retrieve.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        set: A set containing all agents of the specified type stored in `agent_storage`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">agent_type_list</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">unique_id</span><span class="p">,</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_storage</span><span class="p">[</span><span class="n">agent_type</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">agent_type_list</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">agent_type_list</span>
+    
+    <span class="c1"># INITIALIZE MODEL - initialize the agents put on the grid by the previous method</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the model with the specified parameters and sets up the simulation.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        num_steps (int, optional): The number of steps to run the simulation. Defaults to None.</span>
+<span class="sd">        *args: Additional positional arguments for the superclass.</span>
+<span class="sd">        **kwargs: Additional keyword arguments for the superclass.</span>
+
+<span class="sd">        The initialization performs the following tasks:</span>
+<span class="sd">        - Sets a fixed random seed for reproducibility.</span>
+<span class="sd">        - Configures the grid with a size of 150x150 and disables toroidal wrapping.</span>
+<span class="sd">        - Sets up a random activation schedule for agents.</span>
+<span class="sd">        - Initializes storage for various agent types, such as Endothelial, Tumor_cells, M1, M2, and Fibroblast.</span>
+<span class="sd">        - Generates predefined agents of each type and stores them in respective lists.</span>
+<span class="sd">        - Initializes variables for tracking nutrient levels, agent counts, and other data.</span>
+<span class="sd">        - Configures a DataCollector to collect model-level and agent-level data during the simulation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#SET RANDOM SEED</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        
+        <span class="c1">#MODEL RUNNING:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span> <span class="o">=</span> <span class="n">num_steps</span>
+        <span class="c1">#Model fields</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">MultiGrid</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="n">torus</span><span class="o">=</span><span class="kc">False</span><span class="p">);</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span> <span class="o">=</span> <span class="n">RandomActivation</span><span class="p">(</span><span class="bp">self</span><span class="p">);</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_storage</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">Endothelial</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="n">Tumor_cells</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="n">M1</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="n">M2</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="n">Fibroblast</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="c1"># Add other agent types here if needed</span>
+        <span class="p">}</span>
+         <span class="c1">#saves agent_chaces from self.generate_agents(*args);</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">used_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">();</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nutrition_cap</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1">#Initiate nutrition_cap</span>
+        <span class="c1">#self.generate_agents(Tumor_cells,1);</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_agents</span><span class="p">(</span><span class="n">Endothelial</span><span class="p">,</span><span class="s2">&quot;horizontal blood vessle&quot;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">);</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_agents</span><span class="p">(</span><span class="n">Endothelial</span><span class="p">,</span><span class="s2">&quot;vertical blood vessle&quot;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">);</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endothelial_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_agent_type_list</span><span class="p">(</span><span class="n">Endothelial</span><span class="p">)</span>
+        <span class="c1">#self.nutrition_cap = self.grid.width*self.grid.height #len(self.endothelial_list)*1000                #GODTYCKLIKGT STARTVÄRDE </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_agents</span><span class="p">(</span><span class="n">Tumor_cells</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tumor_cell_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_agent_type_list</span><span class="p">(</span><span class="n">Tumor_cells</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_agents</span><span class="p">(</span><span class="n">M1</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="mi">50</span><span class="p">);</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m1_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_agent_type_list</span><span class="p">(</span><span class="n">M1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_agents</span><span class="p">(</span><span class="n">M2</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="mi">200</span><span class="p">);</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m2_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_agent_type_list</span><span class="p">(</span><span class="n">M2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_agents</span><span class="p">(</span><span class="n">Fibroblast</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fibroblast_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_agent_type_list</span><span class="p">(</span><span class="n">Fibroblast</span><span class="p">);</span>
+   
+        <span class="c1">#DATACOLLECTION</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_count_record</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_rate_record</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nutrition_conc_record</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#self.avg_agent_specific_rates = {}</span>
+
+        <span class="c1"># Initialize DataCollector</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">datacollector</span> <span class="o">=</span> <span class="n">DataCollector</span><span class="p">(</span>
+            <span class="n">model_reporters</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;Total Agents&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">schedule</span><span class="o">.</span><span class="n">agents</span><span class="p">),</span>
+                <span class="s2">&quot;Endothelial cells&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">endothelial_list</span><span class="p">),</span>
+                <span class="s2">&quot;Tumor_cells&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">tumor_cell_list</span><span class="p">),</span>
+                <span class="s2">&quot;M1&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">m1_list</span><span class="p">),</span>
+                <span class="s2">&quot;M2&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">m2_list</span><span class="p">),</span>
+                <span class="s2">&quot;Fibroblast&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">fibroblast_list</span><span class="p">),</span>
+                <span class="s2">&quot;Nutrient levels&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">nutrition_cap</span>
+                <span class="p">},</span>
+            <span class="n">agent_reporters</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;Position&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>  
+        
+
+    <span class="c1">#DATACOLLCETION</span>
+    <span class="k">def</span> <span class="nf">data_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Collects and records agent count and rate data at each simulation step.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        *args: A variable-length argument list. The first argument determines the action to take:</span>
+<span class="sd">            - &quot;record&quot; to store current agent count and rate data.</span>
+<span class="sd">            - &quot;count&quot; followed by a specific agent type to return the current count for that type.</span>
+<span class="sd">            - &quot;rate&quot; followed by a specific agent type to return the current rate of change for that type.</span>
+
+<span class="sd">        Data Collected:</span>
+<span class="sd">        - Agent counts for total agents and individual types (Endothelial, Tumor, M1, M2, and Fibroblast).</span>
+<span class="sd">        - Rate of change in agent counts between consecutive steps.</span>
+<span class="sd">        - Nutrient concentration as a ratio of available nutrition to grid area.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - If &quot;count&quot; is provided as the first argument, returns the current count of the specified agent type.</span>
+<span class="sd">        - If &quot;rate&quot; is provided, returns the current rate of change for the specified agent type.</span>
+<span class="sd">        - Otherwise, stores the data in the respective record dictionaries.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#CURRENT COUNTS</span>
+        <span class="n">agent_count</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;TOTAL&quot;</span><span class="p">:(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endothelial_list</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tumor_cell_list</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m1_list</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m2_list</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fibroblast_list</span><span class="p">)),</span>
+            <span class="s2">&quot;ENDOTHELIAL&quot;</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endothelial_list</span><span class="p">),</span>
+            <span class="s2">&quot;TUMOR&quot;</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tumor_cell_list</span><span class="p">),</span>
+            <span class="s2">&quot;M1&quot;</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m1_list</span><span class="p">),</span>
+            <span class="s2">&quot;M2&quot;</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m2_list</span><span class="p">),</span>
+            <span class="s2">&quot;FIBROBLAST&quot;</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fibroblast_list</span><span class="p">),</span>
+            <span class="p">}</span>
+
+        <span class="c1">#DATA ANALYSIS</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">dtotdt</span> <span class="o">=</span> <span class="n">agent_count</span><span class="p">[</span><span class="s2">&quot;TOTAL&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_count_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;TOTAL&quot;</span><span class="p">]</span>
+            <span class="n">dendothelialdt</span> <span class="o">=</span> <span class="n">agent_count</span><span class="p">[</span><span class="s2">&quot;ENDOTHELIAL&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_count_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;ENDOTHELIAL&quot;</span><span class="p">]</span>
+            <span class="n">dtumordt</span> <span class="o">=</span> <span class="n">agent_count</span><span class="p">[</span><span class="s2">&quot;TUMOR&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_count_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;TUMOR&quot;</span><span class="p">]</span>
+            <span class="n">dm1dt</span> <span class="o">=</span> <span class="n">agent_count</span><span class="p">[</span><span class="s2">&quot;M1&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_count_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;M1&quot;</span><span class="p">]</span>
+            <span class="n">dm2dt</span> <span class="o">=</span> <span class="n">agent_count</span><span class="p">[</span><span class="s2">&quot;M2&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_count_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;M2&quot;</span><span class="p">]</span>
+            <span class="n">dfibroblastdt</span> <span class="o">=</span> <span class="n">agent_count</span><span class="p">[</span><span class="s2">&quot;FIBROBLAST&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_count_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;FIBROBLAST&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">dtotdt</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">dendothelialdt</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">dtumordt</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">dm1dt</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">dm2dt</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">dfibroblastdt</span> <span class="o">=</span> <span class="mi">0</span>
+
+        
+        <span class="c1">#CURRENT RATES</span>
+        <span class="n">agent_rate</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;TOTAl&quot;</span><span class="p">:</span><span class="n">dtotdt</span><span class="p">,</span>
+            <span class="s2">&quot;ENDOTHELIAL&quot;</span><span class="p">:</span><span class="n">dendothelialdt</span><span class="p">,</span>
+            <span class="s2">&quot;TUMOR&quot;</span><span class="p">:</span><span class="n">dtumordt</span><span class="p">,</span>
+            <span class="s2">&quot;M1&quot;</span><span class="p">:</span><span class="n">dm1dt</span><span class="p">,</span>
+            <span class="s2">&quot;M2&quot;</span><span class="p">:</span><span class="n">dm2dt</span><span class="p">,</span>
+            <span class="s2">&quot;FIBRObLAST&quot;</span><span class="p">:</span><span class="n">dfibroblastdt</span>
+        <span class="p">}</span>
+
+        <span class="c1">#RECORD STEP DATA</span>
+        <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;record&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">agent_count_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent_count</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">agent_rate_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent_rate</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nutrition_conc_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrition_cap</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">width</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;total&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">agent_count</span><span class="p">[</span><span class="s2">&quot;TOTAL&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;endothelial&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">agent_count</span><span class="p">[</span><span class="s2">&quot;ENDOTHELIAL&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;tumor cells&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">agent_count</span><span class="p">[</span><span class="s2">&quot;TUMOR&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;m1&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">agent_count</span><span class="p">[</span><span class="s2">&quot;M1&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;m2&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">agent_count</span><span class="p">[</span><span class="s2">&quot;M2&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;fibroblast&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">agent_count</span><span class="p">[</span><span class="s2">&quot;FIBROBLAST&quot;</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;rate&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;total&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">agent_rate</span><span class="p">[</span><span class="s2">&quot;TOTAl&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;endothelial&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">agent_rate</span><span class="p">[</span><span class="s2">&quot;ENDOTHELIAL&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;tumor cells&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">agent_rate</span><span class="p">[</span><span class="s2">&quot;TUMOR&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;m1&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">agent_rate</span><span class="p">[</span><span class="s2">&quot;M1&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;m2&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">agent_rate</span><span class="p">[</span><span class="s2">&quot;M2&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;fibroblast&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">agent_rate</span><span class="p">[</span><span class="s2">&quot;FIBROBLAST&quot;</span><span class="p">]</span>
+    
+    <span class="c1">#PRINT DATA</span>
+    <span class="k">def</span> <span class="nf">plot_data_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots the counts of various agent types and nutrient concentration over time.</span>
+
+<span class="sd">        The method collects data on the counts of agents (Total, Endothelial, Tumor, M1, M2, and Fibroblast)</span>
+<span class="sd">        at each simulation step, as well as the nutrient concentration, and plots them using Matplotlib.</span>
+
+<span class="sd">        The following plots are generated:</span>
+<span class="sd">        - Agent counts for each type (Endothelial, Tumor, M1, M2, Fibroblast) over time.</span>
+<span class="sd">        - Nutrient concentration over time.</span>
+
+<span class="sd">        The x-axis represents the simulation steps, and the y-axis represents the count of agents or nutrient concentration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#agent data</span>
+        <span class="n">total_agents_count_over_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">endothelial_agents_count_over_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tumor_agents_count_over_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">m1_agents_count_over_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">m2_agents_count_over_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">fibroblast_ageents_count_over_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="p">)</span>
+        
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TOTAL&quot;</span><span class="p">,</span> <span class="s2">&quot;ENDOTHELIAL&quot;</span><span class="p">,</span> <span class="s2">&quot;TUMOR&quot;</span><span class="p">,</span> <span class="s2">&quot;M1&quot;</span><span class="p">,</span> <span class="s2">&quot;M2&quot;</span><span class="p">,</span> <span class="s2">&quot;FIBROBLAST&quot;</span><span class="p">]</span>
+        <span class="n">time_plots</span> <span class="o">=</span> <span class="p">[</span><span class="n">total_agents_count_over_time</span><span class="p">,</span> <span class="n">endothelial_agents_count_over_time</span><span class="p">,</span> <span class="n">tumor_agents_count_over_time</span><span class="p">,</span> <span class="n">m1_agents_count_over_time</span><span class="p">,</span> <span class="n">m2_agents_count_over_time</span><span class="p">,</span> <span class="n">fibroblast_ageents_count_over_time</span><span class="p">]</span>
+        
+        <span class="k">for</span> <span class="nb">type</span><span class="p">,</span> <span class="n">plot</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">time_plots</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_count_record</span><span class="p">:</span>
+                <span class="c1">#print(step)</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_count_record</span><span class="p">[</span><span class="n">step</span><span class="p">][</span><span class="nb">type</span><span class="p">]</span>
+                <span class="c1">#print(count)</span>
+                <span class="n">plot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+        
+        <span class="c1">#nutrient data</span>
+        <span class="n">nutrient_conc_over_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrition_conc_record</span><span class="p">:</span>
+            <span class="n">nutrient_conc_over_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nutrition_conc_record</span><span class="p">[</span><span class="n">step</span><span class="p">])</span>
+
+        <span class="c1">#self.plot_graph(steps, plot, f&#39;{type} over time&quot;&#39;, &quot;time&quot;, &quot;agents&quot;)</span>
+        <span class="c1">#plt.plot(steps, time_plots[1], label = &quot;endothelial&quot;)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">time_plots</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;tumor cells&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">time_plots</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;m1&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">time_plots</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;m2&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">time_plots</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;fibroblast cells&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">nutrient_conc_over_time</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;nutrient cap&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">plot_data_overlap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots the counts of various agent types and nutrient concentration over time with multiple y-axes.</span>
+
+<span class="sd">        This method creates a plot where the x-axis represents the simulation steps, and the y-axes represent </span>
+<span class="sd">        the counts of different agent types and nutrient concentration at each step. Multiple y-axes are used </span>
+<span class="sd">        to display data for each agent type and nutrient concentration without overlap.</span>
+
+<span class="sd">        The following plots are generated:</span>
+<span class="sd">        - Total agents count on the primary y-axis.</span>
+<span class="sd">        - Individual agent types (Endothelial, Tumor, M1, M2, and Fibroblast) each on a separate y-axis.</span>
+<span class="sd">        - Nutrient concentration on a separate y-axis.</span>
+
+<span class="sd">        All data is plotted over the simulation steps, and the plot is displayed with appropriate labels and legends.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># agent data</span>
+        <span class="n">total_agents_count_over_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">endothelial_agents_count_over_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tumor_agents_count_over_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">m1_agents_count_over_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">m2_agents_count_over_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">fibroblast_ageents_count_over_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="p">)</span>
+        
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TOTAL&quot;</span><span class="p">,</span> <span class="s2">&quot;ENDOTHELIAL&quot;</span><span class="p">,</span> <span class="s2">&quot;TUMOR&quot;</span><span class="p">,</span> <span class="s2">&quot;M1&quot;</span><span class="p">,</span> <span class="s2">&quot;M2&quot;</span><span class="p">,</span> <span class="s2">&quot;FIBROBLAST&quot;</span><span class="p">]</span>
+        <span class="n">time_plots</span> <span class="o">=</span> <span class="p">[</span><span class="n">total_agents_count_over_time</span><span class="p">,</span> <span class="n">endothelial_agents_count_over_time</span><span class="p">,</span> <span class="n">tumor_agents_count_over_time</span><span class="p">,</span> <span class="n">m1_agents_count_over_time</span><span class="p">,</span> <span class="n">m2_agents_count_over_time</span><span class="p">,</span> <span class="n">fibroblast_ageents_count_over_time</span><span class="p">]</span>
+        
+        <span class="k">for</span> <span class="nb">type</span><span class="p">,</span> <span class="n">plot</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">time_plots</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_count_record</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_count_record</span><span class="p">[</span><span class="n">step</span><span class="p">][</span><span class="nb">type</span><span class="p">]</span>
+                <span class="n">plot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+        
+        <span class="c1"># nutrient data</span>
+        <span class="n">nutrient_conc_over_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrition_conc_record</span><span class="p">:</span>
+            <span class="n">nutrient_conc_over_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nutrition_conc_record</span><span class="p">[</span><span class="n">step</span><span class="p">])</span>
+
+        <span class="c1"># Create the main plot</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+        <span class="c1"># Plot the total agents count (primary y-axis)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">time_plots</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;total agents&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Total agents&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Create secondary y-axes for each dataset</span>
+        <span class="n">ax2</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">time_plots</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;endothelial&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Endothelial cells&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+
+        <span class="n">ax3</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+        <span class="n">ax3</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="s1">&#39;outward&#39;</span><span class="p">,</span> <span class="mi">60</span><span class="p">))</span>  <span class="c1"># Offset the axis to avoid overlap</span>
+        <span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">time_plots</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;tumor cells&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+        <span class="n">ax3</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Tumor cells&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+        <span class="n">ax3</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+
+        <span class="n">ax4</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+        <span class="n">ax4</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="s1">&#39;outward&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">))</span>  <span class="c1"># Further offset for clarity</span>
+        <span class="n">ax4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">time_plots</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;m1&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">)</span>
+        <span class="n">ax4</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Macrophage 1&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">)</span>
+        <span class="n">ax4</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">)</span>
+
+        <span class="n">ax5</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+        <span class="n">ax5</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="s1">&#39;outward&#39;</span><span class="p">,</span> <span class="mi">180</span><span class="p">))</span>  <span class="c1"># Further offset for clarity</span>
+        <span class="n">ax5</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">time_plots</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;m2&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">)</span>
+        <span class="n">ax5</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Macrophage 2&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">)</span>
+        <span class="n">ax5</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">)</span>
+
+        <span class="n">ax6</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+        <span class="n">ax6</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="s1">&#39;outward&#39;</span><span class="p">,</span> <span class="mi">240</span><span class="p">))</span>  <span class="c1"># Further offset for clarity</span>
+        <span class="n">ax6</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">time_plots</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;fibroblast cells&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;brown&quot;</span><span class="p">)</span>
+        <span class="n">ax6</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Fibroblast cells&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;brown&quot;</span><span class="p">)</span>
+        <span class="n">ax6</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="s2">&quot;brown&quot;</span><span class="p">)</span>
+
+        <span class="n">ax5</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+        <span class="n">ax6</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="s1">&#39;outward&#39;</span><span class="p">,</span> <span class="mi">300</span><span class="p">))</span>  <span class="c1"># Further offset for clarity</span>
+        <span class="n">ax6</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">nutrient_conc_over_time</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;substrate&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;pink&quot;</span><span class="p">)</span>
+        <span class="n">ax6</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Nutrient Concentration&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;pink&quot;</span><span class="p">)</span>
+        <span class="n">ax6</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="s2">&quot;pink&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Plot nutrient concentration on the main plot</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">nutrient_conc_over_time</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;nutrient cap&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Combine all legends from each axis</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        
+        <span class="c1"># Show plot</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1">#UPDATE AGENT_STORAGE{}</span>
+    <span class="k">def</span> <span class="nf">update_agent_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the agent storage to ensure it only contains agents that are currently in the schedule.</span>
+
+<span class="sd">        This method compares the agents in `agent_storage` with the agents in the `schedule`. If any agents in </span>
+<span class="sd">        `agent_storage` are no longer in the schedule, they are removed from the storage.</span>
+
+<span class="sd">        The method performs the following tasks:</span>
+<span class="sd">        - Creates a set of agents currently in the schedule.</span>
+<span class="sd">        - Iterates through each agent type in `agent_storage`.</span>
+<span class="sd">        - Identifies agents in `agent_storage` whose unique IDs are not present in the schedule.</span>
+<span class="sd">        - Removes these agents from the storage.</span>
+
+<span class="sd">        The update ensures that `agent_storage` remains synchronized with the `schedule`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">schedule_agents_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="o">.</span><span class="n">agents</span><span class="p">)</span>
+        
+        <span class="c1"># ITERATE THROUGH agent_storage{}</span>
+        <span class="k">for</span> <span class="n">agent_type</span><span class="p">,</span> <span class="n">agents_dict</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_storage</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># agents_dict contains {unique_id: agent}</span>
+            
+            <span class="c1"># Collect unique IDs of agents to remove</span>
+            <span class="n">agents_to_remove</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">unique_id</span> <span class="k">for</span> <span class="n">unique_id</span><span class="p">,</span> <span class="n">agent</span> <span class="ow">in</span> <span class="n">agents_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">agent</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">schedule_agents_set</span>
+            <span class="p">]</span>
+            
+            <span class="c1"># Remove agents that are not in the schedule</span>
+            <span class="k">for</span> <span class="n">unique_id</span> <span class="ow">in</span> <span class="n">agents_to_remove</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">agents_dict</span><span class="p">[</span><span class="n">unique_id</span><span class="p">]</span>
+    
+    <span class="c1">#GET NUTRITION CAP</span>
+    <span class="k">def</span> <span class="nf">get_nutrition_cap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the current nutrition capacity of the model.</span>
+
+<span class="sd">        This method provides access to the `nutrition_cap` attribute, which represents the total available </span>
+<span class="sd">        nutrition in the model.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - The current nutrition capacity value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrition_cap</span>
+    
+    <span class="c1">#CREATE NUTRITION CAP</span>
+    <span class="k">def</span> <span class="nf">update_nutrition_cap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the nutrition capacity by adding a specified value.</span>
+
+<span class="sd">        This method modifies the `nutrition_cap` attribute by adding the provided value to it. This can be used </span>
+<span class="sd">        to increase or decrease the available nutrition in the model.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        val (int or float): The value to add to the current nutrition capacity.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nutrition_cap</span> <span class="o">+=</span> <span class="n">val</span>
+    
+    <span class="c1">#EAT NEW NUTRITION CAP</span>
+    <span class="k">def</span> <span class="nf">eat_nutrition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reduces the nutrition capacity by a specified value.</span>
+
+<span class="sd">        This method decreases the `nutrition_cap` attribute by the provided value. This simulates the consumption </span>
+<span class="sd">        or depletion of available nutrition in the model.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        val (int or float): The amount of nutrition to subtract from the current capacity.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nutrition_cap</span> <span class="o">-=</span> <span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">print_step_data</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints the current data for the simulation step.</span>
+
+<span class="sd">        This method outputs relevant information for the current step of the simulation, including:</span>
+<span class="sd">        - The current `nutrition_cap` level.</span>
+<span class="sd">        - The counts of agents stored in `agent_count_record` for the current step.</span>
+<span class="sd">        - The rates of agent changes stored in `agent_rate_record` for the current step.</span>
+<span class="sd">        - The current `nutrition_cap` value and its concentration relative to the grid&#39;s size.</span>
+<span class="sd">        - A sample of the M1 agents (`m1_list`) for testing purposes.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#PRINT STEP DATA:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Current nutrition_cap levels: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nutrition_cap</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Counts:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_count_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Rates:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_rate_record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Nutrition: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nutrition_cap</span><span class="si">}</span><span class="s1">, Nutrition Concentration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nutrition_cap</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">width</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">height</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Test sample : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">m1_list</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># STEP METHOD </span>
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Advances the simulation by one step.</span>
+
+<span class="sd">        This method updates the simulation by performing the following tasks:</span>
+<span class="sd">        - Ends the simulation if the number of steps exceeds `num_steps`.</span>
+<span class="sd">        - Records data for the current step.</span>
+<span class="sd">        - Collects model data using the `datacollector`.</span>
+<span class="sd">        - Advances the simulation schedule by one step.</span>
+<span class="sd">        - Updates the lists of agent types (Endothelial, Tumor cells, M1, M2, Fibroblasts).</span>
+<span class="sd">        - Removes agents from `agent_storage` that are no longer in the schedule.</span>
+<span class="sd">        - Increments the `step_count` for the next simulation step.</span>
+
+<span class="sd">        If the simulation reaches the maximum number of steps (`num_steps`), it will stop and generate plots of the data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># END OF SIMULATION AND PRINT PLOTS</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulation reached the maximum number of steps&quot;</span><span class="p">)</span>
+            
+            <span class="c1">#PLOT DATA</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_data_overlap</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_data_basic</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">(</span><span class="s2">&quot;record&quot;</span><span class="p">)</span>
+
+        <span class="c1">#MESA DATA COLLECTION</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datacollector</span><span class="o">.</span><span class="n">collect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1">#NEXT STEP</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="o">.</span><span class="n">step</span><span class="p">()</span> 
+    
+        <span class="c1">#GENERATE LIST OF ENDOTHELIAL CELLS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endothelial_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_agent_type_list</span><span class="p">(</span><span class="n">Endothelial</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tumor_cell_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_agent_type_list</span><span class="p">(</span><span class="n">Tumor_cells</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m1_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_agent_type_list</span><span class="p">(</span><span class="n">M1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m2_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_agent_type_list</span><span class="p">(</span><span class="n">M2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fibroblast_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_agent_type_list</span><span class="p">(</span><span class="n">Fibroblast</span><span class="p">)</span>
+        
+        <span class="c1">#UPDATE self.agent_storage{} TO REMOVE AGENTS THAT DO NOT APPEAR IN self.scheduler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_agent_storage</span><span class="p">()</span>
+        
+        <span class="c1">#PRINT STEP DATA:</span>
+        <span class="c1">#self.print_step_data()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+<span class="c1">#-------------------------------------------------#-------------------------------------------------</span>
+<span class="c1"># Create a CanvasGrid for visualization</span>
+<span class="c1">#In ModelSetver.py</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -436,6 +1155,26 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequesites">Prerequesites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-neccessary-packages">Import Neccessary Packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#class-declaration-and-method-groups">Class Declaration and Method Groups</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-agents">Generate Agents</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
