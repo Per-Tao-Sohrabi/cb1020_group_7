@@ -95,7 +95,7 @@ class Tumor_cells(Agent):
         #INTERACTION PARAMETERS (Distance Depen dent) -> self.tumor_endo_interaction() (NOT STANDARDIZED RANGES)
         self.death_intensity = 1.7  #1.7
         self.prolif_inhib_intensity = 0.4#0.04
-        self.angiogenesis_intensity = 0.08 #0.8 #Keep it smaller for beutiful branching
+        self.angiogenesis_intensity = 0.08#0.8 #Keep it smaller for beutiful branching
         self.optimal_signal_dist_significane = 0.0 #0.01
 
         #AGE PARAMETERS
@@ -242,8 +242,7 @@ class Tumor_cells(Agent):
         #INTERACTION ATTIBUTE PARAMETERS *FOR LOGISTIC ZONE*
         #  Death Intensity
         death_intensity = self.death_intensity
-        delta_death_factor = death_intensity  * abs(curr_dist-threshold3)/threshold3 
-        death_factor = delta_death_factor
+        death_factor = death_intensity  * abs(curr_dist-threshold3)#/threshold3 
         
         #  Tumor Proliferation Inhibition
         inhib_intensity = self.prolif_inhib_intensity 
@@ -257,10 +256,8 @@ class Tumor_cells(Agent):
         #  Induction Level
         induct_intensity = self.angiogenesis_intensity 
         speed_dampening = self.optimal_signal_dist_significane #Lowers the significance of the optimal signal distance.
-        if best_dist == curr_dist:
-            induction_factor = 1
-        else:
-            induction_factor = induct_intensity * 1 / (1 + abs(best_dist-speed_dampening*curr_dist)) 
+        if curr_dist != 0:
+            induction_factor = (induct_intensity)/ (1 + abs(best_dist-speed_dampening*curr_dist)) 
         
         self.set_nearest_endo('default'); #updates prev distance and new distance.
         
@@ -273,10 +270,10 @@ class Tumor_cells(Agent):
 
         #LOGISTIC ZONE
         elif self.nearest_dist > threshold2:
-            if diff != 0:
-                self.set_proliferation_prob(proliferation_factor, "proportion")
-                if self.nearest_dist > threshold3:
-                    self.set_death_prob(death_factor, "proportion")
+            #if diff != 0:
+            self.set_proliferation_prob(proliferation_factor, "proportion")
+            if self.nearest_dist > threshold3:
+                self.set_death_prob(death_factor, "proportion")
             self.nearest_endo.targeted_proliferation(self.position, induction_factor)          
 
         #PRINT AGENT DATA:
@@ -386,7 +383,7 @@ class Tumor_cells(Agent):
         nutrition_cap = self.model.nutrition_cap
         #COUNT RATIO # Smaller ratio >>> decreased pro parameters, increased de parameters.
         S = nutrition_cap/(self.model.grid.width*self.model.grid.height) # nutrient_concentration
-        nutrient_limit = 2
+        nutrient_limit = 2 #concentration
         
         if nutrition_cap > nutrient_limit:
             self.eat()
@@ -396,7 +393,7 @@ class Tumor_cells(Agent):
                     self.set_proliferation_prob(new_prol_prob, "proportion")
         elif nutrition_cap < nutrient_limit:
             self.eat(0)
-            self.set_angiogenesis_intensity(1.5)
+            #self.set_angiogenesis_intensity(0.01)
             self.set_death_prob(1.2, 'proportion')
             self.set_proliferation_prob(0, "proportion")
             #print(nutrition_cap)

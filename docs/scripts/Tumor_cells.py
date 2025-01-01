@@ -277,7 +277,7 @@ class Tumor_cells(Agent):
                 self.set_proliferation_prob(proliferation_factor, "proportion")
                 if self.nearest_dist > threshold3:
                     self.set_death_prob(death_factor, "proportion")
-            self.nearest_endo.targeted_proliferation(self.position, induction_factor)          
+            #self.nearest_endo.targeted_proliferation(self.position, induction_factor)          
 
         #PRINT AGENT DATA:
         #self.print_agent_data()

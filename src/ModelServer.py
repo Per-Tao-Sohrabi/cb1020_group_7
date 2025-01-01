@@ -70,7 +70,7 @@ server = ModularServer(
     MainModel, 
     [canvas_element], 
     "Prostate Environment Simulation",
-    model_params={"num_steps": 50}
+    model_params={"num_steps": 100}
 )
 
 server.port = 8521  # You can set a custom port
