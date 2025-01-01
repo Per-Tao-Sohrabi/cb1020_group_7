@@ -16,16 +16,22 @@ from Fibroblast import Fibroblast;
 
 
 class MainModel(Model):
-    """
-    MainModel represents the prostate cancer simulation environment.
-    """
+    '''
+    # MainModel
+
+    ABM Model simulating prostate tumor micro environment. 
+    Contains methods for model initiation, agent-agent-interactivity, data collection, data plotting, and simulation progression(step()). 
+    '''
     # GENERATE A UNIQUE ID (not random)
     def get_next_unique_id(self):   
         """
-        Generate a unique ID for agents.
+        Generate the next unique ID.
+
+        This helper method for `MainModel.generate_agents()` generates and adds a new sequential 
+        number to `MainModel.used_ids[]`.
 
         Returns:
-            int: A unique ID that has not been used before.
+            int: The next unique ID.
         """            
         unique_id = len(self.used_ids)          # Start with a base unique_id
         while unique_id in self.used_ids:       # Ensure the unique_id hasn't been used already
@@ -148,11 +154,21 @@ class MainModel(Model):
 
     #ADD AGENT TO MODEL (This is a helper method for the above method)
     def add_agent(self, agent_type, agent):
-        '''
-        Helper method for MainModel.generate_agents()
+        """
+        Adds an agent to the simulation.
 
-        Adds an agent to (1) self.agent_storage, (2) self.schedule, and (3) self.grid.
-        '''
+        Parameters:
+        agent_type (type): The type or class of the agent being added.
+        agent (Agent): The agent instance to be added to the simulation.
+
+        The method performs the following actions:
+        - Checks if the agent's position is within the bounds of the grid.
+        - If valid, adds the agent to `agent_storage` under the specified `agent_type`.
+        - Adds the agent to the simulation schedule.
+        - Places the agent on the grid at its specified position.
+
+        If the agent's position is outside the grid bounds, the method takes no action.
+        """
         x, y = agent.position
         if x < self.grid.width and y < self.grid.height:
             self.agent_storage[agent_type][agent.unique_id]= agent
@@ -163,25 +179,44 @@ class MainModel(Model):
 
     #GENERATE POSITION SORTED LIST OF AGENTS OF SPECFIC TYPE 
     def get_agent_type_list(self, agent_type):
+        """
+        Retrieves a set of agents of a specific type.
+
+        Parameters:
+        agent_type (type): The type or class of agents to retrieve.
+
+        Returns:
+        set: A set containing all agents of the specified type stored in `agent_storage`.
+        """
         agent_type_list = set()
         for unique_id, agent in self.agent_storage[agent_type].items():
             agent_type_list.add(agent)
         return agent_type_list
     
     # INITIALIZE MODEL - initialize the agents put on the grid by the previous method
-    def __init__(self, *args, **kwargs):
+    def __init__(self, num_steps=None, *args, **kwargs):
         """
-        Initialize the MainModel.
+        Initializes the model with the specified parameters and sets up the simulation.
 
-        Args:
-            *args: Additional arguments.
-            **kwargs: Additional keyword arguments.
+        Parameters:
+        num_steps (int, optional): The number of steps to run the simulation. Defaults to None.
+        *args: Additional positional arguments for the superclass.
+        **kwargs: Additional keyword arguments for the superclass.
+
+        The initialization performs the following tasks:
+        - Sets a fixed random seed for reproducibility.
+        - Configures the grid with a size of 150x150 and disables toroidal wrapping.
+        - Sets up a random activation schedule for agents.
+        - Initializes storage for various agent types, such as Endothelial, Tumor_cells, M1, M2, and Fibroblast.
+        - Generates predefined agents of each type and stores them in respective lists.
+        - Initializes variables for tracking nutrient levels, agent counts, and other data.
+        - Configures a DataCollector to collect model-level and agent-level data during the simulation.
         """
         #SET RANDOM SEED
         random.seed(4)
         
         #MODEL RUNNING:
-        self.num_steps = 200
+        self.num_steps = num_steps
         #Model fields
         super().__init__(*args, **kwargs)
         self.grid = MultiGrid(150, 150, torus=False);
@@ -220,24 +255,44 @@ class MainModel(Model):
         #self.avg_agent_specific_rates = {}
 
         # Initialize DataCollector
-        '''
+        
         self.datacollector = DataCollector(
             model_reporters={
-                "Total Agents": lambda m: len(m.schedule.agents)
-                "Endothelial cells": lambda m: len(m.endothelial_list)
-                "Tumor_cells": lambda m: len(m.tumor_cells_list)
-                "M1": lambda m: len(m.m1_list)
-                "M2": lambda m: len(m.m2_list)
-                "Fibroblast": lambda m: len(m.fibroblast_list)
+                "Total Agents": lambda m: len(m.schedule.agents),
+                "Endothelial cells": lambda m: len(m.endothelial_list),
+                "Tumor_cells": lambda m: len(m.tumor_cell_list),
+                "M1": lambda m: len(m.m1_list),
+                "M2": lambda m: len(m.m2_list),
+                "Fibroblast": lambda m: len(m.fibroblast_list),
+                "Nutrient levels": lambda m: m.nutrition_cap
                 },
             agent_reporters={
                 "Position": lambda a: a.pos,
             }
         )  
-        '''
+        
 
     #DATACOLLCETION
     def data_collection(self, *args):
+        """
+        Collects and records agent count and rate data at each simulation step.
+
+        Parameters:
+        *args: A variable-length argument list. The first argument determines the action to take:
+            - "record" to store current agent count and rate data.
+            - "count" followed by a specific agent type to return the current count for that type.
+            - "rate" followed by a specific agent type to return the current rate of change for that type.
+
+        Data Collected:
+        - Agent counts for total agents and individual types (Endothelial, Tumor, M1, M2, and Fibroblast).
+        - Rate of change in agent counts between consecutive steps.
+        - Nutrient concentration as a ratio of available nutrition to grid area.
+
+        Returns:
+        - If "count" is provided as the first argument, returns the current count of the specified agent type.
+        - If "rate" is provided, returns the current rate of change for the specified agent type.
+        - Otherwise, stores the data in the respective record dictionaries.
+        """
         #CURRENT COUNTS
         agent_count = {
             "TOTAL":(len(self.endothelial_list) + len(self.tumor_cell_list) + len(self.m1_list) + len(self.m2_list) + len(self.fibroblast_list)),
@@ -311,43 +366,19 @@ class MainModel(Model):
     
     #PRINT DATA
     def plot_data_basic(self):
-            #agent data
-            total_agents_count_over_time = []
-            endothelial_agents_count_over_time = []
-            tumor_agents_count_over_time = []
-            m1_agents_count_over_time = []
-            m2_agents_count_over_time = []
-            fibroblast_ageents_count_over_time = []
-            steps = np.linspace(0, self.step_count, self.step_count)
-            
-            keys = ["TOTAL", "ENDOTHELIAL", "TUMOR", "M1", "M2", "FIBROBLAST"]
-            time_plots = [total_agents_count_over_time, endothelial_agents_count_over_time, tumor_agents_count_over_time, m1_agents_count_over_time, m2_agents_count_over_time, fibroblast_ageents_count_over_time]
-            
-            for type, plot in zip(keys, time_plots):
-                for step in self.agent_count_record:
-                    #print(step)
-                    count = self.agent_count_record[step][type]
-                    #print(count)
-                    plot.append(count)
-            
-            #nutrient data
-            nutrient_conc_over_time = []
-            for step in self.nutrition_conc_record:
-                nutrient_conc_over_time.append(self.nutrition_conc_record[step])
+        """
+        Plots the counts of various agent types and nutrient concentration over time.
 
-            #self.plot_graph(steps, plot, f'{type} over time"', "time", "agents")
-            #plt.plot(steps, time_plots[1], label = "endothelial")
-            plt.plot(steps, time_plots[2], label = "tumor cells")
-            plt.plot(steps, time_plots[3], label = "m1")
-            plt.plot(steps, time_plots[3], label = "m2")
-            plt.plot(steps, time_plots[3], label = "fibroblast cells")
-            plt.plot(steps, nutrient_conc_over_time, label = "nutrient cap")
-            plt.legend()
-            plt.show()
-            
-    '''
-    def plot_data(self):
-        # agent data
+        The method collects data on the counts of agents (Total, Endothelial, Tumor, M1, M2, and Fibroblast)
+        at each simulation step, as well as the nutrient concentration, and plots them using Matplotlib.
+
+        The following plots are generated:
+        - Agent counts for each type (Endothelial, Tumor, M1, M2, Fibroblast) over time.
+        - Nutrient concentration over time.
+
+        The x-axis represents the simulation steps, and the y-axis represents the count of agents or nutrient concentration.
+        """
+        #agent data
         total_agents_count_over_time = []
         endothelial_agents_count_over_time = []
         tumor_agents_count_over_time = []
@@ -361,63 +392,41 @@ class MainModel(Model):
         
         for type, plot in zip(keys, time_plots):
             for step in self.agent_count_record:
+                #print(step)
                 count = self.agent_count_record[step][type]
+                #print(count)
                 plot.append(count)
         
-        # nutrient data
+        #nutrient data
         nutrient_conc_over_time = []
         for step in self.nutrition_conc_record:
             nutrient_conc_over_time.append(self.nutrition_conc_record[step])
 
-        # Create subplots with independent y-axes
-        fig, axs = plt.subplots(len(time_plots) + 1, sharex=True, figsize=(10, 8))
-
-        # Plot agent data
-        axs[0].plot(steps, time_plots[0], label="total agents")
-        axs[0].set_ylabel("agents")
-        axs[0].legend()
-
-        axs[1].plot(steps, time_plots[1], label="endothelial")
-        axs[1].set_ylabel("agents")
-        axs[1].legend()
-
-        axs[2].plot(steps, time_plots[2], label="tumor cells")
-        axs[2].set_ylabel("agents")
-        axs[2].legend()
-
-        axs[3].plot(steps, time_plots[3], label="m1")
-        axs[3].set_ylabel("agents")
-        axs[3].legend()
-
-        axs[4].plot(steps, time_plots[4], label="m2")
-        axs[4].set_ylabel("agents")
-        axs[4].legend()
-
-        axs[5].plot(steps, time_plots[5], label="fibroblast cells")
-        axs[5].set_ylabel("agents")
-        axs[5].legend()
-
-        # Plot nutrient concentration data on the last axis
-        axs[-1].plot(steps, nutrient_conc_over_time, label="nutrient cap")
-        axs[-1].set_xlabel("time")
-        axs[-1].set_ylabel("concentration")
-        axs[-1].legend()
-
-        # Show plot
-        plt.tight_layout()
+        #self.plot_graph(steps, plot, f'{type} over time"', "time", "agents")
+        #plt.plot(steps, time_plots[1], label = "endothelial")
+        plt.plot(steps, time_plots[2], label = "tumor cells")
+        plt.plot(steps, time_plots[3], label = "m1")
+        plt.plot(steps, time_plots[3], label = "m2")
+        plt.plot(steps, time_plots[3], label = "fibroblast cells")
+        plt.plot(steps, nutrient_conc_over_time, label = "nutrient cap")
+        plt.legend()
         plt.show()
 
-        
-        #Lables
-        #if title != None:
-        #    plt.title(title)
-        #if xLabel != None:
-        #    plt.xlabel(xLabel)
-        #if yLabel != None:
-        #    plt.ylabel(yLabel)
-        #plt.show()'''
-
     def plot_data_overlap(self):
+        """
+        Plots the counts of various agent types and nutrient concentration over time with multiple y-axes.
+
+        This method creates a plot where the x-axis represents the simulation steps, and the y-axes represent 
+        the counts of different agent types and nutrient concentration at each step. Multiple y-axes are used 
+        to display data for each agent type and nutrient concentration without overlap.
+
+        The following plots are generated:
+        - Total agents count on the primary y-axis.
+        - Individual agent types (Endothelial, Tumor, M1, M2, and Fibroblast) each on a separate y-axis.
+        - Nutrient concentration on a separate y-axis.
+
+        All data is plotted over the simulation steps, and the plot is displayed with appropriate labels and legends.
+        """
         # agent data
         total_agents_count_over_time = []
         endothelial_agents_count_over_time = []
@@ -497,6 +506,20 @@ class MainModel(Model):
 
     #UPDATE AGENT_STORAGE{}
     def update_agent_storage(self):
+        """
+        Updates the agent storage to ensure it only contains agents that are currently in the schedule.
+
+        This method compares the agents in `agent_storage` with the agents in the `schedule`. If any agents in 
+        `agent_storage` are no longer in the schedule, they are removed from the storage.
+
+        The method performs the following tasks:
+        - Creates a set of agents currently in the schedule.
+        - Iterates through each agent type in `agent_storage`.
+        - Identifies agents in `agent_storage` whose unique IDs are not present in the schedule.
+        - Removes these agents from the storage.
+
+        The update ensures that `agent_storage` remains synchronized with the `schedule`.
+        """
         schedule_agents_set = set(self.schedule.agents)
         
         # ITERATE THROUGH agent_storage{}
@@ -514,24 +537,91 @@ class MainModel(Model):
     
     #GET NUTRITION CAP
     def get_nutrition_cap(self):
+        """
+        Returns the current nutrition capacity of the model.
+
+        This method provides access to the `nutrition_cap` attribute, which represents the total available 
+        nutrition in the model.
+
+        Returns:
+        - The current nutrition capacity value.
+        """
         return self.nutrition_cap
     
     #CREATE NUTRITION CAP
     def update_nutrition_cap(self, val):
+        """
+        Updates the nutrition capacity by adding a specified value.
+
+        This method modifies the `nutrition_cap` attribute by adding the provided value to it. This can be used 
+        to increase or decrease the available nutrition in the model.
+
+        Parameters:
+        val (int or float): The value to add to the current nutrition capacity.
+
+        Returns:
+        None
+        """
         self.nutrition_cap += val
     
     #EAT NEW NUTRITION CAP
     def eat_nutrition(self, val):
+        """
+        Reduces the nutrition capacity by a specified value.
+
+        This method decreases the `nutrition_cap` attribute by the provided value. This simulates the consumption 
+        or depletion of available nutrition in the model.
+
+        Parameters:
+        val (int or float): The amount of nutrition to subtract from the current capacity.
+
+        Returns:
+        None
+        """
         self.nutrition_cap -= val
 
+    def print_step_data():
+        """
+        Prints the current data for the simulation step.
+
+        This method outputs relevant information for the current step of the simulation, including:
+        - The current `nutrition_cap` level.
+        - The counts of agents stored in `agent_count_record` for the current step.
+        - The rates of agent changes stored in `agent_rate_record` for the current step.
+        - The current `nutrition_cap` value and its concentration relative to the grid's size.
+        - A sample of the M1 agents (`m1_list`) for testing purposes.
+
+        Returns:
+        None
+        """
+        #PRINT STEP DATA:
+        print(f'Current nutrition_cap levels: {self.nutrition_cap}')
+        print(f'Counts:{self.agent_count_record[self.step_count]}')
+        print(f'Rates:{self.agent_rate_record[self.step_count]}')
+        print(f'Nutrition: {self.nutrition_cap}, Nutrition Concentration: {self.nutrition_cap/(self.grid.width*self.grid.height)}')
+        print(f'Test sample : {self.m1_list}')
     # STEP METHOD 
-    def step(self):  # OBS: preliminary code, have not tested it yet!
+    def step(self): 
         """
-        Advance the simulation by one step, updating the model and agents.
+        Advances the simulation by one step.
+
+        This method updates the simulation by performing the following tasks:
+        - Ends the simulation if the number of steps exceeds `num_steps`.
+        - Records data for the current step.
+        - Collects model data using the `datacollector`.
+        - Advances the simulation schedule by one step.
+        - Updates the lists of agent types (Endothelial, Tumor cells, M1, M2, Fibroblasts).
+        - Removes agents from `agent_storage` that are no longer in the schedule.
+        - Increments the `step_count` for the next simulation step.
+
+        If the simulation reaches the maximum number of steps (`num_steps`), it will stop and generate plots of the data.
+
+        Returns:
+        None
         """
-        
+
         # END OF SIMULATION AND PRINT PLOTS
-        if self.step_count > self.num_steps:
+        if self.num_steps != None and self.step_count > self.num_steps:
             self.running = False
             print("Simulation reached the maximum number of steps")
             
@@ -539,21 +629,10 @@ class MainModel(Model):
             self.plot_data_overlap()
             self.plot_data_basic()
 
-            #total_agents_count_over_time = []
-            #steps = np.linspace(0, self.step_count, self.step_count)
-            #for step in self.agent_count_record:
-            #    print(step)
-            #    total_agents_count = self.agent_count_record[step]["TOTAL"]
-            #    print(total_agents_count)
-            #    total_agents_count_over_time.append(total_agents_count)
-            
-            #for plot in time_plots:
-            #    self.plot_graph(steps, plot, f'{type} over time"', "time", "agents")
-            #    return
-        print(f'MODEL LEVEL DATA:')
-        print(f'Pre-step nutrition_cap levels: {self.nutrition_cap}')
-        #DATA COLLECTION
         self.data_collection("record")
+
+        #MESA DATA COLLECTION
+        self.datacollector.collect(self)
 
         #NEXT STEP
         self.schedule.step() 
@@ -565,98 +644,15 @@ class MainModel(Model):
         self.m2_list = self.get_agent_type_list(M2)
         self.fibroblast_list = self.get_agent_type_list(Fibroblast)
         
-        #UPDATE NUTRITION CAP
-        #self.eat_nutrition(self.grid.width*self.grid.height*0.01)            #simulate tissue maintainance consumption
-        #self.update_nutrition_cap()
-
-        #PRINT STEP DATA:
-        
-        #print(f'Number of Endothelial cells: {len(self.endothelial_list)}')
-        #print(f'Number of Tumor cells: {len(self.tumor_cell_list)}')
-        #print(f'Number of M1 cells: {len(self.m1_list)}')
-        #print(f'Number of M2 cells: {len(self.m2_list)}')
-        #print(f'Number of Fibroblast cells: {len(self.fibroblast_list)}')
-        
-        print(f'Current nutrition_cap levels: {self.nutrition_cap}')
-        print(f'Counts:{self.agent_count_record[self.step_count]}')
-        print(f'Rates:{self.agent_rate_record[self.step_count]}')
-        print(f'Nutrition: {self.nutrition_cap}, Nutrition Concentration: {self.nutrition_cap/(self.grid.width*self.grid.height)}')
-        #print(f'Test sample : {self.m1_list}')
-
         #UPDATE self.agent_storage{} TO REMOVE AGENTS THAT DO NOT APPEAR IN self.scheduler
         self.update_agent_storage()
         
+        #PRINT STEP DATA:
+        #self.print_step_data()
+
         self.step_count += 1
 
-        #Update self.agent_storage()
-        #self.update_agent_storage()
 
 #-------------------------------------------------#-------------------------------------------------
 # Create a CanvasGrid for visualization
-"""
-    Define how agents are portrayed in the visualization.
-
-    Args:
-        agent (Agent): The agent to portray.
-
-    Returns:
-        dict: A portrayal dictionary specifying agent appearance.
-"""
-def agent_portrayal(agent):
-    portrayal = {
-        "Filled": "true",   # Ensure the shape is filled
-    }
-
-    if isinstance(agent, Tumor_cells):
-        portrayal["Shape"] = "circle"
-        portrayal["r"] = 1
-        portrayal["Color"] = "blue"
-        portrayal["Layer"] = 0
-
-        # Add a label if multiple agents are in the same cell for clarity
-        cell_contents = agent.model.grid.get_cell_list_contents(agent.position)
-        if len(cell_contents) > 1:
-            portrayal["text"] = f"{len(cell_contents)}"
-            portrayal["text_color"] = "white"
-
-    elif isinstance(agent, Endothelial):
-        portrayal["Shape"] = "circle"
-        portrayal["r"] = 1
-        portrayal["Color"] = "red"
-        portrayal["Layer"] = 0
-
-    elif isinstance(agent, M1):
-        portrayal["Shape"] = "circle"
-        portrayal["r"] = 1
-        portrayal["Color"] = "green"
-        portrayal["Layer"] = 0
-
-    elif isinstance(agent, M2):
-        portrayal["Shape"] = "circle"
-        portrayal["r"] = 1
-        portrayal["Color"] = "purple"
-        portrayal["Layer"] = 0
-    
-    elif isinstance(agent, Fibroblast):
-        portrayal["Shape"] = "circle"
-        portrayal["r"] = 1
-        portrayal["Color"] = "orange"
-        portrayal["Layer"] = 0
-
-
-    return portrayal
-
-# Set up the visualization canvas
-canvas_element = CanvasGrid(agent_portrayal, 150, 150, 1200, 1200) 
-
-# Create the ModularServer to run the visualization
-server = ModularServer(
-    MainModel, 
-    [canvas_element], 
-    "Prostate Environment Simulation",
-    model_params={"num_steps": 500}
-)
-
-server.port = 8521  # You can set a custom port
-# Run the visualization server
-server.launch()
+#In ModelSetver.py
