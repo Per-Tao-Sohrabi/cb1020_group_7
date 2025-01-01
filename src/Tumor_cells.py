@@ -20,8 +20,6 @@ class Tumor_cells(Agent):
 
         #SET RANDOM SEED
         random.seed(5)
-        # All the relevant properties (instance variables) for the tumor cell are initiated 
-        #DEFAULTS
         
         #BASICS
         self.proliferation_prob = 0.0846
@@ -53,6 +51,13 @@ class Tumor_cells(Agent):
             self.set_nearest_endo() #identify nearest endo during initialization
         elif len(args) == 0:
             self.set_nearest_endo('default')
+            
+        self.diff = self.prev_dist - self.nearest_dist #This only works if set_nearest_endo is initialized.
+        #print(f'Prev dist: {self.prev_dist}, Curr dist: {curr_dist}')
+        if self.diff != 0:
+            self.diff_sign = self.diff/abs(self.diff)
+        else:
+            self.diff_sign = 0
         
         #INTERACTION PARAMETERS (Distance Depen dent) -> self.tumor_endo_interaction() (NOT STANDARDIZED RANGES)
         self.death_intensity = 1.7  #1.7
@@ -82,10 +87,7 @@ class Tumor_cells(Agent):
             x_other, y_other = agent.position
             x_self, y_self, = self.position
             distance_i = ((y_other-y_self)**2 + (x_other-x_self)**2)**(1/2)
-            #print("SET!")
-            #print(counter)
 
-            #print(f'The distance between tumor_cell {self.unique_id} and endo cell {agent.unique_id} is {distance_i}')
             if nearest_endo is None or distance_i < nearest_dist:
                 nearest_endo = agent
                 nearest_dist = distance_i
@@ -93,8 +95,6 @@ class Tumor_cells(Agent):
             
             counter += 1
         
-        
-        #print(f'Nearest distance between TC {self.unique_id} and endo {nearest_endo.unique_id} = {nearest_dist}')
         #update new endo and dist
         self.nearest_endo = nearest_endo
         self.nearest_dist = nearest_dist
@@ -103,9 +103,6 @@ class Tumor_cells(Agent):
         if len(args) > 0 and args[0] == 'default':
             #print("HEJ HEJ")
             self.prev_dist = self.nearest_dist
-        #    print(f'near dist={self.nearest_dist}, prev dist ={self.prev_dist}')
-
-        #print(f'near dist={nearest_dist}, prev dist ={self.prev_dist}')
 
         return nearest_endo, nearest_dist
     
@@ -122,6 +119,7 @@ class Tumor_cells(Agent):
                 self.proliferation_prob = val
             else:
                 pass
+    
     def set_death_prob(self, *args):
         if args[0] == "default":
             self.death_prob = 0.00284
@@ -136,6 +134,7 @@ class Tumor_cells(Agent):
             else:
                 pass
         pass  
+    
     def set_optimal_signal_dist(self, *args):
         self.optimal_signal_dist = args[0]
    
@@ -143,20 +142,23 @@ class Tumor_cells(Agent):
         if len(args) == 1:
             self.angiogenesis_intensity = args[0]
     
+    def print_agent_data(self):
+        print(f'TUMOR DATA id = {self.unique_id}')
+        print(f'* Tumor Age = {150-self.lifespan}')
+        print(f'* Proliferation Prob = {self.proliferation_prob}')
+        print(f'* Death Prob = {self.death_prob}')
+        print(f'* Direction sign {self.diff_sign}')
+        print(f'* Distance to nearest Endothelial cell = {self.nearest_dist}')
+
     #TUMOR-ENDOTHELIAL CELL INTERACTIONS
     def tumor_endo_interaction(self):
         #print(f'Attempting tumor-endo interaction for agent: {self.unique_id}')
-
         #NOTATIONS
         best_dist = self.optimal_signal_dist
         curr_dist = self.nearest_dist
         threshold1 = self.hypoxia_thresholds[0]; threshold2 = self.hypoxia_thresholds[1]; threshold3 = self.hypoxia_thresholds[2]
-        diff = self.prev_dist - self.nearest_dist #This only works if set_nearest_endo is initialized.
-        #print(f'Prev dist: {self.prev_dist}, Curr dist: {curr_dist}')
-        if diff != 0:
-            diff_sign = diff/abs(diff)
-        else:
-            diff_sign = 0
+        diff = self.diff
+        diff_sign = self.diff_sign
 
         #INTERACTION ATTIBUTE PARAMETERS *FOR LOGISTIC ZONE*
         #  Death Intensity
@@ -202,17 +204,9 @@ class Tumor_cells(Agent):
                 if self.nearest_dist > threshold3:
                     self.set_death_prob(death_factor, "proportion")
             self.nearest_endo.targeted_proliferation(self.position, induction_factor)          
-        #print(f'TUMOR DATA id = {self.unique_id}')
-        #print(f'* Tumor Age = {150-self.lifespan}')
-        #print(f'* Proliferation Prob = {self.proliferation_prob}')
-        #print(f'* Death Prob = {self.death_prob}')
-        #print(f'* Direction sign {diff_sign}')
-        #print(f'* Distance to nearest Endothelial cell = {self.nearest_dist}')
-        
 
-
-        #elif self.nearest_dist > self.hypoxia_thresholds[2]:
-        #    self.set_death_prob(2, "proportion") 
+        #PRINT AGENT DATA:
+        #self.print_agent_data()
     
     #MIGRATION
     def migrate(self):
@@ -231,7 +225,8 @@ class Tumor_cells(Agent):
                     self.model.grid.move_agent(self, new_position)
 
         #MIGRATION ACROSS BLOOD VESSLE
-        
+        #To be Continued        
+    
     #APOPTOSIS METHOD:
     def apoptosis(self): # Försöka modellera om cellen är tillräckligt nära en anti-cancer-makrofag så dödas den mha. denna metod
             if self.position == None:
@@ -245,8 +240,7 @@ class Tumor_cells(Agent):
 
     #PROLIFERATION METHOD
     def proliferate(self):
-         self.model.generate_agents(Tumor_cells, "proliferate", 1, self.position, self.nearest_dist); #will be changed to proliferate
-         '''
+         #self.model.generate_agents(Tumor_cells, "proliferate", 1, self.position, self.nearest_dist); #will be changed to proliferate
          try:
             self.model.generate_agents(Tumor_cells, "proliferate", 1, self.position, self.nearest_dist); #will be changed to proliferate
             #print("Tumor cell generated, id = ", self.unique_id);
@@ -254,8 +248,7 @@ class Tumor_cells(Agent):
               print(f'Position: {self.position}')
               print(f"Error while generating Tumor cell from agent  {self.unique_id} {e}")
               pass
-              '''
-    
+              
     #AGE
     def age(self):
         if self.lifespan > 0:
@@ -295,7 +288,7 @@ class Tumor_cells(Agent):
         if nutrition_cap > nutrient_limit:
             self.eat()
             if nutrition_cap >= nutrient_limit:                                                          # consumption rate                                                                   # eat substrate
-                if S >= nutrient_limit and self.nearest_dist > self.hypoxia_thresholds[1] and self.qs < self.qs_max:                                      #
+                if S >= nutrient_limit and self.nearest_dist > self.hypoxia_thresholds[1] and self.qs < self.qs_max:
                     new_prol_prob = (1 * S)/(S + self.Ks_growth)
                     self.set_proliferation_prob(new_prol_prob, "proportion")
         elif nutrition_cap < nutrient_limit:
@@ -332,7 +325,3 @@ class Tumor_cells(Agent):
             self.proliferate();
         if random.randint(0,100) < 100*self.death_prob:
             self.apoptosis()
-
-        #if adjacent or diagonal cell contain(fibroblast) do Increase  * death_prob?
-        #if cell_M.._dist < critDistToM:do Proliferation in empty cell * prolifiration_prob;
-        #if cell_endo_dist > critDistHypoxia:Induce Endothelial Proliferation;
