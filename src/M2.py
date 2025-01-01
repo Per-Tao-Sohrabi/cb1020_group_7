@@ -6,6 +6,21 @@ from mesa.visualization.ModularVisualization import ModularServer
 from Tumor_cells import Tumor_cells
 import random
 
+
+
+"""   
+    Represents an M2 macrophage agent in the model. 
+    M2 affect the tumor progression in a negative way by supporting tumor cell growth.
+
+    Args:
+        unique_id (int): Unique identifier for the agent.
+        position (tuple): The (x, y) coordinates of the agent in the grid.
+        model (object): The simulation model instance the agent belongs to.
+        prob_migrate (float): Probability of the agent migrating to a neighboring cell.
+        prob_death (float): Probability of the agent dying at each step of the simulation.
+        prob_support_growth (float): Probability of the agent supporting the growth of nearby tumor cells.
+        alive (bool): Indicates whether the agent is alive.
+"""
 class M2(Agent):
     
     """
@@ -26,11 +41,12 @@ class M2(Agent):
     
     def eat(self, val):
         self.model.eat_nutrition(val)
+    
     """
         Executes one step of the macrophage's behavior:
-        - Checks if the macrophage dies.
-        - Attempts to migrate to a neighboring cell.
-        - Supports the growth of nearby tumor cells with a given probability.
+            - Checks if the macrophage dies.
+            - Attempts to migrate to a neighboring cell.
+            - Supports the growth of nearby tumor cells with a given probability.
     """
     def step(self):
         # Check if macrophage should die
@@ -54,7 +70,7 @@ class M2(Agent):
         # Filter only empty positions
         empty_positions = [pos for pos in possible_steps if self.model.grid.is_cell_empty(pos)]
 
-        #Pick an empty position if there are any
+        # Pick an empty position if there are any
         if len(empty_positions) > 0:
             new_position = self.random.choice(empty_positions)
             self.model.grid.move_agent(self, new_position)
@@ -77,7 +93,6 @@ class M2(Agent):
                     
                     for agent in tumor_cells:
                         agent.set_angiogenesis_intensity(1)
-                        #print("M2 Supperoted TUMOR PROLIFERATIOn")
     
     """
         Moves the macrophage to a random neighboring position.
