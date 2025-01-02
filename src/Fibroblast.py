@@ -119,3 +119,23 @@ class Fibroblast(Agent):
                             tumor_cell.prolif_inhib_intensity = 0.3
                             tumor_cell.death_intensity = 0.5
                             print("Fibroblast Supperoted TUMOR PROLIFERATION")
+
+    def surpress_tumor_cells(self):
+        neighbors = self.model.grid.get_neighbors(self.position, moore=True, include_center=False)
+        for neighbor in neighbors:
+            if isinstance(neighbor, Tumor_cells):
+            
+            # Support tumor growth with probability
+                if self.random.random() < self.prob_support_growth:
+            
+                # Create a new tumor cell in a random neighboring position
+                    neighbors = self.model.grid.get_neighborhood(neighbor.position, moore=True, include_center=False)
+                    tumor_cells = [cell for cell in neighbors if isinstance(cell, Tumor_cells)]
+            
+                    if tumor_cells:
+                        tumor_cell = self.random.choice(tumor_cells)
+                        if tumor_cell.nearest_dist > tumor_cell.hypoxia_thresholds[1]:
+                            tumor_cell.prolif_inhib_intensity = 0
+                            tumor_cell.death_intensity = 1
+                            print("Fibroblast Supperoted TUMOR PROLIFERATION")
+
