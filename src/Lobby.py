@@ -10,10 +10,6 @@ for i in range(steps): #SPECIFY NUMBER OF STEPS IN range()
 
 if count > steps:
     print('Simulation Status: Done')
-    
-
-    
-
 
 #COLLECTING STORED DATA
 model_df = model.datacollector.get_model_vars_dataframe()
