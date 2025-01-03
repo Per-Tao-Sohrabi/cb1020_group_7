@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -179,8 +179,10 @@
 <li class="toctree-l1"><a class="reference internal" href="endothelial_cells.html">ENDOTHELIAL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tumor_cells.html">TUMOR CELL</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">M1</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="m2_cells.html">M2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibroblast_cells.html">FIBROBLAST</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_the_model.html">RUN THE MODEL</a></li>
 </ul>
 
     </div>
@@ -353,7 +355,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -369,6 +373,22 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">M1</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-neccessary-packages">Import Neccessary Packages</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#m1-macrophage-agent">M1 Macrophage Agent</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key features</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
         </div>
     </div>
 </div>
@@ -380,6 +400,135 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="m1">
 <h1>M1<a class="headerlink" href="#m1" title="Link to this heading">#</a></h1>
+<section id="import-neccessary-packages">
+<h2>Import Neccessary Packages<a class="headerlink" href="#import-neccessary-packages" title="Link to this heading">#</a></h2>
+<p>The following packages included in cb1020.yml are necessary for the model to run.
+These include classes of the mesa package, as well as the agent classes improted from the various agent class files.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mesa</span> <span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">mesa.time</span> <span class="kn">import</span> <span class="n">RandomActivation</span>
+<span class="kn">from</span> <span class="nn">mesa.space</span> <span class="kn">import</span> <span class="n">MultiGrid</span>
+<span class="kn">from</span> <span class="nn">mesa.visualization.modules</span> <span class="kn">import</span> <span class="n">CanvasGrid</span>
+<span class="kn">from</span> <span class="nn">Tumor_cells</span> <span class="kn">import</span> <span class="n">Tumor_cells</span>
+<span class="kn">from</span> <span class="nn">mesa.visualization.ModularVisualization</span> <span class="kn">import</span> <span class="n">ModularServer</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">5</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">from</span> <span class="nn">mesa.space</span> <span class="kn">import</span> <span class="n">MultiGrid</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="kn">from</span> <span class="nn">mesa.visualization.modules</span> <span class="kn">import</span> <span class="n">CanvasGrid</span>
+<span class="ne">----&gt; </span><span class="mi">5</span> <span class="kn">from</span> <span class="nn">Tumor_cells</span> <span class="kn">import</span> <span class="n">Tumor_cells</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="kn">from</span> <span class="nn">mesa.visualization.ModularVisualization</span> <span class="kn">import</span> <span class="n">ModularServer</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;Tumor_cells&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="m1-macrophage-agent">
+<h1>M1 Macrophage Agent<a class="headerlink" href="#m1-macrophage-agent" title="Link to this heading">#</a></h1>
+<p>The <strong>M1 Macrophage</strong> agent plays a critical role in the tumor microenvironment simulation. It represents an immune cell actively fighting tumor growth by killing tumor cells in its neighborhood. Below is the implementation of the M1 Macrophage agent. The agent is defined through its instance methods of def step, def migrate, def proliferate, def kill_tumor_cells</p>
+<section id="key-features">
+<h2>Key features<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Killing Capacity</strong>: The maximum number of tumor cells a single agent can kill.</p></li>
+<li><p><strong>Probability of Killing (<code class="docutils literal notranslate"><span class="pre">prob_kill</span></code>)</strong>: Likelihood of killing a tumor cell during a step. Will lower killing capacity with each kill.</p></li>
+<li><p><strong>Probability of Migration (<code class="docutils literal notranslate"><span class="pre">prob_migrate</span></code>)</strong>: Likelihood of moving to a new position</p></li>
+<li><p><strong>Probability of Death (<code class="docutils literal notranslate"><span class="pre">prob_death</span></code>)</strong>: Likelihood of death with each step</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents an M1 macrophage agent in the model.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        position (tuple): The (x, y) position of the agent in the grid.</span>
+<span class="sd">        killing_capacity (int): The number of tumor cells the agent can kill.</span>
+<span class="sd">        prob_kill (float): Probability of killing a tumor cell in a step.</span>
+<span class="sd">        prob_migrate (float): Probability of moving to a new position in a step.</span>
+<span class="sd">        prob_death (float): Probability of dying in a step.</span>
+<span class="sd">        alive (bool): Indicates whether the agent is alive.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">M1</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes an M1 macrophage agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            agent_id (int): Unique identifier for the agent.</span>
+<span class="sd">            position (tuple): Initial position of the agent in the grid.</span>
+<span class="sd">            model (Model): The model the agent belongs to.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">agent_id</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">killing_capacity</span> <span class="o">=</span> <span class="mi">11</span>       <span class="c1"># Killing capacity </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prob_kill</span> <span class="o">=</span> <span class="mf">0.0306</span>          <span class="c1"># Probability of killing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prob_migrate</span> <span class="o">=</span> <span class="mf">0.2667</span>       <span class="c1"># Probability of migration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prob_death</span> <span class="o">=</span> <span class="mf">0.0049</span>         <span class="c1"># Probability of death</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alive</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eat_nutrition</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+<span class="w">    </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Executes one step of the agent&#39;s behavior:</span>
+<span class="sd">        - Checks if the agent dies based on `prob_death`.</span>
+<span class="sd">        - Migrates to a neighboring cell with `prob_migrate`.</span>
+<span class="sd">        - Attempts to kill a tumor cell in its neighborhood with `prob_kill`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">alive</span><span class="p">:</span>
+            <span class="k">return</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">prob_death</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">alive</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">remove_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">schedule</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">prob_migrate</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">migrate</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">prob_kill</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kill_tumor_cell</span><span class="p">()</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Moves the agent to a random neighboring cell if the new cell is empty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">migrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">possible_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_neighborhood</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">moore</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">include_center</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        
+        <span class="c1"># Filter only empty positions</span>
+        <span class="n">empty_positions</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">possible_steps</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">is_cell_empty</span><span class="p">(</span><span class="n">pos</span><span class="p">)]</span>
+
+        <span class="c1">#Pick an empty position if there are any</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">empty_positions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">new_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">empty_positions</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">move_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_position</span><span class="p">)</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Kills a neighboring tumor cell if one exists.</span>
+<span class="sd">    Reduces the killing capacity of the agent by 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">kill_tumor_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">neighbors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_neighbors</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">moore</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">include_center</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">tumor_cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">cell</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">neighbors</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">Tumor_cells</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">tumor_cells</span><span class="p">:</span>
+            <span class="c1">#print(&quot;Attempting to kill TUMOR&quot;)</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">tumor_cells</span><span class="p">)</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">apoptosis</span><span class="p">()</span><span class="c1">#set_death_prob(1, &quot;val&quot;) # Before TC.apoptosis() was called raising NoneType Error</span>
+            <span class="c1">#print(&quot;Kill!&quot;)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">killing_capacity</span> <span class="o">-=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -436,6 +585,29 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">M1</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-neccessary-packages">Import Neccessary Packages</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#m1-macrophage-agent">M1 Macrophage Agent</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key features</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
               
             
           </div>

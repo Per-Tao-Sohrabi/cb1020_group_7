@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -179,8 +179,10 @@
 <li class="toctree-l1"><a class="reference internal" href="endothelial_cells.html">ENDOTHELIAL</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">TUMOR CELL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="m1_cells.html">M1</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="m2_cells.html">M2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibroblast_cells.html">FIBROBLAST</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_the_model.html">RUN THE MODEL</a></li>
 </ul>
 
     </div>
@@ -353,7 +355,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -369,6 +373,32 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imports-and-class-declaration">Imports and Class Declaration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instance-initiation">Instance Initiation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setters">Setters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-display">Data display</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-behaviour-methods">Basic Behaviour Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#proliferation">Proliferation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#apoptosis">Apoptosis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#migration">Migration</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-environment-interacting-methods">Model Environment Interacting Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hunger">Hunger</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eat">Eat</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#age">Age</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tumor-cell-endothelial-cell-interaction">Tumor cell-Endothelial Cell Interaction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step">Step</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#potential-for-improvement">Potential for improvement</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -380,6 +410,551 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="tumor-cell">
 <h1>TUMOR CELL<a class="headerlink" href="#tumor-cell" title="Link to this heading">#</a></h1>
+<p>Class representing tumor cells in the model.
+Tumor cells can be cancerous or non-cancerous. Cancerous cells can induce endothelial growth,
+migrate, proliferate, and interact with endothelial cells.</p>
+<p>Attributes:
+unique_id: The unique identifier for the agent.
+position: The position of the agent in the model grid.
+model: The model in which the agent resides.
+viable: Indicates if the tumor cell is viable.
+proliferation_prob: Probability of tumor cell proliferation.
+migration_prob: Probability of tumor cell migration.
+death_prob: Probability of tumor cell death.
+lifespan: Lifespan of the tumor cell (in steps).
+qs_max: Maximum oxygen concentration.
+qs: Current oxygen concentration.
+Ks_substrate: Substrate concentration for growth.
+mu_max: Maximum growth rate.
+Ks_growth: Growth rate constant.
+hypoxia_thresholds: Thresholds for different levels of hypoxia.
+nearest_endo: The nearest endothelial cell.
+nearest_dist: The distance to the nearest endothelial cell.
+prev_dist: The previous distance to the nearest endothelial cell.</p>
+<section id="imports-and-class-declaration">
+<h2>Imports and Class Declaration<a class="headerlink" href="#imports-and-class-declaration" title="Link to this heading">#</a></h2>
+<p>Import the necessary prerequisites for this class to run as intended.</p>
+<p><strong>Class Declaration</strong>
+class Tumor_cells(Agent):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mesa</span> <span class="kn">import</span> <span class="n">Agent</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">random</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="instance-initiation">
+<h2>Instance Initiation<a class="headerlink" href="#instance-initiation" title="Link to this heading">#</a></h2>
+<p>Instance initalization associates the instance with different attribute parameter values depending on initialization conditions. For instance; whether an instance is created during model initiation or during tumor proliferation.</p>
+<p><strong>Declaration</strong></p>
+<p>def <strong>init</strong>(self, unique_id, position, model, *args):</p>
+<p>Initialize a tumor cell with the given parameters.</p>
+<p>Args:
+unique_id: Unique identifier for the agent.
+position: The position of the agent on the grid as a tuple (x, y).
+model: The model to which the agent belongs.
+*args: Optional arguments, including the previous distance to the nearest endothelial cell.</p>
+<p><strong>Attributes</strong></p>
+<p>There are 8 groups of instance attributes and parameters that relate to different components of tumor cells. These are constructor (1) initiation attributes, (2) basic parameter values, (3) kinetic parameters, (4) hypoxia parameters, (5) parameters related to endothelial cell tracking, (6) tumor cell-endothelial cell interaction parameters, (7) age related parameters, and (8) hunger related parameters.</p>
+<p>Additionally, instance initialization anchors the random number generator to a specified seed inorder to ensure similar simulation conditions for every simulation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Constructor</span>
+<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unique_id</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span> <span class="c1">#Position inputed as (x,y)</span>
+
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">unique_id</span><span class="p">,</span> <span class="n">model</span><span class="p">);</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">unique_id</span> <span class="o">=</span> <span class="n">unique_id</span><span class="p">;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span><span class="p">;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">viable</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1">#SET RANDOM SEED</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    
+    <span class="c1">#BASICS</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">proliferation_prob</span> <span class="o">=</span> <span class="mf">0.0846</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">migration_prob</span> <span class="o">=</span> <span class="mf">0.1167</span> 
+    <span class="bp">self</span><span class="o">.</span><span class="n">death_prob</span> <span class="o">=</span> <span class="mf">0.00284</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">initial_resist_M1_prob</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">resistance_M1_prob</span> <span class="o">=</span> <span class="mf">0.004</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">lifespan</span> <span class="o">=</span> <span class="mi">150</span> <span class="c1">#steps</span>
+    
+    <span class="c1">#KINETIC PARAMETERS:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">qs_max</span> <span class="o">=</span> <span class="mi">30</span> <span class="c1">#µmol oxygen</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">qs</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Ks_substrate</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1">#according to GPT oxygen</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mu_max</span> <span class="o">=</span> <span class="mf">0.06</span> <span class="c1">#</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Ks_growth</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">width</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">width</span><span class="p">)</span> <span class="c1">#µmol/L</span>
+    
+    <span class="c1">#HYPOXIA PARAMETERS</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">max_signal_dist</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">optimal_signal_dist</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">hypoxia_thresholds</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">];</span>
+
+    <span class="c1">#ENDO TRACKINGs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nearest_endo</span> <span class="o">=</span> <span class="kc">None</span><span class="p">;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nearest_dist</span> <span class="o">=</span> <span class="kc">None</span><span class="p">;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">prev_dist</span> <span class="o">=</span> <span class="kc">None</span><span class="p">;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">mothers_nearest_dist</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prev_dist</span> <span class="o">=</span> <span class="n">mothers_nearest_dist</span> <span class="c1">#previous distance set</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_nearest_endo</span><span class="p">()</span> <span class="c1">#identify nearest endo during initialization</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_nearest_endo</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+        
+    <span class="bp">self</span><span class="o">.</span><span class="n">diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_dist</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nearest_dist</span> <span class="c1">#This only works if set_nearest_endo is initialized.</span>
+    <span class="c1">#print(f&#39;Prev dist: {self.prev_dist}, Curr dist: {curr_dist}&#39;)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">diff</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diff_sign</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diff</span><span class="o">/</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diff</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diff_sign</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="c1">#INTERACTION PARAMETERS (Distance Depen dent) -&gt; self.tumor_endo_interaction() (NOT STANDARDIZED RANGES)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">death_intensity</span> <span class="o">=</span> <span class="mf">1.7</span>  <span class="c1">#1.7</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">prolif_inhib_intensity</span> <span class="o">=</span> <span class="mf">0.4</span><span class="c1">#0.04</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">angiogenesis_intensity</span> <span class="o">=</span> <span class="mf">0.08</span> <span class="c1">#0.8 #Keep it smaller for beutiful branching</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">optimal_signal_dist_significane</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1">#0.01</span>
+
+    <span class="c1">#AGE PARAMETERS</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">recParam1</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1">#HUNGER PARAMETERS:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">prolif_inhibition</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">intensify_death</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">migration_inhibition</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="setters">
+<h2>Setters<a class="headerlink" href="#setters" title="Link to this heading">#</a></h2>
+<p>Setters are public instnace methods called upon by the tumor cell agent as well as other agents inroder to comprehensivly adjust or directly set instance parameter values.</p>
+<p><em>See docstrings for details</em></p>
+<p>Tumor_cells declare five setters, that vary in complexity.</p>
+<p>set_nearest_endo() Uses a relativley complex algorithm to identify and set the nearest endothelial cell to an Tumor_cell instance.</p>
+<p>set_proliferation_prob() &amp; set_death_prob() Both methods use similar algorithms to adjust proliferation_prob and death_prb respectively based on method input.</p>
+<p>set_optimal_signal-dist(), set_angiogenesis_intesity() set_angiogeneisis_intensity() simply sets values for their respective parameters based on the input argument.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#SETTERS</span>
+<span class="k">def</span> <span class="nf">set_nearest_endo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the nearest endothelial cell to the tumor cell.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *args: Optional argument for default behavior.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        nearest_endo: The nearest endothelial agent.</span>
+<span class="sd">        nearest_dist: The distance to the nearest endothelial agent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">endothelial_agents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">endothelial_list</span><span class="p">;</span> <span class="c1">#endothelial_list is a list containing class type objects as elements.</span>
+    <span class="c1">#print(f&#39;Endothelial List: {self.model.endothelial_list}&#39;)</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">nearest_endo</span> <span class="o">=</span> <span class="kc">None</span>                     <span class="c1"># initiate variable</span>
+    <span class="n">nearest_dist</span> <span class="o">=</span> <span class="kc">None</span>                     <span class="c1"># initiate variable</span>
+    <span class="c1">#FIND NEAREST ENDO</span>
+    <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="n">endothelial_agents</span><span class="p">:</span>
+        <span class="n">x_other</span><span class="p">,</span> <span class="n">y_other</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">position</span>
+        <span class="n">x_self</span><span class="p">,</span> <span class="n">y_self</span><span class="p">,</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span>
+        <span class="n">distance_i</span> <span class="o">=</span> <span class="p">((</span><span class="n">y_other</span><span class="o">-</span><span class="n">y_self</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_other</span><span class="o">-</span><span class="n">x_self</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">nearest_endo</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">distance_i</span> <span class="o">&lt;</span> <span class="n">nearest_dist</span><span class="p">:</span>
+            <span class="n">nearest_endo</span> <span class="o">=</span> <span class="n">agent</span>
+            <span class="n">nearest_dist</span> <span class="o">=</span> <span class="n">distance_i</span>
+            <span class="c1">#   print(f&#39;nearest dist {nearest_dist}&#39;)</span>
+        
+        <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    
+    <span class="c1">#update new endo and dist</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nearest_endo</span> <span class="o">=</span> <span class="n">nearest_endo</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nearest_dist</span> <span class="o">=</span> <span class="n">nearest_dist</span>
+    
+    <span class="c1">#RECORD CURR DIST</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
+        <span class="c1">#print(&quot;HEJ HEJ&quot;)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prev_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nearest_dist</span>
+
+    <span class="k">return</span> <span class="n">nearest_endo</span><span class="p">,</span> <span class="n">nearest_dist</span>
+
+<span class="k">def</span> <span class="nf">set_proliferation_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the proliferation probability for the tumor cell.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *args: Can specify a value and type (proportion or value).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proliferation_prob</span> <span class="o">=</span> <span class="mf">0.0846</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nb">type</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">proliferation_prob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">proliferation_prob</span> <span class="o">*</span> <span class="n">val</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">proliferation_prob</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">set_death_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the death probability for the tumor cell.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *args: Can specify a value and type (proportion or value).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">death_prob</span> <span class="o">=</span> <span class="mf">0.00284</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nb">type</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">death_prob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">death_prob</span> <span class="o">*</span> <span class="n">val</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">death_prob</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">pass</span>  
+
+<span class="k">def</span> <span class="nf">set_optimal_signal_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the optimal signaling distance for angiogenesis.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *args: A single argument specifying the optimal distance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">optimal_signal_dist</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">set_angiogenesis_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the intensity of angiogenesis (blood vessel growth).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *args: A single argument specifying the intensity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angiogenesis_intensity</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="data-display">
+<h2>Data display<a class="headerlink" href="#data-display" title="Link to this heading">#</a></h2>
+<p><em>print_agent_data()</em> can be called to print instance data as specified.
+Includes information about the tumor’s age, proliferation probability,
+death probability, direction sign, and distance to the nearest endothelial cell.</p>
+<p><strong>Declaration</strong></p>
+<p>def print_agent_data(self):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">print_agent_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;TUMOR DATA id = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;* Tumor Age = </span><span class="si">{</span><span class="mi">150</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">lifespan</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;* Proliferation Prob = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">proliferation_prob</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;* Death Prob = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">death_prob</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;* Direction sign </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">diff_sign</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;* Distance to nearest Endothelial cell = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nearest_dist</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="basic-behaviour-methods">
+<h2>Basic Behaviour Methods<a class="headerlink" href="#basic-behaviour-methods" title="Link to this heading">#</a></h2>
+<section id="proliferation">
+<h3>Proliferation<a class="headerlink" href="#proliferation" title="Link to this heading">#</a></h3>
+<p>Generate a new tumor cells by proliferation by the MainModel instance specific method <em>MainModel.generate_agents()</em> using the speicified arguments below. See the MainModel chapter for details.</p>
+<p>A new tumor cell is created adjacent to the same position as the current cell.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#PROLIFERATION METHOD</span>
+<span class="k">def</span> <span class="nf">proliferate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">generate_agents</span><span class="p">(</span><span class="n">Tumor_cells</span><span class="p">,</span> <span class="s2">&quot;proliferate&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nearest_dist</span><span class="p">);</span> 
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Position: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error while generating Tumor cell from agent  </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_id</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="apoptosis">
+<h3>Apoptosis<a class="headerlink" href="#apoptosis" title="Link to this heading">#</a></h3>
+<p>Induce apoptosis (programmed cell death) for the tumor cell. Called by itself and instances of the agent type M1.M1 that model macrophage type 1 cells.</p>
+<p>If statments handle edge cases where apoptosis has been induced in an exisitng model before it is called by itself for instance, commonly raising NoneType errors due to self.postion and self.pos being NoneType and or empty tuples.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#APOPTOSIS METHOD:</span>
+<span class="k">def</span> <span class="nf">apoptosis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span> 
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1">#print(&quot;DEAAD!&quot;)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viable</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">remove_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">);</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">schedule</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="migration">
+<h3>Migration<a class="headerlink" href="#migration" title="Link to this heading">#</a></h3>
+<p>Method that allows Tumor_cell instances to move by one model grid cell. adjacent to current position.
+To expand the model, migration could be modeled to increase across epithelial cells. This would aim to model tumors becoming malignant.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#MIGRATION</span>
+<span class="k">def</span> <span class="nf">migrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Move the tumor cell to a neighboring empty cell with a probability </span>
+<span class="sd">    defined by the migration probability.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#IN SITU MIGRATION???</span>
+    <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">migration_prob</span><span class="p">:</span>
+        <span class="c1">#print(&quot;TUMOR CELL MIGRATED&quot;)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">possible_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_neighborhood</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">moore</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">include_center</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            
+            <span class="c1"># Filter only empty positions</span>
+            <span class="n">empty_positions</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">possible_steps</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">is_cell_empty</span><span class="p">(</span><span class="n">pos</span><span class="p">)]</span>
+
+            <span class="c1">#Pick an empty position if there are any</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">empty_positions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">new_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">empty_positions</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">move_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_position</span><span class="p">)</span>
+
+    <span class="c1">#MIGRATION ACROSS BLOOD VESSLE</span>
+    <span class="c1">#To be Continued       </span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="model-environment-interacting-methods">
+<h2>Model Environment Interacting Methods<a class="headerlink" href="#model-environment-interacting-methods" title="Link to this heading">#</a></h2>
+<p>The following methods interacts with the environment conditions to adjust parameters using setters and some of the above <em>basic behavioural methods</em> to adjust the probability of basic behaviour.</p>
+<section id="hunger">
+<h3>Hunger<a class="headerlink" href="#hunger" title="Link to this heading">#</a></h3>
+<p>Tracks nurient levels in the main model simulating nutrition dependnecy in the Tumor_cell instnace.</p>
+<p>Simulates the tumor cell’s response to available nutrition.</p>
+<p>The method adjusts various parameters based on the nutrient concentration (S)
+and the available nutrition cap in the model. It determines how hunger (low nutrition)
+influences proliferation, death probability, and other characteristics of the tumor cell.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#HUNGER (BROKEN)</span>
+<span class="k">def</span> <span class="nf">hunger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="c1">#COUNT CELLS</span>
+    <span class="n">total_cells</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">width</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">height</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">data_collection</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;total&quot;</span><span class="p">)</span> 
+    <span class="c1">#COUNT NUTRITION</span>
+    <span class="n">nutrition_cap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">nutrition_cap</span>
+    <span class="c1">#COUNT RATIO # Smaller ratio &gt;&gt;&gt; decreased pro parameters, increased de parameters.</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">nutrition_cap</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">width</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">height</span><span class="p">)</span> <span class="c1"># nutrient_concentration</span>
+    <span class="n">nutrient_limit</span> <span class="o">=</span> <span class="mi">2</span>
+    
+    <span class="k">if</span> <span class="n">nutrition_cap</span> <span class="o">&gt;</span> <span class="n">nutrient_limit</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eat</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">nutrition_cap</span> <span class="o">&gt;=</span> <span class="n">nutrient_limit</span><span class="p">:</span> <span class="c1"># consumption rate, eat substrate</span>
+            <span class="k">if</span> <span class="n">S</span> <span class="o">&gt;=</span> <span class="n">nutrient_limit</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">nearest_dist</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">hypoxia_thresholds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">qs</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">qs_max</span><span class="p">:</span>
+                <span class="n">new_prol_prob</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">S</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">S</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ks_growth</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_proliferation_prob</span><span class="p">(</span><span class="n">new_prol_prob</span><span class="p">,</span> <span class="s2">&quot;proportion&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">nutrition_cap</span> <span class="o">&lt;</span> <span class="n">nutrient_limit</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_angiogenesis_intensity</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_death_prob</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;proportion&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_proliferation_prob</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;proportion&quot;</span><span class="p">)</span>
+        <span class="c1">#print(nutrition_cap)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="eat">
+<h3>Eat<a class="headerlink" href="#eat" title="Link to this heading">#</a></h3>
+<p>Decreases the MainModel.nutrient_cap parameter; a parameter that the above <em>self.hunger()</em> tracks to set instance behaviour.</p>
+<p>Is aimed to simulate substrate concentration cell specific consumption rate using parameters such as maximum consumption rate and half saturation constant to specify subtraction level from <em>MainModel.nutrient_cap</em> through the MainModel instance specfic method <em>MainModel.eat_nutrition()</em>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#EAT</span>
+<span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate the tumor cell eating nutrition based on the available concentration.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *args: Can specify a custom nutrient value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">nutrition_cap</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">width</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">height</span><span class="p">)</span> <span class="c1"># nutrient_concentration</span>
+    <span class="k">if</span> <span class="n">S</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qs</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qs_max</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">S</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Ks_substrate</span><span class="o">*</span><span class="n">S</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eat_nutrition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eat_nutrition</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="age">
+<h3>Age<a class="headerlink" href="#age" title="Link to this heading">#</a></h3>
+<p>Increases the chance of death and decreases the proliferation probability of the Tumor_cell instance when called.</p>
+<p><strong>Usaege</strong></p>
+<p>Is called in the <em>Tumor_cell.step()</em> method using the age specifc instance parameter <em>Tumor_cell.recParam1</em> to recursivly increase and decrease the death probability and proliferation probability respectively.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#AGE</span>
+<span class="k">def</span> <span class="nf">age</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Age the tumor cell, reducing its lifespan and modifying the proliferation </span>
+<span class="sd">    and death probabilities based on age.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lifespan</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lifespan</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recParam1</span> <span class="o">+=</span> <span class="mf">0.001</span>
+
+        <span class="n">chance_of_death</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recParam1</span>
+        <span class="n">decreased_prolif</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recParam1</span><span class="o">*</span><span class="mf">1.3</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">death_prob</span> <span class="o">+=</span> <span class="n">chance_of_death</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proliferation_prob</span> <span class="o">-=</span> <span class="n">decreased_prolif</span>
+    
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">lifespan</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_death_prob</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="tumor-cell-endothelial-cell-interaction">
+<h2>Tumor cell-Endothelial Cell Interaction<a class="headerlink" href="#tumor-cell-endothelial-cell-interaction" title="Link to this heading">#</a></h2>
+<p>Model interactions between the Tumor_cell instance and its nearest endothelial cell set by calling <em>self.set_nearest_endo()</em>.</p>
+<p><strong>Behaviour zones</strong></p>
+<p>Models two distance based zones where interactions differ. If the distance between the instance and its nearest endothelial cell, specified in <em>self.nearest_dist</em> set by <em>self.set_nearest_endo()</em>. The zones are set by the parameters <em>self.hypoxia_threshold</em> which is a list which establishes the inter-turmo-endothelial cell distance limit for when the Turmo_cell instance experiences hypoxia. If <em>self.nearest_dist</em> is above under the first threshold value, no hypoxia is experienced and proliferaiton probability is set directly above the default value. If <em>self.nearest_dist</em> is above the threshold, <em>self.set_death_prob()</em> and <em>self.set_proliferation_prob</em> are used to dynamically multiply existing levels for their respective parameters with distance dependent factors.</p>
+<p>The endothelial cell specified by <em>self.nearest_endo</em> is also promoted to proliferate, the intensity of which is also dynamically set using a distnace dependent factor and the endothelial cell-instance specific method <em>Endothelial.targeted_proliferatoin()</em> See the <em>Endothelial</em> chapter for details.</p>
+<p>If the <em>self.nearest_dist</em> is above the third threshold value, the instance death probability is raised to simulate suffocation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#TUMOR-ENDOTHELIAL CELL INTERACTIONS</span>
+<span class="k">def</span> <span class="nf">tumor_endo_interaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform interaction between the tumor cell and the nearest endothelial cell.</span>
+
+<span class="sd">    This includes modifying the proliferation probability, death probability,</span>
+<span class="sd">    and angiogenesis intensity based on the distance to the endothelial cell.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#print(f&#39;Attempting tumor-endo interaction for agent: {self.unique_id}&#39;)</span>
+    <span class="c1">#NOTATIONS</span>
+    <span class="n">best_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimal_signal_dist</span>
+    <span class="n">curr_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nearest_dist</span>
+    <span class="n">threshold1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hypoxia_thresholds</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="n">threshold2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hypoxia_thresholds</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> <span class="n">threshold3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hypoxia_thresholds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diff</span>
+    <span class="n">diff_sign</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diff_sign</span>
+
+    <span class="c1">#INTERACTION ATTIBUTE PARAMETERS *FOR LOGISTIC ZONE*</span>
+    <span class="c1">#  Death Intensity</span>
+    <span class="n">death_intensity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">death_intensity</span>
+    <span class="n">delta_death_factor</span> <span class="o">=</span> <span class="n">death_intensity</span>  <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">curr_dist</span><span class="o">-</span><span class="n">threshold3</span><span class="p">)</span><span class="o">/</span><span class="n">threshold3</span> 
+    <span class="n">death_factor</span> <span class="o">=</span> <span class="n">delta_death_factor</span>
+    
+    <span class="c1">#  Tumor Proliferation Inhibition</span>
+    <span class="n">inhib_intensity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prolif_inhib_intensity</span> 
+    <span class="k">if</span> <span class="n">curr_dist</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">prolif_inhibition_level</span> <span class="o">=</span>  <span class="n">inhib_intensity</span><span class="o">*</span><span class="n">diff_sign</span> <span class="o">*</span> <span class="p">(</span><span class="n">curr_dist</span> <span class="o">-</span> <span class="n">threshold2</span><span class="p">)</span><span class="o">/</span><span class="n">curr_dist</span> <span class="c1">#relevant in the logistic zone</span>
+    <span class="k">elif</span> <span class="n">curr_dist</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">prolif_inhibition_level</span> <span class="o">=</span>  <span class="mi">0</span>
+
+    <span class="n">proliferation_factor</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="n">prolif_inhibition_level</span>  <span class="c1"># Higher inhibition level -&gt; smaller factor -&gt; smaller proliferation.</span>
+    
+    <span class="c1">#  Induction Level</span>
+    <span class="n">induct_intensity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angiogenesis_intensity</span> 
+    <span class="n">speed_dampening</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimal_signal_dist_significane</span> <span class="c1">#Lowers the significance of the optimal signal distance.</span>
+    <span class="k">if</span> <span class="n">best_dist</span> <span class="o">==</span> <span class="n">curr_dist</span><span class="p">:</span>
+        <span class="n">induction_factor</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">induction_factor</span> <span class="o">=</span> <span class="n">induct_intensity</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">best_dist</span><span class="o">-</span><span class="n">speed_dampening</span><span class="o">*</span><span class="n">curr_dist</span><span class="p">))</span> 
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">set_nearest_endo</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">);</span> <span class="c1">#updates prev distance and new distance.</span>
+    
+    <span class="c1">#========ZONES========</span>
+    <span class="c1">#DISCRETE ZONE</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nearest_dist</span> <span class="o">&lt;=</span> <span class="n">threshold1</span><span class="p">:</span> <span class="c1">#withing Lower bound</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_proliferation_prob</span><span class="p">(</span><span class="mf">0.15</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>   <span class="c1">#+20%</span>
+    <span class="k">elif</span> <span class="n">threshold1</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nearest_dist</span> <span class="o">&lt;=</span> <span class="n">threshold2</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_proliferation_prob</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>     <span class="c1">#default</span>
+
+    <span class="c1">#LOGISTIC ZONE</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">nearest_dist</span> <span class="o">&gt;</span> <span class="n">threshold2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">diff</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_proliferation_prob</span><span class="p">(</span><span class="n">proliferation_factor</span><span class="p">,</span> <span class="s2">&quot;proportion&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nearest_dist</span> <span class="o">&gt;</span> <span class="n">threshold3</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_death_prob</span><span class="p">(</span><span class="n">death_factor</span><span class="p">,</span> <span class="s2">&quot;proportion&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nearest_endo</span><span class="o">.</span><span class="n">targeted_proliferation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">induction_factor</span><span class="p">)</span>          
+
+    <span class="c1">#PRINT AGENT DATA:</span>
+    <span class="c1">#self.print_agent_data()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="step">
+<h2>Step<a class="headerlink" href="#step" title="Link to this heading">#</a></h2>
+<p>The step function specifies Tumor_cell instance specific behaviour at each step taken in the associated MainModel instance.
+To adjust behvaiour to environmental conditions, Tumor_cell.hunger() is called first, this sets new death-and proliferation probabilities. Then Tumro_cell.age() is called to adjust the same parameters based on the lifespan of the Tumor_cell instance.
+This is followed by migration and then Tumor_cell.tumor_endo_interaction().</p>
+<p>After these methods have been called, the Tumor_cell instance will have new pareamter values for proliferation and death. The step function will thus try to call Tumor_cell.proliferate() and then Tumor_cell.apoptosis().</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#STEP </span>
+<span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform one step in the agent-based model.</span>
+<span class="sd">    This involves moving, aging, proliferating, interacting with endothelial cells, and dying.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#print(f&#39;TUMOR id: {self.unique_id}&#39;)</span>
+    <span class="c1">#print(f&#39;Initial proliferation_prob: {self.proliferation_prob}&#39;)</span>
+    <span class="c1">#self.eat(10)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">hunger</span><span class="p">()</span>
+    <span class="c1">#print(f&#39;Hunger adjusted prolif prob: {self.proliferation_prob}&#39;)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="p">()</span>
+    <span class="c1">#print(f&#39;Life Span: {self.lifespan}&#39;)</span>
+    <span class="c1">#print(f&#39;Age Adjusted Prolif Prob: {self.proliferation_prob}&#39;)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">migrate</span><span class="p">();</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">tumor_endo_interaction</span><span class="p">();</span>
+    <span class="c1">#print(f&#39;Nearest distance: {self.nearest_dist}&#39;)</span>
+    <span class="c1">#print(f&#39;Distance adjusted Prolif prob: {self.proliferation_prob}&#39;)</span>
+    <span class="c1">#print(f&#39;Confirm Prolif Prob: {self.proliferation_prob}&#39;)</span>
+    <span class="c1">#print(f&#39;Death prob: {self.death_prob}&#39;)</span>
+    <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">proliferation_prob</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proliferate</span><span class="p">();</span>
+    <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">death_prob</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apoptosis</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="potential-for-improvement">
+<h2>Potential for improvement<a class="headerlink" href="#potential-for-improvement" title="Link to this heading">#</a></h2>
+<p>While functionally of the various functions has been confirmed, efficentcy modularity and better integration with paremters of the MainModel are warranted. For instance, the hunger-and eat operations were added at the end when clear logsitics limitations were noticied to not apply to growth. The only way that hypoxia was simulated was by the the Tumor_cell instane’s distnace to their nearest endothelial cell. While this asumes the exisitance of a nutrient gradient, it does not directly simulte it. Even the exisitng nutrient count associated with the MainModel instnace does not necessarily form a gradient. Rather hunger due to nutrient deficiency and nutrient deficiency due to gradients are modelled spearaetly.</p>
+<p>To improve the model, a new class for nutrients could be created, in which the nutrients are spawned and dispursed away from endothelial cells. In additon, a new class for normal cells with a specifc substrate consumption rate is made for which consumption of nutrient instances that exisit in the same grid cell as themselves is simulated. Since MainModel uses the multigrid class, nutrient can pass cells that contain other agent instances. Those cells containing “full” cell agents, progress to migrate to the next cell in where the probability to be consumed would on a macroscopic scale be higher, thereby generating a concentration gradient perpendicular from the endothelial cells.</p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -436,6 +1011,39 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imports-and-class-declaration">Imports and Class Declaration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instance-initiation">Instance Initiation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setters">Setters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-display">Data display</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-behaviour-methods">Basic Behaviour Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#proliferation">Proliferation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#apoptosis">Apoptosis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#migration">Migration</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-environment-interacting-methods">Model Environment Interacting Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hunger">Hunger</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eat">Eat</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#age">Age</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tumor-cell-endothelial-cell-interaction">Tumor cell-Endothelial Cell Interaction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step">Step</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#potential-for-improvement">Potential for improvement</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
