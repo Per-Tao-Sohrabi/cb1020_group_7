@@ -1,9 +1,9 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: My sample book
-author: The Jupyter Book Community
-logo: logo.png
+title: Agent-based modelling of Angiogenesis and Other Interactions in the Prostate Cancer TME
+author: Per Sohrabi, Rania Kassab, Yohan Shamil, Younes-Amin Zabalawi, Yu Yin Liu
+logo: KTH-logo.png
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html

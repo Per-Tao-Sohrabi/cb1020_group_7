@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>RUN THE MODEL &#8212; My sample book</title>
+    <title>RUN THE MODEL &#8212; Agent-based modelling of Angiogenesis and Other Interactions in the Prostate Cancer TME</title>
   
   
   
@@ -141,14 +141,20 @@
     
   
 
-<a class="navbar-brand logo" href="cover.html">
+<a class="navbar-brand logo" href="intro.html">
   
   
   
   
   
+    
+    
+      
+    
+    
+    <img src="_static/KTH-logo.png" class="logo__image only-light" alt="Agent-based modelling of Angiogenesis and Other Interactions in the Prostate Cancer TME - Home"/>
+    <script>document.write(`<img src="_static/KTH-logo.png" class="logo__image only-dark" alt="Agent-based modelling of Angiogenesis and Other Interactions in the Prostate Cancer TME - Home"/>`);</script>
   
-    <p class="title logo__title">My sample book</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -167,16 +173,15 @@
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
-                <a class="reference internal" href="cover.html">
-                    ANGIOGENESIS IN PROSTATE TME
+                <a class="reference internal" href="intro.html">
+                    INTRODUCTION
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="intro.html">INTRODUCTION</a></li>
 <li class="toctree-l1"><a class="reference internal" href="main_model.html">MAIN MODEL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="endothelial_cells.html">ENDOTHELIAL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tumor_cells.html">TUMOR CELL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="endothelial_cells.html">ENDOTHELIAL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="m1_cells.html">M1</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="m2_cells.html">M2</a></li>
@@ -433,7 +438,7 @@ document.write(`
 <p>Make a for loop that called the model’s .step() function. Specify a number of itterations smaller or equal to than the num_step parameter declared in the code block above. Any higher numbers will not result in more steps taken. This is however not the case if the model was instanciated without a specified num_steps variable.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">):</span> <span class="c1">#SPECIFY NUMBER OF STEPS IN range()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span> <span class="c1">#SPECIFY NUMBER OF STEPS IN range()</span>
     <span class="n">model</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
 <span class="c1">#COLLECTING STORED DATA</span>
@@ -452,31 +457,13 @@ document.write(`
 <span class="c1">#PLOT DATA</span>
 <span class="n">model_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time step&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="s2">&quot;on&quot;</span><span class="p">)</span>
-<span class="c1">#plt.setp(plt.gca(), xlim=(-1, 1000), ylim=(0, 1))</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
 <span class="n">model</span><span class="o">.</span><span class="n">plot_data_overlap</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">20</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="c1">#PLOT DATA</span>
-<span class="g g-Whitespace">     </span><span class="mi">18</span> <span class="n">model_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-<span class="ne">---&gt; </span><span class="mi">20</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">21</span> <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time step&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">22</span> <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="s2">&quot;on&quot;</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;plt&#39; is not defined
-</pre></div>
-</div>
-<img alt="_images/bb8c1bf2118a86ce897c8d647b9c4e4c3233859f5968435f9f7254af51757f31.png" src="_images/bb8c1bf2118a86ce897c8d647b9c4e4c3233859f5968435f9f7254af51757f31.png" />
+<img alt="_images/bf1c3e21bc8afaf89681388e98b700929f116624154c8623f1fe7286a3ce2136.png" src="_images/bf1c3e21bc8afaf89681388e98b700929f116624154c8623f1fe7286a3ce2136.png" />
+<img alt="_images/5f0b7a6dda36dd9fc584a24cb73d66902dda585ee1ba06dd1d67ae7551a4c662.png" src="_images/5f0b7a6dda36dd9fc584a24cb73d66902dda585ee1ba06dd1d67ae7551a4c662.png" />
 </div>
 </div>
 </section>
@@ -572,71 +559,73 @@ document.write(`
 </pre></div>
 </div>
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">RuntimeError</span><span class="g g-Whitespace">                              </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">line</span> <span class="mi">78</span>
+<span class="ne">OSError</span><span class="g g-Whitespace">                                   </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">78</span>
 <span class="g g-Whitespace">     </span><span class="mi">76</span> <span class="n">server</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="mi">8521</span>  <span class="c1"># You can set a custom port</span>
 <span class="g g-Whitespace">     </span><span class="mi">77</span> <span class="c1"># Run the visualization server</span>
 <span class="ne">---&gt; </span><span class="mi">78</span> <span class="n">server</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
 
-<span class="nn">File /opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/mesa_viz_tornado/ModularVisualization.py:407,</span> in <span class="ni">ModularServer.launch</span><span class="nt">(self, port, open_browser)</span>
-<span class="g g-Whitespace">    </span><span class="mi">405</span> <span class="n">tornado</span><span class="o">.</span><span class="n">autoreload</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">406</span> <span class="k">try</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">407</span>     <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">current</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">408</span> <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">409</span>     <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">current</span><span class="p">()</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="nn">File /opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/mesa_viz_tornado/ModularVisualization.py:402,</span> in <span class="ni">ModularServer.launch</span><span class="nt">(self, port, open_browser)</span>
+<span class="g g-Whitespace">    </span><span class="mi">400</span> <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;http://127.0.0.1:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">401</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Interface starting at </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">402</span> <span class="bp">self</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">403</span> <span class="k">if</span> <span class="n">open_browser</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">404</span>     <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 
-<span class="nn">File /opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/tornado/platform/asyncio.py:205,</span> in <span class="ni">BaseAsyncIOLoop.start</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">204</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">205</span>     <span class="bp">self</span><span class="o">.</span><span class="n">asyncio_loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span>
+<span class="nn">File /opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/tornado/web.py:2211,</span> in <span class="ni">Application.listen</span><span class="nt">(self, port, address, family, backlog, flags, reuse_port, **kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2188</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Starts an HTTP server for this application on the given port.</span>
+<span class="g g-Whitespace">   </span><span class="mi">2189</span><span class="sd"> </span>
+<span class="g g-Whitespace">   </span><span class="mi">2190</span><span class="sd"> This is a convenience alias for creating an `.HTTPServer` object and</span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2208</span><span class="sd">    including ``reuse_port``.</span>
+<span class="g g-Whitespace">   </span><span class="mi">2209</span><span class="sd"> &quot;&quot;&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">2210</span> <span class="n">server</span> <span class="o">=</span> <span class="n">HTTPServer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">2211</span> <span class="n">server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">2212</span>     <span class="n">port</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2213</span>     <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2214</span>     <span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2215</span>     <span class="n">backlog</span><span class="o">=</span><span class="n">backlog</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2216</span>     <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2217</span>     <span class="n">reuse_port</span><span class="o">=</span><span class="n">reuse_port</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2218</span> <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2219</span> <span class="k">return</span> <span class="n">server</span>
 
-<span class="nn">File /opt/anaconda3/envs/cb1020/lib/python3.12/asyncio/base_events.py:630,</span> in <span class="ni">BaseEventLoop.run_forever</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">628</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Run until stop() is called.&quot;&quot;&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">629</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_closed</span><span class="p">()</span>
-<span class="ne">--&gt; </span><span class="mi">630</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_running</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">631</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_coroutine_origin_tracking</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">633</span> <span class="n">old_agen_hooks</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">get_asyncgen_hooks</span><span class="p">()</span>
+<span class="nn">File /opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/tornado/tcpserver.py:183,</span> in <span class="ni">TCPServer.listen</span><span class="nt">(self, port, address, family, backlog, flags, reuse_port)</span>
+<span class="g g-Whitespace">    </span><span class="mi">159</span> <span class="k">def</span> <span class="nf">listen</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">160</span>     <span class="bp">self</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">161</span>     <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">166</span>     <span class="n">reuse_port</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">167</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">168</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Starts accepting connections on the given port.</span>
+<span class="g g-Whitespace">    </span><span class="mi">169</span><span class="sd"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">170</span><span class="sd">     This method may be called more than once to listen on multiple ports.</span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">    </span><span class="mi">181</span><span class="sd">        arguments to match `tornado.netutil.bind_sockets`.</span>
+<span class="g g-Whitespace">    </span><span class="mi">182</span><span class="sd">     &quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">183</span>     <span class="n">sockets</span> <span class="o">=</span> <span class="n">bind_sockets</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">184</span>         <span class="n">port</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">185</span>         <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">186</span>         <span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">187</span>         <span class="n">backlog</span><span class="o">=</span><span class="n">backlog</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">188</span>         <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">189</span>         <span class="n">reuse_port</span><span class="o">=</span><span class="n">reuse_port</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">190</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">191</span>     <span class="bp">self</span><span class="o">.</span><span class="n">add_sockets</span><span class="p">(</span><span class="n">sockets</span><span class="p">)</span>
 
-<span class="nn">File /opt/anaconda3/envs/cb1020/lib/python3.12/asyncio/base_events.py:622,</span> in <span class="ni">BaseEventLoop._check_running</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">620</span> <span class="k">def</span> <span class="nf">_check_running</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">621</span>     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_running</span><span class="p">():</span>
-<span class="ne">--&gt; </span><span class="mi">622</span>         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;This event loop is already running&#39;</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">623</span>     <span class="k">if</span> <span class="n">events</span><span class="o">.</span><span class="n">_get_running_loop</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">624</span>         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">625</span>             <span class="s1">&#39;Cannot run the event loop while another loop is running&#39;</span><span class="p">)</span>
+<span class="nn">File /opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/tornado/netutil.py:162,</span> in <span class="ni">bind_sockets</span><span class="nt">(port, address, family, backlog, flags, reuse_port)</span>
+<span class="g g-Whitespace">    </span><span class="mi">160</span> <span class="n">sock</span><span class="o">.</span><span class="n">setblocking</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">161</span> <span class="k">try</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">162</span>     <span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">sockaddr</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">163</span> <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">164</span>     <span class="k">if</span> <span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">165</span>         <span class="n">errno_from_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">==</span> <span class="n">errno</span><span class="o">.</span><span class="n">EADDRNOTAVAIL</span>
+<span class="g g-Whitespace">    </span><span class="mi">166</span>         <span class="ow">and</span> <span class="n">address</span> <span class="o">==</span> <span class="s2">&quot;localhost&quot;</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">178</span>         <span class="c1"># might be a real problem like a typo in a</span>
+<span class="g g-Whitespace">    </span><span class="mi">179</span>         <span class="c1"># configuration.</span>
 
-<span class="ne">RuntimeError</span>: This event loop is already running
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Socket opened!
-{&quot;type&quot;:&quot;reset&quot;}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:1}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:2}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:3}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:4}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:5}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:6}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:7}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:8}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:9}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:10}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:11}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:12}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:13}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:14}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:15}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:16}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:17}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:18}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:19}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:20}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:21}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:22}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:23}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:24}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:25}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:26}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:27}
-{&quot;type&quot;:&quot;get_step&quot;,&quot;step&quot;:28}
+<span class="ne">OSError</span>: [Errno 48] Address already in use
 </pre></div>
 </div>
 </div>
@@ -721,7 +710,7 @@ document.write(`
   <div class="footer-item">
     
 <p class="component-author">
-By The Jupyter Book Community
+By Per Sohrabi, Rania Kassab, Yohan Shamil, Younes-Amin Zabalawi, Yu Yin Liu
 </p>
 
   </div>

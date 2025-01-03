@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>MAIN MODEL &#8212; My sample book</title>
+    <title>MAIN MODEL &#8212; Agent-based modelling of Angiogenesis and Other Interactions in the Prostate Cancer TME</title>
   
   
   
@@ -60,7 +60,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'main_model';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ENDOTHELIAL" href="endothelial_cells.html" />
+    <link rel="next" title="TUMOR CELL" href="tumor_cells.html" />
     <link rel="prev" title="INTRODUCTION" href="intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -142,14 +142,20 @@
     
   
 
-<a class="navbar-brand logo" href="cover.html">
+<a class="navbar-brand logo" href="intro.html">
   
   
   
   
   
+    
+    
+      
+    
+    
+    <img src="_static/KTH-logo.png" class="logo__image only-light" alt="Agent-based modelling of Angiogenesis and Other Interactions in the Prostate Cancer TME - Home"/>
+    <script>document.write(`<img src="_static/KTH-logo.png" class="logo__image only-dark" alt="Agent-based modelling of Angiogenesis and Other Interactions in the Prostate Cancer TME - Home"/>`);</script>
   
-    <p class="title logo__title">My sample book</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -168,16 +174,15 @@
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
-                <a class="reference internal" href="cover.html">
-                    ANGIOGENESIS IN PROSTATE TME
+                <a class="reference internal" href="intro.html">
+                    INTRODUCTION
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="intro.html">INTRODUCTION</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">MAIN MODEL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="endothelial_cells.html">ENDOTHELIAL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tumor_cells.html">TUMOR CELL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="endothelial_cells.html">ENDOTHELIAL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="m1_cells.html">M1</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="m2_cells.html">M2</a></li>
@@ -378,7 +383,6 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequesites">Prerequesites</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-neccessary-packages">Import Neccessary Packages</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#class-declaration-and-method-groups">Class Declaration and Method Groups</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-agents">Generate Agents</a></li>
@@ -396,14 +400,6 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="main-model">
 <h1>MAIN MODEL<a class="headerlink" href="#main-model" title="Link to this heading">#</a></h1>
-<section id="prerequesites">
-<h2>Prerequesites<a class="headerlink" href="#prerequesites" title="Link to this heading">#</a></h2>
-<p><strong>Environment</strong>
-Before importing necessary pacakges in the next cell, ensure that your cb1020 environment is activated.
-It can be downloaded through the following link: <a class="reference external" href="https://canvas.kth.se/courses/49002/files/8235393/download?download_frd=1">https://canvas.kth.se/courses/49002/files/8235393/download?download_frd=1</a></p>
-<p><strong>Agent class files</strong>
-The agent class files used throughout the simulation needs be placed in the same directory as <a class="reference external" href="http://MainModel.py">MainModel.py</a>.</p>
-</section>
 <section id="import-neccessary-packages">
 <h2>Import Neccessary Packages<a class="headerlink" href="#import-neccessary-packages" title="Link to this heading">#</a></h2>
 <p>The following packages included in cb1020.yml are necessary for the model to run.
@@ -1153,11 +1149,11 @@ num_steps (int, optional): The number of steps to run the simulation. Defaults t
       </div>
     </a>
     <a class="right-next"
-       href="endothelial_cells.html"
+       href="tumor_cells.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">ENDOTHELIAL</p>
+        <p class="prev-next-title">TUMOR CELL</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1177,7 +1173,6 @@ num_steps (int, optional): The number of steps to run the simulation. Defaults t
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequesites">Prerequesites</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-neccessary-packages">Import Neccessary Packages</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#class-declaration-and-method-groups">Class Declaration and Method Groups</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-agents">Generate Agents</a></li>
@@ -1196,7 +1191,7 @@ num_steps (int, optional): The number of steps to run the simulation. Defaults t
   <div class="footer-item">
     
 <p class="component-author">
-By The Jupyter Book Community
+By Per Sohrabi, Rania Kassab, Yohan Shamil, Younes-Amin Zabalawi, Yu Yin Liu
 </p>
 
   </div>

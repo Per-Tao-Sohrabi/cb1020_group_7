@@ -1,0 +1,177 @@
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/nbclient/client.py", line 1314, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/cb1020/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+from MainModel import MainModel
+
+from mesa.visualization.modules import CanvasGrid
+from mesa.visualization.ModularVisualization import ModularServer
+
+from Endothelial import Endothelial;
+from Tumor_cells import Tumor_cells; 
+from M1 import M1;
+from M2 import M2;
+from Fibroblast import Fibroblast;
+
+def agent_portrayal(agent):
+    """
+    Define how agents are portrayed in the visualization.
+
+    Args:
+        agent (Agent): The agent to portray.
+
+    Returns:
+        dict: A portrayal dictionary specifying agent appearance.
+"""
+    portrayal = {
+        "Filled": "true",   # Ensure the shape is filled
+    }
+
+    if isinstance(agent, Tumor_cells):
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = 1
+        portrayal["Color"] = "blue"
+        portrayal["Layer"] = 0
+
+        # Add a label if multiple agents are in the same cell for clarity
+        cell_contents = agent.model.grid.get_cell_list_contents(agent.position)
+        if len(cell_contents) > 1:
+            portrayal["text"] = f"{len(cell_contents)}"
+            portrayal["text_color"] = "white"
+
+    elif isinstance(agent, Endothelial):
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = 1
+        portrayal["Color"] = "red"
+        portrayal["Layer"] = 0
+
+    elif isinstance(agent, M1):
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = 1
+        portrayal["Color"] = "green"
+        portrayal["Layer"] = 0
+
+    elif isinstance(agent, M2):
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = 1
+        portrayal["Color"] = "purple"
+        portrayal["Layer"] = 0
+    
+    elif isinstance(agent, Fibroblast):
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = 1
+        portrayal["Color"] = "orange"
+        portrayal["Layer"] = 0
+
+
+    return portrayal
+
+# Set up the visualization canvas
+canvas_element = CanvasGrid(agent_portrayal, 150, 150, 1200, 1200) 
+
+# Create the ModularServer to run the visualization
+server = ModularServer(
+    MainModel, 
+    [canvas_element], 
+    "Prostate Environment Simulation",
+    model_params={"num_steps": 100}
+)
+
+server.port = 8521  # You can set a custom port
+# Run the visualization server
+server.launch()
+
+
+
+
+------------------
+
+----- stdout -----
+Interface starting at http://127.0.0.1:8521
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mOSError[0m                                   Traceback (most recent call last)
+Cell [0;32mIn[4], line 78[0m
+[1;32m     76[0m server[38;5;241m.[39mport [38;5;241m=[39m [38;5;241m8521[39m  [38;5;66;03m# You can set a custom port[39;00m
+[1;32m     77[0m [38;5;66;03m# Run the visualization server[39;00m
+[0;32m---> 78[0m [43mserver[49m[38;5;241;43m.[39;49m[43mlaunch[49m[43m([49m[43m)[49m
+
+File [0;32m/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/mesa_viz_tornado/ModularVisualization.py:402[0m, in [0;36mModularServer.launch[0;34m(self, port, open_browser)[0m
+[1;32m    400[0m url [38;5;241m=[39m [38;5;124mf[39m[38;5;124m"[39m[38;5;124mhttp://127.0.0.1:[39m[38;5;132;01m{[39;00m[38;5;28mself[39m[38;5;241m.[39mport[38;5;132;01m}[39;00m[38;5;124m"[39m
+[1;32m    401[0m [38;5;28mprint[39m([38;5;124mf[39m[38;5;124m"[39m[38;5;124mInterface starting at [39m[38;5;132;01m{[39;00murl[38;5;132;01m}[39;00m[38;5;124m"[39m)
+[0;32m--> 402[0m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mlisten[49m[43m([49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mport[49m[43m)[49m
+[1;32m    403[0m [38;5;28;01mif[39;00m open_browser:
+[1;32m    404[0m     webbrowser[38;5;241m.[39mopen(url)
+
+File [0;32m/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/tornado/web.py:2211[0m, in [0;36mApplication.listen[0;34m(self, port, address, family, backlog, flags, reuse_port, **kwargs)[0m
+[1;32m   2188[0m [38;5;250m[39m[38;5;124;03m"""Starts an HTTP server for this application on the given port.[39;00m
+[1;32m   2189[0m 
+[1;32m   2190[0m [38;5;124;03mThis is a convenience alias for creating an `.HTTPServer` object and[39;00m
+[0;32m   (...)[0m
+[1;32m   2208[0m [38;5;124;03m   including ``reuse_port``.[39;00m
+[1;32m   2209[0m [38;5;124;03m"""[39;00m
+[1;32m   2210[0m server [38;5;241m=[39m HTTPServer([38;5;28mself[39m, [38;5;241m*[39m[38;5;241m*[39mkwargs)
+[0;32m-> 2211[0m [43mserver[49m[38;5;241;43m.[39;49m[43mlisten[49m[43m([49m
+[1;32m   2212[0m [43m    [49m[43mport[49m[43m,[49m
+[1;32m   2213[0m [43m    [49m[43maddress[49m[38;5;241;43m=[39;49m[43maddress[49m[43m,[49m
+[1;32m   2214[0m [43m    [49m[43mfamily[49m[38;5;241;43m=[39;49m[43mfamily[49m[43m,[49m
+[1;32m   2215[0m [43m    [49m[43mbacklog[49m[38;5;241;43m=[39;49m[43mbacklog[49m[43m,[49m
+[1;32m   2216[0m [43m    [49m[43mflags[49m[38;5;241;43m=[39;49m[43mflags[49m[43m,[49m
+[1;32m   2217[0m [43m    [49m[43mreuse_port[49m[38;5;241;43m=[39;49m[43mreuse_port[49m[43m,[49m
+[1;32m   2218[0m [43m[49m[43m)[49m
+[1;32m   2219[0m [38;5;28;01mreturn[39;00m server
+
+File [0;32m/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/tornado/tcpserver.py:183[0m, in [0;36mTCPServer.listen[0;34m(self, port, address, family, backlog, flags, reuse_port)[0m
+[1;32m    159[0m [38;5;28;01mdef[39;00m [38;5;21mlisten[39m(
+[1;32m    160[0m     [38;5;28mself[39m,
+[1;32m    161[0m     port: [38;5;28mint[39m,
+[0;32m   (...)[0m
+[1;32m    166[0m     reuse_port: [38;5;28mbool[39m [38;5;241m=[39m [38;5;28;01mFalse[39;00m,
+[1;32m    167[0m ) [38;5;241m-[39m[38;5;241m>[39m [38;5;28;01mNone[39;00m:
+[1;32m    168[0m [38;5;250m    [39m[38;5;124;03m"""Starts accepting connections on the given port.[39;00m
+[1;32m    169[0m 
+[1;32m    170[0m [38;5;124;03m    This method may be called more than once to listen on multiple ports.[39;00m
+[0;32m   (...)[0m
+[1;32m    181[0m [38;5;124;03m       arguments to match `tornado.netutil.bind_sockets`.[39;00m
+[1;32m    182[0m [38;5;124;03m    """[39;00m
+[0;32m--> 183[0m     sockets [38;5;241m=[39m [43mbind_sockets[49m[43m([49m
+[1;32m    184[0m [43m        [49m[43mport[49m[43m,[49m
+[1;32m    185[0m [43m        [49m[43maddress[49m[38;5;241;43m=[39;49m[43maddress[49m[43m,[49m
+[1;32m    186[0m [43m        [49m[43mfamily[49m[38;5;241;43m=[39;49m[43mfamily[49m[43m,[49m
+[1;32m    187[0m [43m        [49m[43mbacklog[49m[38;5;241;43m=[39;49m[43mbacklog[49m[43m,[49m
+[1;32m    188[0m [43m        [49m[43mflags[49m[38;5;241;43m=[39;49m[43mflags[49m[43m,[49m
+[1;32m    189[0m [43m        [49m[43mreuse_port[49m[38;5;241;43m=[39;49m[43mreuse_port[49m[43m,[49m
+[1;32m    190[0m [43m    [49m[43m)[49m
+[1;32m    191[0m     [38;5;28mself[39m[38;5;241m.[39madd_sockets(sockets)
+
+File [0;32m/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/tornado/netutil.py:162[0m, in [0;36mbind_sockets[0;34m(port, address, family, backlog, flags, reuse_port)[0m
+[1;32m    160[0m sock[38;5;241m.[39msetblocking([38;5;28;01mFalse[39;00m)
+[1;32m    161[0m [38;5;28;01mtry[39;00m:
+[0;32m--> 162[0m     [43msock[49m[38;5;241;43m.[39;49m[43mbind[49m[43m([49m[43msockaddr[49m[43m)[49m
+[1;32m    163[0m [38;5;28;01mexcept[39;00m [38;5;167;01mOSError[39;00m [38;5;28;01mas[39;00m e:
+[1;32m    164[0m     [38;5;28;01mif[39;00m (
+[1;32m    165[0m         errno_from_exception(e) [38;5;241m==[39m errno[38;5;241m.[39mEADDRNOTAVAIL
+[1;32m    166[0m         [38;5;129;01mand[39;00m address [38;5;241m==[39m [38;5;124m"[39m[38;5;124mlocalhost[39m[38;5;124m"[39m
+[0;32m   (...)[0m
+[1;32m    178[0m         [38;5;66;03m# might be a real problem like a typo in a[39;00m
+[1;32m    179[0m         [38;5;66;03m# configuration.[39;00m
+
+[0;31mOSError[0m: [Errno 48] Address already in use
+
