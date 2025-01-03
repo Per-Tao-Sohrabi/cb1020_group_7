@@ -51,11 +51,11 @@ class M1(Agent):
         if not self.alive:
             return
         self.eat(5)
-        if self.random.random() < self.prob_death: 
-            self.alive = False
-            self.model.grid.remove_agent(self)
-            self.model.schedule.remove(self)
-            return
+        #if self.random.random() < self.prob_death: 
+        #    self.alive = False
+        #    self.model.grid.remove_agent(self)
+        #    self.model.schedule.remove(self)
+        #    return
         if self.random.random() < self.prob_migrate:
             self.migrate()
         if self.random.random() < self.prob_kill:

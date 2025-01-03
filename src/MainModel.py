@@ -240,9 +240,9 @@ class MainModel(Model):
         #self.nutrition_cap = self.grid.width*self.grid.height #len(self.endothelial_list)*1000                #GODTYCKLIKGT STARTVÄRDE 
         self.generate_agents(Tumor_cells, "default", 1);
         self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
-        self.generate_agents(M1, "default", 50);
+        self.generate_agents(M1, "default", 100);
         self.m1_list = self.get_agent_type_list(M1)
-        self.generate_agents(M2, "default", 200);
+        self.generate_agents(M2, "default", 800);
         self.m2_list = self.get_agent_type_list(M2)
         self.generate_agents(Fibroblast, "default", 10);
         self.fibroblast_list = self.get_agent_type_list(Fibroblast);
@@ -624,6 +624,14 @@ class MainModel(Model):
         if self.num_steps != None and self.step_count > self.num_steps:
             self.running = False
             print("Simulation reached the maximum number of steps")
+
+            #COLLECTING STORED DATA
+            model_df = self.datacollector.get_model_vars_dataframe()
+            agent_df = self.datacollector.get_agent_vars_dataframe()
+
+            #DOWNLOAD DATA FILES
+            model_df.to_excel("model_data.xlsx", index=False)
+            agent_df.to_excel("agent_data.xlsx", index=False)
             
             #PLOT DATA
             self.plot_data_overlap()

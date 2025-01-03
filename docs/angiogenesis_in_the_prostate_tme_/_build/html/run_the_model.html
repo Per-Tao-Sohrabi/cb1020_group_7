@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>RUN THE MODEL &#8212; My sample book</title>
+    <title>RUN THE MODEL &#8212; Agent-based modelling of Angiogenesis and Other Interactions in the Prostate Cancer TME</title>
   
   
   
@@ -141,14 +141,20 @@
     
   
 
-<a class="navbar-brand logo" href="cover.html">
+<a class="navbar-brand logo" href="intro.html">
   
   
   
   
   
+    
+    
+      
+    
+    
+    <img src="_static/KTH-logo.png" class="logo__image only-light" alt="Agent-based modelling of Angiogenesis and Other Interactions in the Prostate Cancer TME - Home"/>
+    <script>document.write(`<img src="_static/KTH-logo.png" class="logo__image only-dark" alt="Agent-based modelling of Angiogenesis and Other Interactions in the Prostate Cancer TME - Home"/>`);</script>
   
-    <p class="title logo__title">My sample book</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -167,17 +173,17 @@
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
-                <a class="reference internal" href="cover.html">
-                    ANGIOGENESIS IN PROSTATE TME
+                <a class="reference internal" href="intro.html">
+                    INTRODUCTION
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="intro.html">INTRODUCTION</a></li>
 <li class="toctree-l1"><a class="reference internal" href="main_model.html">MAIN MODEL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="endothelial_cells.html">ENDOTHELIAL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tumor_cells.html">TUMOR CELL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="endothelial_cells.html">ENDOTHELIAL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="m1_cells.html">M1</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="m2_cells.html">M2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fibroblast_cells.html">FIBROBLAST</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">RUN THE MODEL</a></li>
@@ -376,8 +382,13 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-the-path">SET THE PATH</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initiate-the-model">INITIATE THE MODEL</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-the-class-path">1. Set the class path</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initiate-the-model">2. Initiate the model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3. Run the Model!</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-non-visual-simulation">For non-visual simulation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-visual-simulation">For visual simulation</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -391,12 +402,14 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="run-the-model">
 <h1>RUN THE MODEL<a class="headerlink" href="#run-the-model" title="Link to this heading">#</a></h1>
-<section id="set-the-path">
-<h2>SET THE PATH<a class="headerlink" href="#set-the-path" title="Link to this heading">#</a></h2>
+<p>Use the following blocks to initate and run the simulation.</p>
+<section id="set-the-class-path">
+<h2>1. Set the class path<a class="headerlink" href="#set-the-class-path" title="Link to this heading">#</a></h2>
+<p>First you must set the class path to the directory containing your .py files for the agent classes as well as the model class. Then import the MainModel.MainModel class from <a class="reference external" href="http://MainModel.py">MainModel.py</a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;../scripts&#39;</span><span class="p">)</span>  <span class="c1"># Add the scripts directory to the Python path</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;../../src&#39;</span><span class="p">)</span>  <span class="c1"># Add the scripts directory to the Python path</span>
 
 <span class="kn">from</span> <span class="nn">MainModel</span> <span class="kn">import</span> <span class="n">MainModel</span>
 </pre></div>
@@ -405,24 +418,219 @@ document.write(`
 </div>
 </section>
 <section id="initiate-the-model">
-<h2>INITIATE THE MODEL<a class="headerlink" href="#initiate-the-model" title="Link to this heading">#</a></h2>
+<h2>2. Initiate the model<a class="headerlink" href="#initiate-the-model" title="Link to this heading">#</a></h2>
+<p>Initate an instance of MainModel and</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">MainModel</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">steps</span> <span class="o">=</span> <span class="kc">None</span><span class="c1">#insert integer or None. </span>
 
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">32</span><span class="p">):</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">MainModel</span><span class="p">(</span><span class="n">num_steps</span><span class="o">=</span><span class="n">steps</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id1">
+<h2>3. Run the Model!<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>Choose between visual and non-visual model simulation.</p>
+<section id="for-non-visual-simulation">
+<h3>For non-visual simulation<a class="headerlink" href="#for-non-visual-simulation" title="Link to this heading">#</a></h3>
+<p>Make a for loop that called the model’s .step() function. Specify a number of itterations smaller or equal to than the num_step parameter declared in the code block above. Any higher numbers will not result in more steps taken. This is however not the case if the model was instanciated without a specified num_steps variable.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span> <span class="c1">#SPECIFY NUMBER OF STEPS IN range()</span>
     <span class="n">model</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+<span class="c1">#COLLECTING STORED DATA</span>
+<span class="n">model_df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">datacollector</span><span class="o">.</span><span class="n">get_model_vars_dataframe</span><span class="p">()</span>
+<span class="n">agent_df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">datacollector</span><span class="o">.</span><span class="n">get_agent_vars_dataframe</span><span class="p">()</span>
+
+<span class="c1">#model_df.head(5)</span>
+
+<span class="c1">#agent_df</span>
+
+<span class="c1">#DOWNLOAD DATA FILES</span>
+<span class="n">model_df</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="s2">&quot;model_data.xlsx&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">agent_df</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="s2">&quot;agent_data.xlsx&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="c1">#PLOT DATA</span>
+<span class="n">model_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">plot_data_overlap</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Simulation reached the maximum number of steps
+<img alt="_images/bf1c3e21bc8afaf89681388e98b700929f116624154c8623f1fe7286a3ce2136.png" src="_images/bf1c3e21bc8afaf89681388e98b700929f116624154c8623f1fe7286a3ce2136.png" />
+<img alt="_images/5f0b7a6dda36dd9fc584a24cb73d66902dda585ee1ba06dd1d67ae7551a4c662.png" src="_images/5f0b7a6dda36dd9fc584a24cb73d66902dda585ee1ba06dd1d67ae7551a4c662.png" />
+</div>
+</div>
+</section>
+<section id="for-visual-simulation">
+<h3>For visual simulation<a class="headerlink" href="#for-visual-simulation" title="Link to this heading">#</a></h3>
+<p>The following code creates an https server that visually simulates the model. If the aim is to run a limitied number of steps throughout a simulation specify num_steps in the arguments that initate a server object.</p>
+<p>Note: this method instanciates a server using the MainModel class as input. It does not use an instance of MainModel which is why num_steps has to be specified under <em>“model_params”</em> rather in the MainModel call directly.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">MainModel</span> <span class="kn">import</span> <span class="n">MainModel</span>
+
+<span class="kn">from</span> <span class="nn">mesa.visualization.modules</span> <span class="kn">import</span> <span class="n">CanvasGrid</span>
+<span class="kn">from</span> <span class="nn">mesa.visualization.ModularVisualization</span> <span class="kn">import</span> <span class="n">ModularServer</span>
+
+<span class="kn">from</span> <span class="nn">Endothelial</span> <span class="kn">import</span> <span class="n">Endothelial</span><span class="p">;</span>
+<span class="kn">from</span> <span class="nn">Tumor_cells</span> <span class="kn">import</span> <span class="n">Tumor_cells</span><span class="p">;</span> 
+<span class="kn">from</span> <span class="nn">M1</span> <span class="kn">import</span> <span class="n">M1</span><span class="p">;</span>
+<span class="kn">from</span> <span class="nn">M2</span> <span class="kn">import</span> <span class="n">M2</span><span class="p">;</span>
+<span class="kn">from</span> <span class="nn">Fibroblast</span> <span class="kn">import</span> <span class="n">Fibroblast</span><span class="p">;</span>
+
+<span class="k">def</span> <span class="nf">agent_portrayal</span><span class="p">(</span><span class="n">agent</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Define how agents are portrayed in the visualization.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        agent (Agent): The agent to portray.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A portrayal dictionary specifying agent appearance.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+    <span class="n">portrayal</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Filled&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>   <span class="c1"># Ensure the shape is filled</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">Tumor_cells</span><span class="p">):</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;circle&quot;</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Layer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Add a label if multiple agents are in the same cell for clarity</span>
+        <span class="n">cell_contents</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_cell_list_contents</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_contents</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cell_contents</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;text_color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;white&quot;</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">Endothelial</span><span class="p">):</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;circle&quot;</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Layer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">M1</span><span class="p">):</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;circle&quot;</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Layer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">M2</span><span class="p">):</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;circle&quot;</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;purple&quot;</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Layer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">Fibroblast</span><span class="p">):</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;circle&quot;</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;orange&quot;</span>
+        <span class="n">portrayal</span><span class="p">[</span><span class="s2">&quot;Layer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+    <span class="k">return</span> <span class="n">portrayal</span>
+
+<span class="c1"># Set up the visualization canvas</span>
+<span class="n">canvas_element</span> <span class="o">=</span> <span class="n">CanvasGrid</span><span class="p">(</span><span class="n">agent_portrayal</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">1200</span><span class="p">,</span> <span class="mi">1200</span><span class="p">)</span> 
+
+<span class="c1"># Create the ModularServer to run the visualization</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">ModularServer</span><span class="p">(</span>
+    <span class="n">MainModel</span><span class="p">,</span> 
+    <span class="p">[</span><span class="n">canvas_element</span><span class="p">],</span> 
+    <span class="s2">&quot;Prostate Environment Simulation&quot;</span><span class="p">,</span>
+    <span class="n">model_params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;num_steps&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">server</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="mi">8521</span>  <span class="c1"># You can set a custom port</span>
+<span class="c1"># Run the visualization server</span>
+<span class="n">server</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
 </pre></div>
 </div>
-<img alt="_images/264bffd49f79d848442422fa1152277aeb3fbdfb9d455866446787992a286e0b.png" src="_images/264bffd49f79d848442422fa1152277aeb3fbdfb9d455866446787992a286e0b.png" />
-<img alt="_images/186b0805932e0fd4e54063581ed08124fc8ac6bfa2b56989a09cd8bec9b7a4c2.png" src="_images/186b0805932e0fd4e54063581ed08124fc8ac6bfa2b56989a09cd8bec9b7a4c2.png" />
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interface starting at http://127.0.0.1:8521
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">OSError</span><span class="g g-Whitespace">                                   </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">78</span>
+<span class="g g-Whitespace">     </span><span class="mi">76</span> <span class="n">server</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="mi">8521</span>  <span class="c1"># You can set a custom port</span>
+<span class="g g-Whitespace">     </span><span class="mi">77</span> <span class="c1"># Run the visualization server</span>
+<span class="ne">---&gt; </span><span class="mi">78</span> <span class="n">server</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
+
+<span class="nn">File /opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/mesa_viz_tornado/ModularVisualization.py:402,</span> in <span class="ni">ModularServer.launch</span><span class="nt">(self, port, open_browser)</span>
+<span class="g g-Whitespace">    </span><span class="mi">400</span> <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;http://127.0.0.1:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">401</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Interface starting at </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">402</span> <span class="bp">self</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">403</span> <span class="k">if</span> <span class="n">open_browser</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">404</span>     <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+<span class="nn">File /opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/tornado/web.py:2211,</span> in <span class="ni">Application.listen</span><span class="nt">(self, port, address, family, backlog, flags, reuse_port, **kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2188</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Starts an HTTP server for this application on the given port.</span>
+<span class="g g-Whitespace">   </span><span class="mi">2189</span><span class="sd"> </span>
+<span class="g g-Whitespace">   </span><span class="mi">2190</span><span class="sd"> This is a convenience alias for creating an `.HTTPServer` object and</span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2208</span><span class="sd">    including ``reuse_port``.</span>
+<span class="g g-Whitespace">   </span><span class="mi">2209</span><span class="sd"> &quot;&quot;&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">2210</span> <span class="n">server</span> <span class="o">=</span> <span class="n">HTTPServer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">2211</span> <span class="n">server</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">2212</span>     <span class="n">port</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2213</span>     <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2214</span>     <span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2215</span>     <span class="n">backlog</span><span class="o">=</span><span class="n">backlog</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2216</span>     <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2217</span>     <span class="n">reuse_port</span><span class="o">=</span><span class="n">reuse_port</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2218</span> <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2219</span> <span class="k">return</span> <span class="n">server</span>
+
+<span class="nn">File /opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/tornado/tcpserver.py:183,</span> in <span class="ni">TCPServer.listen</span><span class="nt">(self, port, address, family, backlog, flags, reuse_port)</span>
+<span class="g g-Whitespace">    </span><span class="mi">159</span> <span class="k">def</span> <span class="nf">listen</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">160</span>     <span class="bp">self</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">161</span>     <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">166</span>     <span class="n">reuse_port</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">167</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">168</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Starts accepting connections on the given port.</span>
+<span class="g g-Whitespace">    </span><span class="mi">169</span><span class="sd"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">170</span><span class="sd">     This method may be called more than once to listen on multiple ports.</span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">    </span><span class="mi">181</span><span class="sd">        arguments to match `tornado.netutil.bind_sockets`.</span>
+<span class="g g-Whitespace">    </span><span class="mi">182</span><span class="sd">     &quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">183</span>     <span class="n">sockets</span> <span class="o">=</span> <span class="n">bind_sockets</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">184</span>         <span class="n">port</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">185</span>         <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">186</span>         <span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">187</span>         <span class="n">backlog</span><span class="o">=</span><span class="n">backlog</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">188</span>         <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">189</span>         <span class="n">reuse_port</span><span class="o">=</span><span class="n">reuse_port</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">190</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">191</span>     <span class="bp">self</span><span class="o">.</span><span class="n">add_sockets</span><span class="p">(</span><span class="n">sockets</span><span class="p">)</span>
+
+<span class="nn">File /opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/tornado/netutil.py:162,</span> in <span class="ni">bind_sockets</span><span class="nt">(port, address, family, backlog, flags, reuse_port)</span>
+<span class="g g-Whitespace">    </span><span class="mi">160</span> <span class="n">sock</span><span class="o">.</span><span class="n">setblocking</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">161</span> <span class="k">try</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">162</span>     <span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">sockaddr</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">163</span> <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">164</span>     <span class="k">if</span> <span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">165</span>         <span class="n">errno_from_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">==</span> <span class="n">errno</span><span class="o">.</span><span class="n">EADDRNOTAVAIL</span>
+<span class="g g-Whitespace">    </span><span class="mi">166</span>         <span class="ow">and</span> <span class="n">address</span> <span class="o">==</span> <span class="s2">&quot;localhost&quot;</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">178</span>         <span class="c1"># might be a real problem like a typo in a</span>
+<span class="g g-Whitespace">    </span><span class="mi">179</span>         <span class="c1"># configuration.</span>
+
+<span class="ne">OSError</span>: [Errno 48] Address already in use
+</pre></div>
 </div>
 </div>
+</div>
+</section>
 </section>
 </section>
 
@@ -481,8 +689,13 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-the-path">SET THE PATH</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initiate-the-model">INITIATE THE MODEL</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-the-class-path">1. Set the class path</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initiate-the-model">2. Initiate the model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3. Run the Model!</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-non-visual-simulation">For non-visual simulation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-visual-simulation">For visual simulation</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
@@ -497,7 +710,7 @@ document.write(`
   <div class="footer-item">
     
 <p class="component-author">
-By The Jupyter Book Community
+By Per Sohrabi, Rania Kassab, Yohan Shamil, Younes-Amin Zabalawi, Yu Yin Liu
 </p>
 
   </div>
