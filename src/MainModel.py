@@ -214,7 +214,7 @@ class MainModel(Model):
         - Configures a DataCollector to collect model-level and agent-level data during the simulation.
         """
         #SET RANDOM SEED
-        SEED = 42
+        SEED = 4
         random.seed(SEED)
         
         #MODEL RUNNING:
@@ -599,7 +599,6 @@ class MainModel(Model):
         print(f'Rates:{self.agent_rate_record[self.step_count]}')
         print(f'Nutrition: {self.nutrition_cap}, Nutrition Concentration: {self.nutrition_cap/(self.grid.width*self.grid.height)}')
         print(f'Test sample : {self.m1_list}')
-    
     # STEP METHOD 
     def step(self): 
         """

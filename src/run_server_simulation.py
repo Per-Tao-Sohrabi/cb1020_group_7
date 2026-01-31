@@ -70,11 +70,11 @@ server = ModularServer(
     MainModel, 
     [canvas_element], 
     "Prostate Environment Simulation",
-    model_params={"num_steps": 100}
+    model_params={"num_steps": 500}
 )
 
+# Run the server
 server.port = 8521  # You can set a custom port
-# Run the visualization server
 server.launch()
 
 

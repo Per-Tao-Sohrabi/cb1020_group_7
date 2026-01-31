@@ -22,7 +22,7 @@ class Endothelial(Agent):
         self.unique_id
         self.model = model
         self.position = position
-        self.proliferation_prob = 100
+        self.proliferation_prob = 120
         self.targeted_prolif = None
         self.nurish(5)
 

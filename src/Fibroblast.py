@@ -37,7 +37,7 @@ class Fibroblast(Agent):
         self.position = position
         self.alive = True
         self.proliferation_capacity = params["Fpmax"]
-        self.prob_support_growth = 0.05
+        self.prob_support_growth = 0.5
     
     def eat(self, val):
         self.model.eat_nutrition(val)
