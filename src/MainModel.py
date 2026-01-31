@@ -1,7 +1,7 @@
 from mesa import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
-from mesa.visualization.modules import CanvasGrid
+# from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.datacollection import DataCollector
 import matplotlib.pyplot as plt
@@ -13,14 +13,15 @@ from M1 import M1;
 from M2 import M2;
 from Fibroblast import Fibroblast;
 
-
-
 class MainModel(Model):
     '''
     # MainModel
-
     ABM Model simulating prostate tumor micro environment. 
     Contains methods for model initiation, agent-agent-interactivity, data collection, data plotting, and simulation progression(step()). 
+    
+    ## Inheritance
+    Inherits from mesa.Model class.
+    
     '''
     # GENERATE A UNIQUE ID (not random)
     def get_next_unique_id(self):   
@@ -213,51 +214,49 @@ class MainModel(Model):
         - Configures a DataCollector to collect model-level and agent-level data during the simulation.
         """
         #SET RANDOM SEED
-        random.seed(4)
+        SEED = 42
+        random.seed(SEED)
         
         #MODEL RUNNING:
-        self.num_steps = num_steps
+        self.num_steps = num_steps              # Maximum number of steps for the simulation
         #Model fields
-        super().__init__(*args, **kwargs)
-        self.grid = MultiGrid(150, 150, torus=False);
-        self.schedule = RandomActivation(self);
-        self.agent_storage = {
+        super().__init__(*args, **kwargs)               # Initate from the mesa.Model superclass.
+        self.grid = MultiGrid(150, 150, torus=False);   # Multigrid can take multiple agents at the same tile. 
+        self.schedule = RandomActivation(self);         # Sets scheduling mode to random activation.
+        self.agent_storage = {                          # library stores separate lists of agents for each agent type. 
             Endothelial: {},
             Tumor_cells: {},
             M1: {},
             M2: {},
             Fibroblast: {}
-            # Add other agent types here if needed
+            # NOTE: Add other agent types here if needed
         }
-         #saves agent_chaces from self.generate_agents(*args);
-        self.used_ids = set();
-        self.nutrition_cap = 0
-        #Initiate nutrition_cap
-        #self.generate_agents(Tumor_cells,1);
-        self.generate_agents(Endothelial,"horizontal blood vessle", 1000);
-        self.generate_agents(Endothelial,"vertical blood vessle", 1000);
-        self.endothelial_list = self.get_agent_type_list(Endothelial)
-        #self.nutrition_cap = self.grid.width*self.grid.height #len(self.endothelial_list)*1000                #GODTYCKLIKGT STARTVÄRDE 
-        self.generate_agents(Tumor_cells, "default", 1);
-        self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)
-        self.generate_agents(M1, "default", 100);
-        self.m1_list = self.get_agent_type_list(M1)
-        self.generate_agents(M2, "default", 800);
-        self.m2_list = self.get_agent_type_list(M2)
-        self.generate_agents(Fibroblast, "default", 10);
-        self.fibroblast_list = self.get_agent_type_list(Fibroblast);
+        #saves agent_chaces from self.generate_agents(*args);
+        self.used_ids = set();                 # Set to track used unique IDs
+        self.nutrition_cap = 0                 # Set global nutrition cap to 0 at start
+        self.generate_agents(Endothelial,"horizontal blood vessle", 1000);  # Generate horizontal line of endothelial cells
+        self.generate_agents(Endothelial,"vertical blood vessle", 1000);    # Generate vertical line of endothelial cells, TODO: Optimize to have them generate in arbitrary lines,
+        self.endothelial_list = self.get_agent_type_list(Endothelial)       # Generate list of endothelial cells
+        #self.nutrition_cap = self.grid.width*self.grid.height #len(self.endothelial_list)*1000                #GODTYCKLIKGT STARTVÄRDE TODO: Develop method to calculate nutrition cap based on blood vessle positions
+        self.generate_agents(Tumor_cells, "default", 1);                    # Generate single tumor cell at random position      
+        self.tumor_cell_list = self.get_agent_type_list(Tumor_cells)        # Generate list of tumor cells
+        self.generate_agents(M1, "default", 100);                           # Generate 100 M1 macrophages at random positions
+        self.m1_list = self.get_agent_type_list(M1)                         # Generate list of M1 macrophages 
+        self.generate_agents(M2, "default", 800);                           # Generate 800 M2 macrophages at random positions   
+        self.m2_list = self.get_agent_type_list(M2)                         # Generate list of M2 macrophages
+        self.generate_agents(Fibroblast, "default", 10);                    # Generate 10 fibroblast cells at random positions 
+        self.fibroblast_list = self.get_agent_type_list(Fibroblast);        # Generate list of fibroblast cells
    
-        #DATACOLLECTION
-        self.step_count = 0
-        self.agent_count_record = {}
-        self.agent_rate_record = {}
-        self.nutrition_conc_record = {}
+        #DATACOLLECTION, TODO: Investigate redundancy, bloat, and/or general optimization of data collection. NOTE: Works with mesa built in data collector.
+        self.step_count = 0                 # Initialize step count 
+        self.agent_count_record = {}        # Dictionary to record agent counts at each step
+        self.agent_rate_record = {}         # Dictionary to record agent rates at each step
+        self.nutrition_conc_record = {}     # Dictionary to record nutrition concentration at each step
         #self.avg_agent_specific_rates = {}
 
         # Initialize DataCollector
-        
-        self.datacollector = DataCollector(
-            model_reporters={
+        self.datacollector = DataCollector(     
+            model_reporters={                                               # Model-level reporters
                 "Total Agents": lambda m: len(m.schedule.agents),
                 "Endothelial cells": lambda m: len(m.endothelial_list),
                 "Tumor_cells": lambda m: len(m.tumor_cell_list),
@@ -266,14 +265,14 @@ class MainModel(Model):
                 "Fibroblast": lambda m: len(m.fibroblast_list),
                 "Nutrient levels": lambda m: m.nutrition_cap
                 },
-            agent_reporters={
+            agent_reporters={                                              # Agent-level reporters  
                 "Position": lambda a: a.pos,
             }
         )  
         
 
     #DATACOLLCETION
-    def data_collection(self, *args):
+    def data_collection(self, *args):   # TODO: Review and Optimize data collection method
         """
         Collects and records agent count and rate data at each simulation step.
 
@@ -365,7 +364,7 @@ class MainModel(Model):
                 return agent_rate["FIBROBLAST"]
     
     #PRINT DATA
-    def plot_data_basic(self):
+    def plot_data_basic(self):      # TODO: Review and Optimize data plotting method
         """
         Plots the counts of various agent types and nutrient concentration over time.
 
@@ -412,7 +411,7 @@ class MainModel(Model):
         plt.legend()
         plt.show()
 
-    def plot_data_overlap(self):
+    def plot_data_overlap(self):    # TODO: Review and Optimize data plotting method
         """
         Plots the counts of various agent types and nutrient concentration over time with multiple y-axes.
 
@@ -505,7 +504,7 @@ class MainModel(Model):
         plt.show()
 
     #UPDATE AGENT_STORAGE{}
-    def update_agent_storage(self):
+    def update_agent_storage(self): # TODO: Review and Optimize agent storage update method
         """
         Updates the agent storage to ensure it only contains agents that are currently in the schedule.
 
@@ -536,7 +535,7 @@ class MainModel(Model):
                 del agents_dict[unique_id]
     
     #GET NUTRITION CAP
-    def get_nutrition_cap(self):
+    def get_nutrition_cap(self): 
         """
         Returns the current nutrition capacity of the model.
 
@@ -565,7 +564,7 @@ class MainModel(Model):
         self.nutrition_cap += val
     
     #EAT NEW NUTRITION CAP
-    def eat_nutrition(self, val):
+    def eat_nutrition(self, val):       # TODO: Investigate the method and potentially deprecate and merge to the Agent level if infered beneficial. 
         """
         Reduces the nutrition capacity by a specified value.
 
@@ -600,6 +599,7 @@ class MainModel(Model):
         print(f'Rates:{self.agent_rate_record[self.step_count]}')
         print(f'Nutrition: {self.nutrition_cap}, Nutrition Concentration: {self.nutrition_cap/(self.grid.width*self.grid.height)}')
         print(f'Test sample : {self.m1_list}')
+    
     # STEP METHOD 
     def step(self): 
         """

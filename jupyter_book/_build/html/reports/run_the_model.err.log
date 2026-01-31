@@ -1,0 +1,143 @@
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/nbclient/client.py", line 1314, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/cb1020/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+from MainModel import MainModel
+
+from mesa.visualization.modules import CanvasGrid
+from mesa.visualization.ModularVisualization import ModularServer
+
+from Endothelial import Endothelial;
+from Tumor_cells import Tumor_cells; 
+from M1 import M1;
+from M2 import M2;
+from Fibroblast import Fibroblast;
+
+def agent_portrayal(agent):
+    """
+    Define how agents are portrayed in the visualization.
+
+    Args:
+        agent (Agent): The agent to portray.
+
+    Returns:
+        dict: A portrayal dictionary specifying agent appearance.
+"""
+    portrayal = {
+        "Filled": "true",   # Ensure the shape is filled
+    }
+
+    if isinstance(agent, Tumor_cells):
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = 1
+        portrayal["Color"] = "blue"
+        portrayal["Layer"] = 0
+
+        # Add a label if multiple agents are in the same cell for clarity
+        cell_contents = agent.model.grid.get_cell_list_contents(agent.position)
+        if len(cell_contents) > 1:
+            portrayal["text"] = f"{len(cell_contents)}"
+            portrayal["text_color"] = "white"
+
+    elif isinstance(agent, Endothelial):
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = 1
+        portrayal["Color"] = "red"
+        portrayal["Layer"] = 0
+
+    elif isinstance(agent, M1):
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = 1
+        portrayal["Color"] = "green"
+        portrayal["Layer"] = 0
+
+    elif isinstance(agent, M2):
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = 1
+        portrayal["Color"] = "purple"
+        portrayal["Layer"] = 0
+    
+    elif isinstance(agent, Fibroblast):
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = 1
+        portrayal["Color"] = "orange"
+        portrayal["Layer"] = 0
+
+
+    return portrayal
+
+# Set up the visualization canvas
+canvas_element = CanvasGrid(agent_portrayal, 150, 150, 1200, 1200) 
+
+# Create the ModularServer to run the visualization
+server = ModularServer(
+    MainModel, 
+    [canvas_element], 
+    "Prostate Environment Simulation",
+    model_params={"num_steps": 100}
+)
+
+server.port = 8521  # You can set a custom port
+# Run the visualization server
+server.launch()
+
+
+
+
+------------------
+
+----- stdout -----
+Interface starting at http://127.0.0.1:8521
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mRuntimeError[0m                              Traceback (most recent call last)
+Cell [0;32mIn[4], line 78[0m
+[1;32m     76[0m server[38;5;241m.[39mport [38;5;241m=[39m [38;5;241m8521[39m  [38;5;66;03m# You can set a custom port[39;00m
+[1;32m     77[0m [38;5;66;03m# Run the visualization server[39;00m
+[0;32m---> 78[0m [43mserver[49m[38;5;241;43m.[39;49m[43mlaunch[49m[43m([49m[43m)[49m
+
+File [0;32m/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/mesa_viz_tornado/ModularVisualization.py:407[0m, in [0;36mModularServer.launch[0;34m(self, port, open_browser)[0m
+[1;32m    405[0m tornado[38;5;241m.[39mautoreload[38;5;241m.[39mstart()
+[1;32m    406[0m [38;5;28;01mtry[39;00m:
+[0;32m--> 407[0m     [43mtornado[49m[38;5;241;43m.[39;49m[43mioloop[49m[38;5;241;43m.[39;49m[43mIOLoop[49m[38;5;241;43m.[39;49m[43mcurrent[49m[43m([49m[43m)[49m[38;5;241;43m.[39;49m[43mstart[49m[43m([49m[43m)[49m
+[1;32m    408[0m [38;5;28;01mexcept[39;00m [38;5;167;01mKeyboardInterrupt[39;00m:
+[1;32m    409[0m     tornado[38;5;241m.[39mioloop[38;5;241m.[39mIOLoop[38;5;241m.[39mcurrent()[38;5;241m.[39mstop()
+
+File [0;32m/opt/anaconda3/envs/cb1020/lib/python3.12/site-packages/tornado/platform/asyncio.py:205[0m, in [0;36mBaseAsyncIOLoop.start[0;34m(self)[0m
+[1;32m    204[0m [38;5;28;01mdef[39;00m [38;5;21mstart[39m([38;5;28mself[39m) [38;5;241m-[39m[38;5;241m>[39m [38;5;28;01mNone[39;00m:
+[0;32m--> 205[0m     [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43masyncio_loop[49m[38;5;241;43m.[39;49m[43mrun_forever[49m[43m([49m[43m)[49m
+
+File [0;32m/opt/anaconda3/envs/cb1020/lib/python3.12/asyncio/base_events.py:630[0m, in [0;36mBaseEventLoop.run_forever[0;34m(self)[0m
+[1;32m    628[0m [38;5;250m[39m[38;5;124;03m"""Run until stop() is called."""[39;00m
+[1;32m    629[0m [38;5;28mself[39m[38;5;241m.[39m_check_closed()
+[0;32m--> 630[0m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_check_running[49m[43m([49m[43m)[49m
+[1;32m    631[0m [38;5;28mself[39m[38;5;241m.[39m_set_coroutine_origin_tracking([38;5;28mself[39m[38;5;241m.[39m_debug)
+[1;32m    633[0m old_agen_hooks [38;5;241m=[39m sys[38;5;241m.[39mget_asyncgen_hooks()
+
+File [0;32m/opt/anaconda3/envs/cb1020/lib/python3.12/asyncio/base_events.py:622[0m, in [0;36mBaseEventLoop._check_running[0;34m(self)[0m
+[1;32m    620[0m [38;5;28;01mdef[39;00m [38;5;21m_check_running[39m([38;5;28mself[39m):
+[1;32m    621[0m     [38;5;28;01mif[39;00m [38;5;28mself[39m[38;5;241m.[39mis_running():
+[0;32m--> 622[0m         [38;5;28;01mraise[39;00m [38;5;167;01mRuntimeError[39;00m([38;5;124m'[39m[38;5;124mThis event loop is already running[39m[38;5;124m'[39m)
+[1;32m    623[0m     [38;5;28;01mif[39;00m events[38;5;241m.[39m_get_running_loop() [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m:
+[1;32m    624[0m         [38;5;28;01mraise[39;00m [38;5;167;01mRuntimeError[39;00m(
+[1;32m    625[0m             [38;5;124m'[39m[38;5;124mCannot run the event loop while another loop is running[39m[38;5;124m'[39m)
+
+[0;31mRuntimeError[0m: This event loop is already running
+
